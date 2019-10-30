@@ -8,7 +8,7 @@ function run {
 }
 
 # Farbprofil
-dispwin -d 1 $HOME/.color/dell_P2214H_user.icm &
+dispwin -d 1 $HOME/.color/profile.icm &
 # Network-Manager im Tray
 run nm-applet
 # # Polybar
@@ -49,5 +49,12 @@ xsetroot -cursor_name left_ptr &
 run /usr/lib/kdeconnectd
 # Sperrbildschirm
 run light-locker
+# Wacom-Setup
+xsetwacom set "Wacom Pen and multitouch sensor Finger touch" Gesture off
+xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 2 3
+xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 1 1
+xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Threshold 1
+# Batterieindikator
+run cbatticon
 # Compressor
 run pulseeffects
