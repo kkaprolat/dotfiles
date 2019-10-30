@@ -25,6 +25,9 @@ require("awful.hotkeys_popup.keys")
 -- load keys externally
 local keys = require("keys")
 
+-- load rules externally
+local rules = require("rules")
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -203,25 +206,15 @@ awful.screen.connect_for_each_screen(function(s)
     }
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s, width = s.geometry.width * 0.98, height = 27, border_width = 2 })
+    s.mywibox = awful.wibar({ position = "top", screen = s, width = 1920, height = 27 })
 
     -- systray
     s.systray = wibox.widget.systray()
     s.systray.visible = false
 
-    -- toggle for systray
-    -- TODO does not work!
-    local button = awful.widget.button()
-    button:buttons(gears.table.join(
-        button:buttons(),
-        awful.button({}, 1, nil, function ()
-                -- awful.screen.focused().systray.visible = not awful.screen.focused().systray.visible
-                print("Mouse was clicked")
-            end)
-    ))
-
     -- Add widgets to the wibox
     s.mywibox:setup {
+        expand = "none",
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
@@ -229,95 +222,14 @@ awful.screen.connect_for_each_screen(function(s)
             s.mytaglist,
             s.mypromptbox,
         },
-        mytextclock, -- Middle widget
+        mytextclock,
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             s.systray,
-            button,
             s.mylayoutbox,
         },
     }
 end)
--- }}}
-
--- {{{ Rules
--- Rules to apply to new clients (through the "manage" signal).
-awful.rules.rules = {
-    -- All clients will match this rule.
-    { rule = { },
-      properties = { border_width = beautiful.border_width,
-                     border_color = beautiful.border_normal,
-                     focus = awful.client.focus.filter,
-                     raise = true,
-                     keys = keys.clientkeys,
-                     buttons = keys.clientbuttons,
-                     screen = awful.screen.preferred,
-                     placement = awful.placement.no_overlap+awful.placement.no_offscreen
-     }
-    },
-
-    -- Floating clients.
-    { rule_any = {
-        instance = {
-          "DTA",  -- Firefox addon DownThemAll.
-          "copyq",  -- Includes session name in class.
-          "pinentry",
-        },
-        class = {
-          "Arandr",
-          "Blueman-manager",
-          "Gpick",
-          "Kruler",
-          "MessageWin",  -- kalarm.
-          "Sxiv",
-          "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
-          "Wpa_gui",
-          "veromix",
-          "xtightvncviewer"},
-
-        -- Note that the name property shown in xprop might be set slightly after creation of the client
-        -- and the name shown there might not match defined rules here.
-        name = {
-          "Event Tester",  -- xev.
-          "win0",
-        },
-        role = {
-          "AlarmWindow",  -- Thunderbird's calendar.
-          "ConfigManager",  -- Thunderbird's about:config.
-          "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
-        }
-      }, properties = { floating = true }},
-
-    -- Add titlebars to normal clients and dialogs
-    { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = false }
-    },
-
-    -- Set Firefox to always map on the tag named "2" on screen 1.
-    { rule = { class = "firefox" },
-    properties = { screen = 1, tag = "5" } },
-    { rule = { class = "keepassxc"},
-    properties = { screen = 1, tag = "8"} },
-    { rule = { class = "Steam" },
-    properties = { screen = 1, tag = "2" } },
-    { rule = { name = "ncmpcpp" },
-    properties = { screen = 1, tag = "3" } },
-    { rule = { class = "Clementine" },
-    properties = { screen = 1, tag = "3" } },
-    { rule = { class = "Thunderbird" },
-    properties = { screen = 1, tag = "6" } },
-    { rule = { class = "discord" },
-    properties = { screen = 1, tag = "7" } },
-    { rule_any = {  class = { "Rofi", }, },
-    properties = { honor_padding = false, honor_workarea = false, skip_taskbar = true, floating = true, ontop = true, fullscreen = true, maximized = true, x = 0, y = 0 },
-    callback = function (c)
-            awful.placement.centered(c,{honor_padding = true, honor_workarea=true})
-            if not beautiful.titlebars_imitate_borders then
-                    awful.titlebar.hide(c)
-            end
-    end
-    },
-}
 -- }}}
 
 -- {{{ Signals
@@ -333,46 +245,6 @@ client.connect_signal("manage", function (c)
         -- Prevent clients from being unreachable after screen count changes.
         awful.placement.no_offscreen(c)
     end
-end)
-
--- Add a titlebar if titlebars_enabled is set to true in the rules.
-client.connect_signal("request::titlebars", function(c)
-    -- buttons for the titlebar
-    local buttons = gears.table.join(
-        awful.button({ }, 1, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.move(c)
-        end),
-        awful.button({ }, 3, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.resize(c)
-        end)
-    )
-
-    awful.titlebar(c) : setup {
-        { -- Left
-            awful.titlebar.widget.iconwidget(c),
-            buttons = buttons,
-            layout  = wibox.layout.fixed.horizontal
-        },
-        { -- Middle
-            { -- Title
-                align  = "center",
-                widget = awful.titlebar.widget.titlewidget(c)
-            },
-            buttons = buttons,
-            layout  = wibox.layout.flex.horizontal
-        },
-        { -- Right
-            awful.titlebar.widget.floatingbutton (c),
-            awful.titlebar.widget.maximizedbutton(c),
-            awful.titlebar.widget.stickybutton   (c),
-            awful.titlebar.widget.ontopbutton    (c),
-            awful.titlebar.widget.closebutton    (c),
-            layout = wibox.layout.fixed.horizontal()
-        },
-        layout = wibox.layout.align.horizontal
-    }
 end)
 
 -- Enable sloppy focus, so that focus follows mouse.
