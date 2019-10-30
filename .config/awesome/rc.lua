@@ -226,7 +226,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             s.systray,
-            s.mylayoutbox,
+            s.mylayoutbox, -- der Layout-Indikator
         },
     }
 end)
