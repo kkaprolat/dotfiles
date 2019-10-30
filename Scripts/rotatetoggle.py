@@ -3,7 +3,7 @@
 import subprocess
 
 # --- set the name of the screen and the rotate direction below
-screen = "eDP-1"
+screen = "DP-0"
 rotate = "left"
 # ---
 

@@ -5,6 +5,7 @@
 local theme_assets = require("beautiful.theme_assets")
 local xresources = require("beautiful.xresources")
 local dpi = xresources.apply_dpi
+local gears = require("gears")
 
 local gfs = require("gears.filesystem")
 local themes_path = gfs.get_themes_dir()
@@ -57,6 +58,24 @@ theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
 -- notification_[bg|fg]
 -- notification_[width|height|margin]
 -- notification_[border_color|border_width|shape|opacity]
+theme.notification_font = "Cantarell 11"
+theme.notification_border_width = 0
+theme.notification_bg = "#202020"
+theme.notification_fg = "#ffffff"
+theme.notification_max_width = dpi(800)
+theme.notification_icon_size = dpi(32)
+theme.notification_margin = dpi(200)
+theme.notification_padding = dpi(200)
+theme.notification_spacing = dpi(200)
+
+local rrect = function(radius)
+    return function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, radius)
+    end
+end
+
+
+theme.notification_shape = rrect(5)
 
 -- Variables set for theming the menu:
 -- menu_[bg|fg]_[normal|focus]
