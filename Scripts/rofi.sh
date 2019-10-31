@@ -5,4 +5,4 @@ rofi -show combi -normal-window &
  
 sleep 0.4s
  
-xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -id $(xdotool search -name rofi | grep $(xdotool getactivewindow) )
+# xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -id $(xdotool search -name rofi | grep $(xdotool getactivewindow) )
