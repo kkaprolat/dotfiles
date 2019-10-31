@@ -142,14 +142,14 @@ end
 local month_calendar = awful.widget.calendar_popup.month({
 	start_sunday = false,
 -- 	spacing = 10,
-	font = 'Cantarell 11',
+	font = 'Overpass 11',
 	long_weekdays = true,
 	margin = 2, -- 10
 	style_month = { border_width = 0, padding = 12, shape = cal_shape, padding = 25},
 	style_header = { border_width = 0, bg_color = '#00000000' },
 	style_weekday = { border_width = 0, bg_color = '#00000000' },
 	style_normal = { border_width = 0, bg_color = '#00000000' },
-	style_focus = { border_width = 0, bg_color = beautiful.bg_focus, shape = cal_item_shape, padding = 12 },
+	style_focus = { border_width = 0, bg_color = beautiful.bg_urgent, shape = cal_item_shape, padding = 12, fg_color = beautiful.fg_normal },
     style_weeknumber = { border_width = 0, bg_color = '#00000000' },
     week_numbers = true,
 

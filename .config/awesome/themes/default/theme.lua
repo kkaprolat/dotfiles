@@ -12,7 +12,7 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font          = "Cantarell 11"
+theme.font          = "Overpass 11"
 
 theme.bg_normal     = "#20202033" 
 theme.bg_focus      = xresources.get_current_theme().color0
