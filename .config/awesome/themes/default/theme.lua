@@ -14,7 +14,7 @@ local theme = {}
 
 theme.font          = "Cantarell 11"
 
-theme.bg_normal     = "#20202000" 
+theme.bg_normal     = "#20202033" 
 theme.bg_focus      = xresources.get_current_theme().color0
 theme.bg_urgent     = xresources.get_current_theme().color1
 theme.bg_minimize   = xresources.get_current_theme().color2
