@@ -116,6 +116,35 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock("%d.%m.%y  |  %H:%M")
 
+local cal_shape = function(cr, width, height)
+  --gears.shape.infobubble(cr, width, height, 12)
+  gears.shape.partially_rounded_rect(
+    cr,
+    width,
+    height,
+    false,
+    false,
+    true,
+    true,
+    12)
+end
+
+-- Calendar Widget
+local month_calendar = awful.widget.calendar_popup.month({
+	start_sunday = true,
+	spacing = 10,
+	font = 'Cantarell 11',
+	long_weekdays = true,
+	margin = 0, -- 10
+	style_month = { border_width = 0, padding = 12, shape = cal_shape, padding = 25},
+	style_header = { border_width = 0, bg_color = '#00000000'},
+	style_weekday = { border_width = 0, bg_color = '#00000000' },
+	style_normal = { border_width = 0, bg_color = '#00000000'},
+	style_focus = { border_width = 0, bg_color = '#FF5722' },
+
+	})
+	month_calendar:attach( mytextclock, "tc" , { on_pressed = true, on_hover = false })
+
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
                     awful.button({ }, 1, function(t) t:view_only() end),
