@@ -7,18 +7,17 @@ function run {
         fi
 }
 
+sleep 2
 # Farbprofil
 dispwin -d 1 $HOME/.color/profile.icm &
 # Network-Manager im Tray
 run nm-applet
 # # Polybar
 # $HOME/.config/polybar/launch.sh
-# Compositor
-compton -c -f --backend glx --blur-method kawase --blur-strength 10 --config $HOME/.config/compton/compton.conf &
 # Numlock an
-numlockx on &
+run numlockx on
 # Firefox
-GTK_USE_PORTAL=1 firefox &
+GTK_USE_PORTAL=1 run firefox
 # Steam
 run steam-native
 # Policykit
@@ -44,17 +43,19 @@ $HOME/Scripts/bspccolors.sh &
 # Flashfocus
 run flashfocus
 # Cursor richtig
-xsetroot -cursor_name left_ptr &
+run xsetroot -cursor_name left_ptr
 # KDEConnect
 run /usr/lib/kdeconnectd
 # Sperrbildschirm
 run light-locker
 # Wacom-Setup
-xsetwacom set "Wacom Pen and multitouch sensor Finger touch" Gesture off
-xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 2 3
-xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 1 1
-xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Threshold 1
+run xsetwacom set "Wacom Pen and multitouch sensor Finger touch" Gesture off
+run xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 2 3
+run xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 1 1
+run xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Threshold 1
 # Batterieindikator
 run cbatticon
 # Compressor
 run pulseeffects
+# Compositor
+run compton -c -f --backend glx --blur-method kawase --blur-strength 10 --config $HOME/.config/compton/compton.conf
