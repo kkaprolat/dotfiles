@@ -57,5 +57,3 @@ run xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Threshold 1
 run cbatticon
 # Compressor
 run pulseeffects
-# Compositor
-run compton -c -f --backend glx --blur-method kawase --blur-strength 10 --config $HOME/.config/compton/compton.conf
