@@ -37,6 +37,13 @@ if dein#load_state('~/.cache/dein')
 
   " my plugins
   call dein#add('neoclide/coc.nvim', {'rev': 'release'})
+  call dein#add('scrooloose/nerdtree')
+  call dein#add('Xuyuanp/nerdtree-git-plugin')
+  call dein#add('tiagofumo/vim-nerdtree-syntax-highlight')
+  call dein#add('ryanoasis/vim-devicons')
+  call dein#add('vim-airline/vim-airline')
+  call dein#add('scrooloose/nerdcommenter')
+  call dein#add('airblade/vim-gitgutter')
 
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
@@ -119,3 +126,19 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
+" Prettier
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
+" NERDTree
+nmap <C-n> :NERDTreeToggle<CR>
+autocmd StdinReadPre * lead s:std_in=1
+autocmd VimEnter * NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" for vim-devicons
+set encoding=UTF-8
+
+" nerdcommenter
+" vim currently does not allow for Ctrl + Number
+" nmap <C-7> <plug>NERDCommenterToggle
+" vmap <C-7> <plug>NERDCommenterToggle
