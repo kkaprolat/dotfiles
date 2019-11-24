@@ -1,0 +1,4 @@
+setxkbmap -model pc104 -layout de &
+wal -i $HOME/wallpapers
+. $HOME/.cache/wal/colors.sh
+feh --bg-fill $wallpaper
