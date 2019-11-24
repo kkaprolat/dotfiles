@@ -1,3 +1,3 @@
 #!/bin/bash
-xbacklight -dec 10
+xbacklight -dec 5
 notify-send "Brightness" $(xbacklight -get)
