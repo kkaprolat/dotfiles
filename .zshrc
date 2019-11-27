@@ -105,8 +105,8 @@ source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 neofetch | lolcat -t
 bindkey "\e[1~" beginning-of-line
 bindkey "\e[4~" end-of-line
-export EDITOR=vim
-export VISUAL=vim
+export EDITOR=nvim
+export VISUAL=nvim
 
 # Import colorscheme from 'wal' asynchronously
 # &   # Run the process in the background.
@@ -122,4 +122,5 @@ export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
-
+alias vim='nvim'
+alias vi='nvim'

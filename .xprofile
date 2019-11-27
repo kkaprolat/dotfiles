@@ -1,4 +1,18 @@
+#!/bin/zsh
+if [ $(cat /proc/sys/kernel/hostname) == Magnesium ]
+then
 setxkbmap -model pc104 -layout de &
 wal -i $HOME/wallpapers
 . $HOME/.cache/wal/colors.sh
 feh --bg-fill $wallpaper
+fi
+if [ $(cat /proc/sys/kernel/hostname) == Technetium ]
+then
+nvidia-settings --load-config-only &
+XDG_CURRENT_DESKTOP=KDE
+export XDG_CURRENT_DESKTOP
+XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CONFIG_HOME
+wal -b '#202020' -a 50 -i /run/media/kay/D0-P1/Bibliotheken/Bilder/Wallpaper/dump
+compton -c -f --backend glx --blur-method kawase --blur-strength 10 --config /home/kay/.config/compton/compton.conf &
+fi
