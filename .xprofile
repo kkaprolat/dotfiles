@@ -14,5 +14,5 @@ export XDG_CURRENT_DESKTOP
 XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CONFIG_HOME
 wal -b '#202020' -a 50 -i /run/media/kay/D0-P1/Bibliotheken/Bilder/Wallpaper/dump
-compton -c -f --backend glx --blur-method kawase --blur-strength 10 --config /home/kay/.config/compton/compton.conf &
 fi
+compton -c -f --backend glx --blur-method kawase --blur-strength 10 --config /home/kay/.config/compton/compton.conf &
