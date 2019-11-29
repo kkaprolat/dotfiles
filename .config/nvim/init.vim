@@ -38,11 +38,11 @@ if dein#load_state('~/.cache/dein')
   " my plugins
   call dein#add('neoclide/coc.nvim', {'rev': 'release'})
   call dein#add('scrooloose/nerdtree')
+  call dein#add('scrooloose/nerdcommenter')
   call dein#add('Xuyuanp/nerdtree-git-plugin')
   call dein#add('tiagofumo/vim-nerdtree-syntax-highlight')
   call dein#add('ryanoasis/vim-devicons')
   call dein#add('vim-airline/vim-airline')
-  call dein#add('scrooloose/nerdcommenter')
   call dein#add('airblade/vim-gitgutter')
 
   if !has('nvim')
