@@ -49,10 +49,10 @@ run /usr/lib/kdeconnectd
 # Sperrbildschirm
 run light-locker
 # Wacom-Setup
-run xsetwacom set "Wacom Pen and multitouch sensor Finger touch" Gesture off
-run xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 2 3
-run xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 1 1
-run xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Threshold 1
+xsetwacom set "Wacom Pen and multitouch sensor Finger touch" Gesture off
+xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 2 3
+xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 1 1
+xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Threshold 1
 # Batterieindikator
 run cbatticon
 # Compressor
