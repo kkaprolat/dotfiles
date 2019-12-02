@@ -68,7 +68,8 @@ filetype plugin indent on
 :set whichwrap=b,s,<,>,[,]
 
 " line numbers
-:set number
+set number
+set rnu
 
 " color scheme
 packadd! onedark.vim
