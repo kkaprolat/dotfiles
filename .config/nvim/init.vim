@@ -44,6 +44,8 @@ if dein#load_state('~/.cache/dein')
   call dein#add('vim-airline/vim-airline')
   call dein#add('scrooloose/nerdcommenter')
   call dein#add('airblade/vim-gitgutter')
+  call dein#add('lervag/vimtex')
+  call dein#add('tpope/vim-surround')
 
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
@@ -69,6 +71,7 @@ filetype plugin indent on
 
 " line numbers
 :set number
+set rnu
 
 " color scheme
 packadd! onedark.vim
@@ -142,3 +145,10 @@ set encoding=UTF-8
 " vim currently does not allow for Ctrl + Number
 " nmap <C-7> <plug>NERDCommenterToggle
 " vmap <C-7> <plug>NERDCommenterToggle
+
+" for Latex:
+let g:tex_flavor='latex'
+let g:timtex_view_method='zathura'
+let g:vimtex_quickfix_mode=0
+set conceallevel=1
+let g:tex_concel='abdmg'
