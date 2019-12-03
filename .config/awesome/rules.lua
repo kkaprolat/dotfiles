@@ -64,6 +64,8 @@ awful.rules.rules = {
     properties = { screen = 1, tag = "2" } },
     { rule = { name = "ncmpcpp" },
     properties = { screen = 1, tag = "3" } },
+    { rule = { class = "Clementine" },
+    properties = { screen = 1, tag = "3" } },
     { rule = { class = "Thunderbird" },
     properties = { screen = 1, tag = "6" } },
     { rule = { class = "discord" },
