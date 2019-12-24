@@ -46,6 +46,7 @@ if dein#load_state('~/.cache/dein')
   call dein#add('airblade/vim-gitgutter')
   call dein#add('lervag/vimtex')
   call dein#add('tpope/vim-surround')
+  call dein#add('joshdick/onedark.vim')
 
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
@@ -74,7 +75,6 @@ set number
 set rnu
 
 " color scheme
-packadd! onedark.vim
 syntax on
 colorscheme onedark
 
