@@ -1,0 +1,239 @@
+Encrypted installation of Arch Linux on Thinkpad X390 Yoga
+==========================================================
+Kay Kaprolat
+v1.0, 2019-12-22
+:compat-mode!:
+
+== Preparations
+. Back up everything in the home directory that you need.
+. Make a list of all installed programs. (forget to write down the undervolting configuration)
+. https://wiki.archlinux.org/index.php/Dm-crypt/Drive_preparation[Clear the SSD memory cells.] I was afraid of bricking my drive, so I did not do that.
+. Boot from a USB-Drive
+. https://wiki.archlinux.org/index.php/Securely_wipe_disk[Wipe the drive:]
+Use pseudo random data /dev/urandom: `dd if=/dev/urandom of=/dev/nvme0n1 bs=4096 status=progress`
++
+----
+dd: error writing '/dev/nvme0n1': No space left on device
+125026903+0 records in
+125026902+0 records out
+512110190592 bytes (512 GB, 477 GiB) copied, 2975.85 s, 172 MB/s
+dd if=/dev/urandom of=/dev/nvme0n1 bs=4096 status=progress 53.02s user 2920.55s system 99% cpu 49:35.86 total
+----
+
+== Installation
+=== Normal start
+. Load the german keyboard layout with `loadkeys de-latin1`
+. Confirm you are running in UEFI mode with `ls /sys/firmware/efi/efivars` (should exist with UEFI)
+. Connect to wifi using `wifi-menu`
+. Check for a connection using `ip a` and `ping` (oddly enough ipv6 works)
+. Update the system clock with `timedatectl set-ntp true`
+
+=== Partitioning (https://wiki.archlinux.org/index.php/Dm-crypt/Encrypting_an_entire_system#LVM_on_LUKS[Details])
+. Use `gdisk /dev/nvme0n1` to create a new partition table (`o` for new GPT table and `n` for new partitions)
+. We want to use the https://wiki.archlinux.org/index.php/EFI_system_partition[EFI system partition] for `/boot`
+. We create a 512 MiB EFI system partition (`EF00`) and the rest will be a LVM partition (`8E00`)
+. Write and exit with `w`
+. Enable encryption on the LVM partition using `cryptsetup luksFormat /dev/nvme0n1p2`
+. Enter a secure passphrase
+. Open the container using `cryptsetup open /dev/nvme0n1p2 cryptlvm`
+. Create a physical volume on top of the opened LUKS container with `pvcreate /dev/mapper/cryptlvm`
+. Create a volume group (`VolGroup`) and add the physical volume to it (`vgcreate VolGroup /dev/mapper/cryptlvm`)
+. Create logical volumes
++
+----
+$ lvcreate -L 16G VolGroup -n swap
+$ lvcreate -L 100G VolGroup -n root
+$ lvcreate -l 100%FREE VolGroup -n home  # note that -l is not capitalized
+----
+. Format the filesystems
++
+----
+$ mkfs.ext4 /dev/VolGroup/root
+$ mkfs.ext4 /dev/VolGroup/home
+$ mkswap /dev/VolGroup/swap
+$ mkfs.fat -F32 /dev/nvme0n1p1
+----
+. Mount all partitions
++
+----
+$ mount /dev/VolGroup/root /mnt
+$ mkdir /mnt/home
+$ mount /dev/VolGroup/home /mnt/home
+$ swapon /dev/VolGroup/swap
+$ mkdir /mnt/efi
+$ mount /dev/nvme0n1p1 /mnt/boot
+----
+
+=== Further normal steps
+. Select your mirror servers (only german ones are enough for now)
+. Install your usual packages (with `pacstrap /mnt base linux linux-firmware base-devel neovim man-db man-pages texinfo lvm2`)
+. Generate an fstab with `genfstab /mnt >> /mnt/etc/fstab` and check it
+. Chroot into the new system
+. Set the timezone with `ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime`
+. Run `hwclock --systohc` to generate `/etc/adjtime`
+. Generate your locales with `/etc/locale.gen` and `locale-gen` (`en_US.UTF-8 UTF-8` and `de_DE.UTF-8 UTF-8` should be enough)
+. Edit `/etc/locale.conf` and insert `LANG=en_US.UTF-8`
+. Edit `/etc/vconsole.conf` and insert `KEYMAP=de-latin1`
+. Create `/etc/hostname` and add matching entries to `/etc/hosts`
+. Install `networkmanager`
+. Configure the mkinitcpio
+.. Add `keyboard`, `keymap`, `consolefont`, `encrypt` and `lvm2` to the hooks array and remove double entries
++
+----
+HOOKS=(base udev autodetect keyboard keymap consolefont modconf block encrypt lvm2 filesystems fsck)
+----
+. Run `mkinitcpio -P`
+. Set the root password with `passwd`
+. Create your normal user with `useradd -m <username>` and give them a password with `passwd <username>`
+. Install `refind-efi`, `efitools` and `sbsigntools`
+
+=== Using Secure Boot
+. Create a GUID for owner identification
++
+----
+$ uuidgen --random > GUID.txt
+----
+. Create a platform key:
++
+----
+$ openssl req -newkey rsa:4096 -nodes -keyout PK.key -new -x509 -sha256 -days 3650 -subj "/CN=Platform Key/" -out PK.crt
+$ openssl x509 -outform DER -in PK.crt -out PK.cer
+$ cert-to-efi-sig-list -g "$(< GUID.txt)" PK.crt PK.esl
+$ sign-efi-sig-list -g "(< GUID.txt)" -k PK.key -c PK.crt PK PK.esl PK.auth
+----
+. Sign an empty file to allow removing Platform Key when in "User Mode":
++
+----
+sign-efi-sig-list -g "$(< GUID.txt)" -c PK.crt -k PK.key PK /dev/null rm_PK.auth
+----
+. Key Exchange Key:
++
+----
+$ openssl req -newkey rsa:4096 -nodes -keyout KEK.key -new -x509 -sha256 -days 3650 -subj "/CN=Key Exchange Key/" -out KEK.crt
+$ openssl x509 -outform DER -in KEK.crt -out KEK.cer
+$ cert-to-efi-sig-list -g "$(< GUID.txt)" KEK.crt KEK.esl
+$ sign-efi-sig-list -g "$(< GUID.txt)" -k PK.key -c PK.crt KEK KEK.esl KEK.auth
+----
+. Signature Database key:
++
+----
+$ openssl req -newkey rsa:4096 -nodes -keyout db.key -new -x509 -sha256 -days 3650 -subj "/CN=Signature Database Key/" -out db.crt
+$ openssl x509 -outform DER -in db.crt -out db.cer
+$ cert-to-efi-sig-list -g "$(< GUID.txt)" db.crt db.esl
+$ sign-efi-sig-list -g "$(< GUID.txt)" -k KEK.key -c KEK.crt db db.esl db.auth
+----
+
+=== The Boot Loader
+==== Installation
+* We will be using rEFInd.
+. Copy `db.cer`, `db.crt` and `db.key` to `/etc/refind.d/keys/`
+. Rename them to `refind_local.cer`, `refind_local.crt` and `refind_local.key`
+. Run `refind-install --localkeys`
+. The script will warn you that you are not running in Secure Boot mode, however that does not matter at the moment.
+. Also install `intel-ucode`
+
+==== Configuration
+. In `/efi/EFI/refind/refind.conf` add (and don't forget to uncomment it)
++
+----
+extra_kernel_version_strings linux-hardened,linux-zen,linux-lts,linux
+----
+. Edit `/boot/refind_linux.conf` to the following:
++
+----
+"Boot with standard options"    "cryptdevice=UUID=<DeviceUUID>:cryptlvm:allow-discards root=/dev/VolGroup/root rw resume=/dev/VolGroup/swap initrd=/intel-ucode.img initrd=/initramfs-%v.img quiet"
+"Boot to single-user mode"      "cryptdevice=UUID=<DeviceUUID>:cryptlvm:allow-discards root=/dev/VolGroup/root rw resume=/dev/VolGroup/swap initrd=/boot/intel-ucode.img initrd=/boot/initramfs-%v.img single"
+----
+
+=== Continue with Secure Boot
+. Sign kernel and boot manager with `sbsign`:
++
+----
+$ sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux /boot/vmlinuz-linux
+$ sbsign --key db.key --cert db.crt --output /efi/EFI/refind/refind_x64.efi /efi/EFI/refind/refind_x64.efi
+----
+. Create a pacman hook for signing the kernel after every update:
++
+./etc/pacman.d/hooks/99-secureboot.hook
+----
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = linux
+
+[Action]
+Description = Signing Kernel for Secure Boot
+When = PostTransaction
+Exec = /usr/bin/sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux /boot/vmlinuz-linux
+Depends = sbsigntools
+----
+. Create a pacman hook for installing rEFInd after every update:
++
+./etc/pacman.d/hooks/refind.hook
+----
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = refind-efi
+
+[Action]
+Description = Updating rEFInd on ESP
+When = PostTransaction
+Exec = /usr/bin/refind-install --localkeys --yes
+----
+. Copy all `\*.cer`, `*.esl` and `*.auth` files to the EFI system partition
+. Put firmware in "Setup Mode"
+. Sign KeyTool with
++
+----
+$ sbsign --key db.key --cert db.crt --output /efi/EFI/KeyTool-signed.efi /usr/share/efitools/efi/KeyTool.efi
+----
+. Enroll your keys (`PK`, `KEK` and `db`):
+.. Boot the Arch Linux thumb drive
+.. Choose UEFI Shell
+.. Change the FS to FS0:
+.. Run KeyTool
+.. Enroll your keys
+. Secure Boot will be enabled in UEFI and you should be unable to boot your thumb drive
+. `od --address-radix=n --format=u1 /sys/firmware/efi/efivars/SecureBoot-???`
+should return
+`6  0  0  0  1`
+. You should be able to boot your system now.
+
+== After Installation
+* Don't forget to remove your keys from `/boot/EFI/refind/keys` so an attacker cannot get them.
+// TODO create a hook for that!
+* Add yourself to the wheel group with `usermod -aG wheel <user>` and edit `/etc/sudoers` with `visudo` accordingly
+* In `/etc/pacman.conf` enable `Color`, `TotalDownload` and `multilib` and update your package databases
+
+=== Reconnect to WiFi
+. Enable and start NetworkManager
+. Use `nmtui` to connect to your WiFi network of choice
+
+=== Dependencies
+==== Basics
+* `ntfs-3g` so we can mount our external hard drive.
+* `zsh` as shell as well as `zsh-syntax-highlighting`, `zsh-autosuggestions` and `zsh-completions`
+** Change your shell to zsh with `usermod -s /bin/zsh <user>`
+** The zsh prompt requires `neofetch` and `lolcat`
+** `wget` for oh-my-zsh
+* `git` for getting the dotfiles
+** https://www.atlassian.com/git/tutorials/dotfiles[Get your dotfiles.]
+* Download and install `yay` or some other AUR helper of your choice
+
+==== Xorg
+* `awesome` as window manager
+* `lightdm` as display manager
+** `lightdm-gtk-greeter` or `lightdm-webkit2-greeter` as greeter
+* Install `mesa`, `lib32-mesa`, `vulkan-intel` for graphics drivers
+* Don't forget to remove broken lines in .Xprofile or Xorg will not start
+* Install `xf86-input-wacom` for touch and pen support
+* The autorun script requires at least `network-manager-applet`, `numlockx`, `redshift`, `thunderbird`, `firefox`, `keepassxc`, `udiskie`, `flashfocus`, `kdeconnect`, `light-locker` and `argyllcms`
+* `feh` and `python-pywal` for wallpaper and corresponding colors
+* `compton-tryone-git` as compositor
+* `alacritty` terminal emulator
+* `steam` and `steam-native-runtime` for KTANE
+* `krita`, `inkscape` for graphics editing
+* NeoVim requires for its plugins `vim-dein-git`, `nodejs` and `npm`
+** Run `call dein#install()` and `call dein#update()` in NeoVim
