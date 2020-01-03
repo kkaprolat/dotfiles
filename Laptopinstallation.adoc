@@ -124,8 +124,7 @@ $ sign-efi-sig-list -g "$(< GUID.txt)" -k KEK.key -c KEK.crt db db.esl db.auth
 ----
 
 === The Boot Loader
-==== Installation
-* We will be using rEFInd.
+==== Installation (rEFInd)
 . Copy `db.cer`, `db.crt` and `db.key` to `/etc/refind.d/keys/`
 . Rename them to `refind_local.cer`, `refind_local.crt` and `refind_local.key`
 . Run `refind-install --localkeys`
@@ -146,7 +145,7 @@ extra_kernel_version_strings linux-hardened,linux-zen,linux-lts,linux
 ----
 
 === Continue with Secure Boot
-. Sign kernel and boot manager with `sbsign`:
+. Sign kernel and boot manager with `sbsign`: (boot manager signing is probably not needed, as rEFInd does this by itself)
 +
 ----
 $ sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux /boot/vmlinuz-linux
@@ -197,7 +196,7 @@ $ sbsign --key db.key --cert db.crt --output /efi/EFI/KeyTool-signed.efi /usr/sh
 .. Enroll your keys
 . Secure Boot will be enabled in UEFI and you should be unable to boot your thumb drive
 . `od --address-radix=n --format=u1 /sys/firmware/efi/efivars/SecureBoot-???`
-should return
+should end with 1, e.g.
 `6  0  0  0  1`
 . You should be able to boot your system now.
 
@@ -233,7 +232,64 @@ should return
 * `feh` and `python-pywal` for wallpaper and corresponding colors
 * `compton-tryone-git` as compositor
 * `alacritty` terminal emulator
+* `dolphin` and `breeze` as file manager
+* `pavucontrol`, `pulseaudio-alsa` and `pulseaudio` for audio
+* `rofi` as launcher
+* `xorg-xbacklight` for brightness control. This also requires
+* `ttf-dejavu`, `ttf-fantasque-sans-mono`, `ttf-iosevka`, `ttf-unifont` and `nerd-fonts-complete` are some nice fonts that my configuration uses
++
+./etc/X11/xorg.conf.d/20-intel.conf
+----
+Section "Device"
+        Identifier    "Intel Graphics"
+        Driver        "intel"
+        Option        "Backlight"    "intel_backlight"
+EndSection
+----
+
+==== Other useful packages
 * `steam` and `steam-native-runtime` for KTANE
-* `krita`, `inkscape` for graphics editing
+* `krita`, `inkscape` and `gimp` for graphics editing
 * NeoVim requires for its plugins `vim-dein-git`, `nodejs` and `npm`
 ** Run `call dein#install()` and `call dein#update()` in NeoVim
+* `intel-undervolt` for undervolting. The following values work for me on an i7-8565U, however I did not test any higher ones. I just started with these and left them alone.
++
+./etc/intel-undervolt.conf
+----
+undervolt 0 'CPU' -70
+undervolt 1 'GPU' -50
+undervolt 2 'CPU Cache' -70
+undervolt 3 'System Agent' -70
+undervolt 4 'Analog I/O' -70
+----
+* Apply the configuration with `intel-undervolt apply` and check with `intel-undervolt read` and enable `intel-undervolt.service` to make the changes permanent.
+// TODO check whether the configuration stays
+* `xournalpp`, `texstudio` and `texlive-most` for university
+* `zathura`, `zathura-pdf-poppler` as PDF viewer
+* `fwupd` for firmware updates
+* `arch-wiki-docs` for an offline copy of the Arch wiki
+* `ufw` and `gufw` as firewall
+** Enable `ufw.service`
+* `lxqt-policykit`  as polkit agent
+
+==== Other optimizations
+* You can run `make` and package compression with multiple cores:
++
+./etc/makepkg.conf
+----
+MAKEFLAGS="-j$(nproc)"
+COMPRESSXZ=(xz -c -z --threads=0)
+COMPRESSZST=(zstd -c -z -q --threads=0)
+# There are also drop ins for gzip and bzip2, see https://wiki.archlinux.org/index.php/Makepkg#Utilizing_multiple_cores_on_compression[here]
+----
+
+== Encryption with GnuPG smartcard
+* Install `ccid`, `pcsc-tools` and `opensc` and enable and start `pcscd.service`
+* You can also install `kleopatra` or something similar
+* Run `gpg --card-edit`
+** Enter `admin` and then `name`, `lang`, `sex`, `url` and `login` and then change your card's password with `passwd`
+** With `key-attr` you can use larger keys or ECC
+** Generate your key with `generate` (think of a passphrase first or you may time out)
+** You can also use `paperkey` for archiving the key
+** Move the backup of your key somewhere safe and then `shred` it from disk
+* Install `initramfs-scencrypt`
