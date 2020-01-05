@@ -35,7 +35,7 @@ run keepassxc
 # Dunst (Notifications)
 # run dunst
 # Udiskie (automount)
-run udiskie --smart-tray
+run udiskie --smart-tray --automount --file-manager=dolphin
 # Farben für Glava
 $HOME/Scripts/glavawal.sh &
 # Farben für BSPWM
