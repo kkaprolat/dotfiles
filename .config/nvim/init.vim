@@ -46,7 +46,7 @@ if dein#load_state('~/.cache/dein')
   call dein#add('airblade/vim-gitgutter')
   call dein#add('lervag/vimtex')
   call dein#add('tpope/vim-surround')
-  call dein#add('joshdick/onedark.vim')
+  call dein#add('arcticicestudio/nord-vim')
 
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
@@ -56,6 +56,8 @@ if dein#load_state('~/.cache/dein')
   call dein#end()
   call dein#save_state()
 endif
+
+call dein#install()
 
 " Plugins end
 filetype plugin indent on
@@ -76,7 +78,7 @@ set rnu
 
 " color scheme
 syntax on
-colorscheme onedark
+colorscheme nord
 
 " Tabs
 set tabstop=4        " visual spaces per TAB
