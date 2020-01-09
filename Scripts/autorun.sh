@@ -47,7 +47,8 @@ run xsetroot -cursor_name left_ptr
 # KDEConnect
 run /usr/lib/kdeconnectd
 # Sperrbildschirm
-run light-locker
+# run light-locker
+run gnome-screensaver
 # Wacom-Setup
 xsetwacom set "Wacom Pen and multitouch sensor Finger touch" Gesture off
 xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 2 3
