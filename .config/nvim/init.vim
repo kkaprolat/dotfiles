@@ -78,6 +78,7 @@ set rnu
 
 " color scheme
 syntax on
+let g:nord_underline = 1
 colorscheme nord
 
 " Tabs
