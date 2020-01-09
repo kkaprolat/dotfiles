@@ -12,24 +12,32 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font          = "Overpass 11"
+theme.red = "#BF616A"
+theme.green = "#A3BE8C"
+theme.yellow = "#EBCB8B"
+theme.blue = "#81A1C1"
+theme.magenta = "#B48EAD"
+theme.cyan = "#88C0D0"
+theme.white = "#3B4252"
 
-theme.bg_normal     = "#20202033" 
-theme.bg_focus      = xresources.get_current_theme().color0
-theme.bg_urgent     = xresources.get_current_theme().color1
-theme.bg_minimize   = xresources.get_current_theme().color2
+theme.font          = "Overpass 12"
+
+theme.bg_normal     = "#2E3440"
+theme.bg_focus      = theme.white
+theme.bg_urgent     = theme.red
+theme.bg_minimize   = theme.red
 theme.bg_systray    = theme.bg_normal
 
-theme.fg_normal     = "#ffffff"
-theme.fg_focus      = xresources.get_current_theme().color4
-theme.fg_urgent     = xresources.get_current_theme().color4
-theme.fg_minimize   = xresources.get_current_theme().color4
+theme.fg_normal     = "#D8DEE9"
+theme.fg_focus      = theme.green
+theme.fg_urgent     = theme.fg_normal
+theme.fg_minimize   = theme.fg_normal
 
-theme.useless_gap   = dpi(5)
+theme.useless_gap   = dpi(3)
 theme.border_width  = dpi(3)
-theme.border_normal = xresources.get_current_theme().color5
-theme.border_focus  = xresources.get_current_theme().color6
-theme.border_marked = xresources.get_current_theme().color7
+theme.border_normal = theme.bg_normal
+theme.border_focus  = theme.bg_focus
+theme.border_marked = theme.bg_urgent
 
 -- There are other variable sets
 -- overriding the default one when
@@ -58,10 +66,10 @@ theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
 -- notification_[bg|fg]
 -- notification_[width|height|margin]
 -- notification_[border_color|border_width|shape|opacity]
-theme.notification_font = "Cantarell 11"
+theme.notification_font = theme.font
 theme.notification_border_width = 0
-theme.notification_bg = "#202020"
-theme.notification_fg = "#ffffff"
+theme.notification_bg = theme.bg_normal
+theme.notification_fg = theme.fg_normal
 theme.notification_max_width = dpi(800)
 theme.notification_icon_size = dpi(32)
 theme.notification_margin = dpi(200)
@@ -82,7 +90,7 @@ theme.notification_shape = rrect(5)
 -- menu_[border_color|border_width]
 theme.menu_submenu_icon = themes_path.."default/submenu.png"
 theme.menu_height = dpi(15)
-theme.menu_width  = dpi(100)
+theme.menu_width  = dpi(150)
 
 -- You can add as many variables as
 -- you wish and access them by using
