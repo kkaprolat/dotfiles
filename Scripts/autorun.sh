@@ -58,3 +58,5 @@ xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Threshold 1
 run cbatticon
 # Compressor
 run pulseeffects
+# Bluetooth Tray
+run blueman-tray
