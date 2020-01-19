@@ -272,6 +272,25 @@ undervolt 4 'Analog I/O' -70
 ** Enable `ufw.service`
 * `lxqt-policykit`  as polkit agent
 
+==== Fingerprint reader
+* `fprintd-libfprint2` from the AUR for fingerprint support though this may change in the future (if Arch starts using libfprint2)
+* Enroll your finger with `fprintd-enroll`
+* Restrict enrolling to super users
++
+./usr/share/polkit-1/rules.d/50-net.reactivated.fprint.device.enroll.rules
+----
+polkit.addRule(function (action, subject) {
+  if (action.id == "net.reactivated.fprint.device.enroll") {
+    return subject.user == "root" ? polkit.Result.YES : polkit.result.NO
+  }
+})
+----
+* Add the following line at top to `/etc/pam.d/sudo`, `system-local-login` and others
++
+----
+auth      sufficient pam_fprintd.so
+----
+
 ==== Other optimizations
 * You can run `make` and package compression with multiple cores:
 +
@@ -282,6 +301,7 @@ COMPRESSXZ=(xz -c -z --threads=0)
 COMPRESSZST=(zstd -c -z -q --threads=0)
 # There are also drop ins for gzip and bzip2, see https://wiki.archlinux.org/index.php/Makepkg#Utilizing_multiple_cores_on_compression[here]
 ----
+* Install `tlp`, `tp_smapi`, `acpi_call` and `tlp-rdw` for better power management and configure as written https://wiki.archlinux.org/index.php/TLP[here]
 
 == Encryption with GnuPG smartcard
 * Install `ccid`, `pcsc-tools` and `opensc` and enable and start `pcscd.service`
