@@ -102,7 +102,6 @@ alias ls="ls -lah --color"
 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-neofetch | lolcat -t
 bindkey "\e[1~" beginning-of-line
 bindkey "\e[4~" end-of-line
 export EDITOR=nvim
@@ -124,3 +123,4 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias vim='nvim'
 alias vi='nvim'
+neofetch | lolcat -t
