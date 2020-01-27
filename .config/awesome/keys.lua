@@ -150,7 +150,9 @@ keys.globalkeys = gears.table.join(
         function (c)
             awful.screen.focused().systray.visible = not awful.screen.focused().systray.visible
         end ,
-        {description = "Toggle systray", group = "custom"})
+        {description = "Toggle systray", group = "custom"}),
+        awful.key({ } , "Print", function () awful.spawn.with_shell("notify-send 'no screenshot tool found'") end,
+                  {description = "take a screenshot with xxx", group = "misc"})
 )
 
 keys.clientkeys = gears.table.join(
