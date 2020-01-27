@@ -1,0 +1,3 @@
+[submodule "/home/kay/.config/awesome/awesome-wm-widgets"]
+	path = /home/kay/.config/awesome/awesome-wm-widgets
+	url = git@github.com:streetturtle/awesome-wm-widgets
