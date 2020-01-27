@@ -60,3 +60,5 @@ run cbatticon
 run pulseeffects
 # Bluetooth Tray
 run blueman-tray
+# syncthing
+run syncthingtray
