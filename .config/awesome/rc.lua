@@ -28,6 +28,9 @@ local keys = require("keys")
 -- load rules externally
 local rules = require("rules")
 
+-- widgets
+local wifi_widget = require("widgets.wifi")
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -264,6 +267,7 @@ awful.screen.connect_for_each_screen(function(s)
         mytextclock,
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
+            wifi_widget,
             s.systray,
             s.mylayoutbox, -- der Layout-Indikator
         },
