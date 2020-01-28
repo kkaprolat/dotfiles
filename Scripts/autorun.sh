@@ -61,4 +61,4 @@ run pulseeffects
 # Bluetooth Tray
 run blueman-tray
 # syncthing
-XDG_CURRENT_DESKTOP="" run syncthingtray --wait
+run syncthing-gtk
