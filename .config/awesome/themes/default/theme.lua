@@ -20,7 +20,7 @@ theme.magenta = "#B48EAD"
 theme.cyan = "#88C0D0"
 theme.white = "#3B4252"
 
-theme.font          = "Overpass 12"
+theme.font          = "Overpass Nerd Font 12"
 
 theme.bg_normal     = "#2E3440"
 theme.bg_focus      = theme.white
