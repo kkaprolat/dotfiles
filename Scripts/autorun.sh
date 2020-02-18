@@ -7,7 +7,12 @@ function run {
         fi
 }
 
-sleep 2
+# sleep 2
+# wallpaper
+wallpaper=$(find $wallpaperlocation | shuf -n 1)
+echo $wallpaper
+export wallpaper=$wallpaper
+feh --bg-fill $wallpaper
 # Farbprofil
 dispwin -d 1 $HOME/.color/profile.icm &
 # Network-Manager im Tray
@@ -19,7 +24,7 @@ run numlockx on
 # Firefox
 GTK_USE_PORTAL=1 run firefox
 # Steam
-run steam-native
+run steam
 # Policykit
 run /usr/bin/lxqt-policykit-agent
 # Redshift
