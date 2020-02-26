@@ -46,7 +46,7 @@ if dein#load_state('~/.cache/dein')
   call dein#add('airblade/vim-gitgutter')
   call dein#add('lervag/vimtex')
   call dein#add('tpope/vim-surround')
-  call dein#add('arcticicestudio/nord-vim')
+  call dein#add('morhetz/gruvbox')
 
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
@@ -78,8 +78,10 @@ set rnu
 
 " color scheme
 syntax on
-let g:nord_underline = 1
-colorscheme nord
+colorscheme gruvbox
+let g:gruvbox_italic = 1
+let g:gruvbox_contrast_dark = 'hard'
+
 
 " Tabs
 set tabstop=4        " visual spaces per TAB
