@@ -63,14 +63,14 @@ call dein#install()
 filetype plugin indent on
 
 " Copy/Paste on right register
-:set clipboard=unnamedplus
+set clipboard=unnamedplus
 
 " better word wrapping
-:set linebreak
-:set breakindent
+set linebreak
+set breakindent
 
 " traverse line breaks with arrow keys
-:set whichwrap=b,s,<,>,[,]
+set whichwrap=b,s,<,>,[,]
 
 " line numbers
 set number
