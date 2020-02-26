@@ -1,18 +1,24 @@
-#!/bin/zsh
+#!/bin/bash
+# machine specific code
 if [ $(cat /proc/sys/kernel/hostname) == Magnesium ]
 then
 setxkbmap -model pc104 -layout de &
-wal -i $HOME/Wallpapers
-. $HOME/.cache/wal/colors.sh
-feh --bg-fill $wallpaper
+wallpaperlocation="$HOME/Wallpapers"
+export wallpaperlocation=$wallpaperlocation
 fi
 if [ $(cat /proc/sys/kernel/hostname) == Technetium ]
 then
 nvidia-settings --load-config-only &
-wal -b '#202020' -a 50 -i /run/media/kay/D0-P1/Bibliotheken/Bilder/Wallpaper/dump
+wallpaperlocation="/run/media/kay/D0-P1/Bibliotheken/Bilder/Wallpaper/dump"
+export wallpaperlocation=$wallpaperlocation
 fi
 XDG_CURRENT_DESKTOP=KDE
 export XDG_CURRENT_DESKTOP
 XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CONFIG_HOME
 compton -c -f --backend glx --blur-method kawase --blur-strength 10 --config /home/kay/.config/compton/compton.conf &
+
+# set wallpaper
+wallpaper=$(find $wallpaperlocation | grep -v ".stfolder" | shuf -n 1)
+feh --bg-fill $wallpaper
+export wallpaper=$wallpaper
