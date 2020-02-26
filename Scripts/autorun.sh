@@ -17,7 +17,7 @@ run nm-applet
 # Numlock an
 run numlockx on
 # Firefox
-GTK_USE_PORTAL=1 run firefox
+run firefox
 # Steam
 run steam-native
 # Policykit
