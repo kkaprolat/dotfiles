@@ -40,7 +40,7 @@ $HOME/Scripts/glavawal.sh &
 # Farben für BSPWM
 $HOME/Scripts/bspccolors.sh &
 # Flashfocus
-run flashfocus
+run flashfocus 2>/dev/null
 # Cursor richtig
 run xsetroot -cursor_name left_ptr
 # KDEConnect
