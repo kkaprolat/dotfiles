@@ -77,7 +77,7 @@ $ mount /dev/nvme0n1p1 /mnt/boot
 . Create `/etc/hostname` and add matching entries to `/etc/hosts`
 . Install `networkmanager`
 . Configure the mkinitcpio
-.. Add `keyboard`, `keymap`, `consolefont`, `encrypt` and `lvm2` to the hooks array and remove double entries
+.. Add `keyboard`, `keymap`, `consolefont`, `encrypt`, `lvm2` and `resume` (after `lvm2`) to the hooks array and remove double entries
 +
 ----
 HOOKS=(base udev autodetect keyboard keymap consolefont modconf block encrypt lvm2 filesystems fsck)
