@@ -123,4 +123,4 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias vim='nvim'
 alias vi='nvim'
-neofetch | lolcat -t
+cat $HOME/.motd | lolcat -t
