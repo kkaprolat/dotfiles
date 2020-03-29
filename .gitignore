@@ -1,2 +1,5 @@
 .cfg
 Scripts/rotatetoggle.py
+.config/mpd/database
+.config/mpd/pid
+.config/mpd/state
