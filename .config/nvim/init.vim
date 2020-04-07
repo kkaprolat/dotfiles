@@ -33,10 +33,8 @@ if dein#load_state('~/.cache/dein')
   call dein#begin('~/.cache/dein')
 
   call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
-  call dein#add('Shougo/deoplete.nvim')
 
   " my plugins
-  call dein#add('neoclide/coc.nvim', {'rev': 'release'})
   call dein#add('scrooloose/nerdtree')
   call dein#add('scrooloose/nerdcommenter')
   call dein#add('Xuyuanp/nerdtree-git-plugin')
@@ -44,9 +42,13 @@ if dein#load_state('~/.cache/dein')
   call dein#add('ryanoasis/vim-devicons')
   call dein#add('vim-airline/vim-airline')
   call dein#add('airblade/vim-gitgutter')
-  call dein#add('lervag/vimtex')
   call dein#add('tpope/vim-surround')
+  call dein#add('vimwiki/vimwiki')
+  " color scheme
   call dein#add('morhetz/gruvbox')
+  " languages
+  call dein#add('Shougo/deoplete.nvim') " generic autocomplete
+  call dein#add('lervag/vimtex') " LaTeX
 
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
@@ -106,36 +108,10 @@ let g:powerline_pycmd="py3"
 
 set termguicolors
 
-" for coc
-set hidden
-set nobackup
-set nowritebackup
-set cmdheight=2
-set updatetime=300
-set shortmess+=c
-set signcolumn=yes
-
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
 function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
-
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Prettier
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
 
 " NERDTree
 nmap <C-n> :NERDTreeToggle<CR>
@@ -151,9 +127,15 @@ set encoding=UTF-8
 " nmap <C-7> <plug>NERDCommenterToggle
 " vmap <C-7> <plug>NERDCommenterToggle
 
+" deoplete
+let g:deoplete#enable_at_startup = 1
+
 " for Latex:
 let g:tex_flavor='latex'
-let g:timtex_view_method='zathura'
+let g:vimtex_view_method='zathura'
 let g:vimtex_quickfix_mode=0
 set conceallevel=1
 let g:tex_concel='abdmg'
+let g:vimtex_complete_close_braces=1
+let g:vimtex_compiler_progname = 'nvr'
+
