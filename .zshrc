@@ -123,4 +123,5 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias vim='nvim'
 alias vi='nvim'
+alias sudo='sudo ' # so that aliases are applied when using sudo
 cat $HOME/.motd | lolcat -t
