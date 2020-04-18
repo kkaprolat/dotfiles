@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# für MPD
-# mpc next
-# für Clementine
-clementine --next
+# for MPD
+mpc next
+# for Clementine
+# clementine --next

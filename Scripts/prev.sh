@@ -1,5 +1,5 @@
 #! /bin/bash
-# für MPD
-# mpc prev
-# für Clementine
-clementine --previous
+# for MPD
+mpc prev
+# for Clementine
+# clementine --previous
