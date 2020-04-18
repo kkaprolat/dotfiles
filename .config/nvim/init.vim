@@ -44,10 +44,11 @@ if dein#load_state('~/.cache/dein')
   call dein#add('airblade/vim-gitgutter')
   call dein#add('tpope/vim-surround')
   call dein#add('vimwiki/vimwiki')
+  call dein#add('Shougo/context_filetype.vim')
   " color scheme
   call dein#add('morhetz/gruvbox')
   " languages
-  call dein#add('Shougo/deoplete.nvim') " generic autocomplete
+  call dein#add('neoclide/coc.nvim', {'rev': 'release'}) " generic autocomplete
   call dein#add('lervag/vimtex') " LaTeX
 
   if !has('nvim')
@@ -127,8 +128,31 @@ set encoding=UTF-8
 " nmap <C-7> <plug>NERDCommenterToggle
 " vmap <C-7> <plug>NERDCommenterToggle
 
-" deoplete
-let g:deoplete#enable_at_startup = 1
+" for CoC
+set hidden
+set nobackup
+set nowritebackup
+set cmdheight=2
+set updatetime=300
+set shortmess+=c
+set signcolumn=yes
+
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Prettier
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
 
 " for Latex:
 let g:tex_flavor='latex'
