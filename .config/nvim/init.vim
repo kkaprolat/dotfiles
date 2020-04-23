@@ -129,6 +129,8 @@ set encoding=UTF-8
 " vmap <C-7> <plug>NERDCommenterToggle
 
 " for CoC
+"
+let g:coc_global_extensions=[ 'coc-yank', 'coc-prettier', 'coc-pairs', 'coc-highlight', 'coc-git', 'coc-eslint', 'coc-tsserver', 'coc-python', 'coc-markdownlint', 'coc-lua', 'coc-json', 'coc-java', 'coc-html', 'coc-css' ]
 set hidden
 set nobackup
 set nowritebackup
