@@ -45,6 +45,7 @@ if dein#load_state('~/.cache/dein')
   call dein#add('tpope/vim-surround')
   call dein#add('vimwiki/vimwiki')
   call dein#add('Shougo/context_filetype.vim')
+  call dein#add('ctrlpvim/ctrlp.vim')
   " color scheme
   call dein#add('morhetz/gruvbox')
   " languages
@@ -147,14 +148,31 @@ inoremap <silent><expr> <TAB>
       \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+if exists('*complete_info')
+  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+else
+  imap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
+
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
 
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
+" status for Coc
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
 " Prettier
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
+" ctrlp
+let g:ctrlp_working_path_mode ='ra'
 
 " for Latex:
 let g:tex_flavor='latex'

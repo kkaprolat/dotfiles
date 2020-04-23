@@ -77,10 +77,15 @@ $ mount /dev/nvme0n1p1 /mnt/boot
 . Create `/etc/hostname` and add matching entries to `/etc/hosts`
 . Install `networkmanager`
 . Configure the mkinitcpio
-.. Add `keyboard`, `keymap`, `consolefont`, `encrypt`, `lvm2` and `resume` (after `lvm2`) to the hooks array and remove double entries
+.. Change the hooks array to the following:
 +
 ----
-HOOKS=(base udev autodetect keyboard keymap consolefont modconf block encrypt lvm2 filesystems fsck)
+HOOKS=(base systemd autodetect keyboard sd-vconsole modconf block sd-encrypt sd-lvm2 filesystems resume fsck)
+----
+. Add your graphics driver to the modules array
++
+----
+MODULES=(intel_agp i915)
 ----
 . Run `mkinitcpio -P`
 . Set the root password with `passwd`
@@ -140,8 +145,8 @@ extra_kernel_version_strings linux-hardened,linux-zen,linux-lts,linux
 . Edit `/boot/refind_linux.conf` to the following:
 +
 ----
-"Boot with standard options"    "cryptdevice=UUID=<DeviceUUID>:cryptlvm:allow-discards root=/dev/VolGroup/root rw resume=/dev/VolGroup/swap initrd=/intel-ucode.img initrd=/initramfs-%v.img quiet"
-"Boot to single-user mode"      "cryptdevice=UUID=<DeviceUUID>:cryptlvm:allow-discards root=/dev/VolGroup/root rw resume=/dev/VolGroup/swap initrd=/boot/intel-ucode.img initrd=/boot/initramfs-%v.img single"
+"Boot with standard options"    "rd.luks.name=<DeviceUUID>=cryptlvm rd.luks.options=<DeviceUUID>=allow-discards root=/dev/VolGroup/root rw resume=/dev/VolGroup/swap initrd=/intel-ucode.img initrd=/initramfs-%v.img quiet"
+"Boot to single-user mode"      "rd.luks.name=<DeviceUUID>=cryptlvm rd.luks.options=<DeviceUUID>=allow-discards root=/dev/VolGroup/root rw resume=/dev/VolGroup/swap initrd=/boot/intel-ucode.img initrd=/boot/initramfs-%v.img single"
 ----
 
 === Continue with Secure Boot
