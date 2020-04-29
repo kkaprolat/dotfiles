@@ -110,6 +110,8 @@ keys.globalkeys = gears.table.join(
               {description = "Play / Pause song", group = "media"}),
     awful.key({}, "XF86AudioNext", function () awful.spawn.with_shell("~/Scripts/next.sh") end,
               {description = "Next song", group = "media"}),
+    awful.key({}, "XF86AudioMicMute", function () awful.spawn.with_shell("~/Scripts/micmutetoggle.sh") end,
+              {description = "Toggle microphone mute", group = "media"}),
     awful.key({}, "XF86AudioPrev", function () awful.spawn.with_shell("~/Scripts/prev.sh") end,
               {description = "Previous song", group = "media"}),
     awful.key({}, "XF86MonBrightnessUp", function () awful.spawn.with_shell("~/Scripts/backlightup.sh") end,
