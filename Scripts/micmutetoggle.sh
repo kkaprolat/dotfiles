@@ -1,3 +1,2 @@
 #!/bin/bash
-SOURCE=$( pactl list short sources | sed -e 's,^\([0-9][0-9]*\)[^0-9].*,\1,' | head -n 1 )
-pactl set-source-mute $SOURCE toggle
+pactl set-source-mute @DEFAULT_SOURCE@ toggle

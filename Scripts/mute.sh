@@ -1,13 +1,13 @@
 #! /bin/bash
 
-pactl set-sink-mute 0 toggle
+pactl set-sink-mute @DEFAULT_SINK@ toggle
 
 value=$(pulsemixer --id 0 --get-mute)
 
 if [[ $value = '1' ]]; then
-        dunstify -r 25336 --urgency=low "muted"
+        notify-send "muted"
 elif [[ $value = '0' ]]; then
-        dunstify -r 25336 --urgency=low "unmuted"
+        notify-send "unmuted"
 else
-        dunstify -r 25336 --urgency=low "Muting error occured"
+        notify-send "Muting error occured"
 fi
