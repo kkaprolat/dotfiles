@@ -117,7 +117,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock("%d.%m.%y  |  %H:%M")
+mytextclock = wibox.widget.textclock("%d.%m.%y  -  %H:%M")
 
 local cal_shape = function(cr, width, height)
   --gears.shape.infobubble(cr, width, height, 12)
@@ -205,6 +205,19 @@ awful.screen.connect_for_each_screen(function(s)
 
     -- Each screen has its own tag table.
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[4])
+    local function stylize_count(self, t, index, objects)
+            local conversion_table = {"⠀", "⠂", "⠆", "⠖", "⠶", "⠷", "⢷", "⢿", "⣿"}
+--            local conversion_table = {"0", "1", "2", "3", "4", "5", "6", "7", "8"}
+            local clientcount = #t:clients()+1
+            local text = ""
+            if (clientcount > 9)
+                then
+                    text = "+"
+                else
+                    text = conversion_table[clientcount]
+                end
+            self:get_children_by_id('window_count')[1].markup = text
+    end
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -220,7 +233,33 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytaglist = awful.widget.taglist {
         screen  = s,
         filter  = awful.widget.taglist.filter.all,
-        buttons = taglist_buttons
+        layout = {
+                layout = wibox.layout.fixed.horizontal
+        },
+        widget_template = {
+        {
+            {
+                {
+                        {
+                            id     = 'window_count',
+                            widget = wibox.widget.textbox,
+                            font = beautiful.font,
+                        },
+                        margins = 0,
+                        widget  = wibox.container.margin,
+                },
+                layout = wibox.layout.fixed.horizontal,
+            },
+            left  = -1,
+            right = -1,
+            widget = wibox.container.margin
+        },
+        id     = 'background_role',
+        widget = wibox.container.background,
+        create_callback = stylize_count,
+        update_callback = stylize_count,
+    },
+    buttons = taglist_buttons
     }
 
     -- Create a tasklist widget
