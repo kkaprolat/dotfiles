@@ -39,8 +39,6 @@ run udiskie --smart-tray --automount --file-manager=dolphin
 $HOME/Scripts/glavawal.sh &
 # Farben für BSPWM
 $HOME/Scripts/bspccolors.sh &
-# Flashfocus
-run flashfocus 2>/dev/null
 # Cursor richtig
 run xsetroot -cursor_name left_ptr
 # KDEConnect
@@ -50,7 +48,7 @@ run /usr/lib/kdeconnectd
 run gnome-screensaver
 run xss-lock "gnome-screensaver-command -l"
 # Wacom-Setup
-xsetwacom set "Wacom Pen and multitouch sensor Finger touch" Gesture off
+# xsetwacom set "Wacom Pen and multitouch sensor Finger touch" Gesture off
 xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 2 3
 xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Button 1 1
 xsetwacom -s set "Wacom Pen and multitouch sensor Pen stylus" Threshold 1
