@@ -271,7 +271,7 @@ awful.screen.connect_for_each_screen(function(s)
     }
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s, width = 1920, height = 27 })
+    s.mywibox = awful.wibar({ position = "top", screen = s, width = s.geometry.width, height = 27 })
 
     -- systray
     s.systray = wibox.widget.systray()
