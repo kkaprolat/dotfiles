@@ -1,12 +1,12 @@
 #!/bin/bash
 # machine specific code
-if [ $(cat /proc/sys/kernel/hostname) == Magnesium ]
+if [ $(hostname) == Magnesium ]
 then
 setxkbmap -model pc104 -layout de &
 wallpaperlocation="$HOME/Wallpapers"
 export wallpaperlocation=$wallpaperlocation
 fi
-if [ $(cat /proc/sys/kernel/hostname) == Technetium ]
+if [ $(hostname) == Technetium ]
 then
 nvidia-settings --load-config-only &
 wallpaperlocation="/run/media/kay/D0-P1/Bibliotheken/Bilder/Wallpaper/dump"
