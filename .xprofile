@@ -2,7 +2,6 @@
 # machine specific code
 if [ $(cat /proc/sys/kernel/hostname) == Magnesium ]
 then
-setxkbmap -model pc104 -layout de &
 wallpaperlocation="$HOME/Wallpapers"
 export wallpaperlocation=$wallpaperlocation
 fi
