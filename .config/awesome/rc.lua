@@ -30,6 +30,7 @@ local rules = require("rules")
 
 -- widgets
 local wifi_widget = require("widgets.wifi")
+-- local test = require("key_notifications.base")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
