@@ -71,7 +71,7 @@ awful.rules.rules = {
     { rule = { class = "discord" },
     properties = { screen = 1, tag = "7" } },
     { rule_any = {  class = { "Rofi", }, },
-    properties = { skip_taskbar = true, floating = true, ontop = true, sticky = true, fullscreen = false, maximized = true, x = 0, y = 0 },
+    properties = { skip_taskbar = true, floating = true, ontop = true, sticky = true, fullscreen = false, maximized = true },
     -- callback = function (c)
     --         awful.placement.centered(c,{honor_padding = true, honor_workarea=true})
     --         if not beautiful.titlebars_imitate_borders then

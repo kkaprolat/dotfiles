@@ -7,8 +7,10 @@ function run {
         fi
 }
 
-# Farbprofil
-dispwin -d 1 $HOME/.color/profile.icm &
+# color profiles
+dispwin -d 1 $HOME/.color/profile.icm
+dispwin -d 1 $HOME/.color/24g2u.icc
+dispwin -d 2 $HOME/.color/p2214h.icm
 # Network-Manager im Tray
 run nm-applet
 # # Polybar

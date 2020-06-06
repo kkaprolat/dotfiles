@@ -202,6 +202,8 @@ local tasklist_buttons = gears.table.join(
                                               awful.client.focus.byidx(-1)
                                           end))
 
+screen.connect_signal("property::geometry", awesome.restart)
+
 awful.screen.connect_for_each_screen(function(s)
 
     -- Each screen has its own tag table.
