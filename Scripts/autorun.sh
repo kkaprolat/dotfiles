@@ -58,3 +58,5 @@ run cbatticon
 run blueman-tray
 # syncthing
 run syncthing-gtk
+# automatic screen rotation
+run screenrotator
