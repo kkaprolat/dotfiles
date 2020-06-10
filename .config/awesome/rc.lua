@@ -209,11 +209,11 @@ awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[4])
     local function stylize_count(self, t, index, objects)
-            local conversion_table = {"⠀", "⠂", "⠆", "⠖", "⠶", "⠷", "⢷", "⢿", "⣿"}
+            local conversion_table = {" ", "", "", "", "", "", "" }
 --            local conversion_table = {"0", "1", "2", "3", "4", "5", "6", "7", "8"}
             local clientcount = #t:clients()+1
             local text = ""
-            if (clientcount > 9)
+            if (clientcount > #conversion_table)
                 then
                     text = "+"
                 else
@@ -246,9 +246,9 @@ awful.screen.connect_for_each_screen(function(s)
                         {
                             id     = 'window_count',
                             widget = wibox.widget.textbox,
-                            font = beautiful.font,
+                            font = "Overpass 20",
                         },
-                        margins = 0,
+                        margins = 5,
                         widget  = wibox.container.margin,
                 },
                 layout = wibox.layout.fixed.horizontal,
