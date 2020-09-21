@@ -12,8 +12,8 @@ wallpaperlocation="/run/media/kay/D0-P1/Bibliotheken/Bilder/Wallpaper/dump"
 export wallpaperlocation=$wallpaperlocation
 fi
 
-XDG_CURRENT_DESKTOP=KDE
-export XDG_CURRENT_DESKTOP
+# XDG_CURRENT_DESKTOP=KDE
+# export XDG_CURRENT_DESKTOP
 XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CONFIG_HOME
 compton -c -f --backend glx --blur-method kawase --blur-strength 10 --config /home/kay/.config/compton/compton.conf &
