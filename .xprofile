@@ -18,6 +18,8 @@ fi
 XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CONFIG_HOME
 picom --experimental-backends -c -f --backend glx --blur-method dual_kawase --blur-strength 10 --config /home/kay/.config/picom/picom.conf &
+MANGOHUD=1
+export MANGOHUD
 
 # set wallpaper
 feh --bg-fill --random $wallpaperlocation
