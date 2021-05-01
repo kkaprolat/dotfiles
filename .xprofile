@@ -20,6 +20,8 @@ export XDG_CONFIG_HOME
 picom --experimental-backends -c -f --backend glx --blur-method dual_kawase --blur-strength 10 --config /home/kay/.config/picom/picom.conf &
 MANGOHUD=1
 export MANGOHUD
+MOZ_USE_XINPUT2=1
+export MOZ_USE_XINPUT2
 
 # set wallpaper
 feh --bg-fill --random $wallpaperlocation
