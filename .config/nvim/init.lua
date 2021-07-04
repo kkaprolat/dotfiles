@@ -71,6 +71,7 @@ o.completeopt = 'menuone,noselect'
 -- Leader on space
 map('n', '<Space>', '', {})
 g.mapleader = ' '
+g.maplocalleader = ' '
 
 -- Telescope
 map('n', '<leader>ff', "<cmd>lua require('telescope.builtin').find_files()<cr>", nr)
