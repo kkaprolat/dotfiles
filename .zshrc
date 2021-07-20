@@ -4,8 +4,9 @@ promptinit
 
 prompt_mytheme_setup() {
         name='%F{red}%f%K{red} %n %k%F{red}%f'
-        dir='%F{green}%f%K{green} %~ %k%F{green}%f'
+        dir='%F{yellow}%f%K{yellow}%F{black} %~ %f%k%F{yellow}%f'
         returncode='%(0?..%F{magenta}%f%K{magenta}  %k%F{magenta}%f)'
+        PS1=' '
         PS1=$name
         PS1+=' '
         PS1+=$dir
