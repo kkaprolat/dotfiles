@@ -20,9 +20,21 @@ prompt mytheme
 zstyle ':completion:*' menu select # arrow key driven interface
 zstyle :compinstall filename '/home/kay/.zshrc'
 setopt COMPLETE_ALIASES # autocompletion of command line switches
+HISTFILE=~/.histfile
+HISTSIZE=1000
+SAVEHIST=1000
 setopt appendhistory nomatch
 unsetopt autocd beep extendedglob notify
 bindkey -e
+
+# see https://superuser.com/a/585004
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search
+bindkey "^[[B" down-line-or-beginning-search
+
 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
