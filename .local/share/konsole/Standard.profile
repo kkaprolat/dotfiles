@@ -2,9 +2,9 @@
 AntiAliasFonts=true
 BoldIntense=true
 ColorScheme=BlackOnWhite
-Font=Iosevka Nerd Font,9,-1,5,50,0,0,0,0,0
+Font=Iosevka Nerd Font Mono,9,-1,5,50,0,0,0,0,0
 LineSpacing=0
-UseFontLineChararacters=true
+UseFontLineChararacters=false
 
 [Cursor Options]
 CursorShape=0
