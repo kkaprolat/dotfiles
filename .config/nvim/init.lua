@@ -17,7 +17,7 @@ end
 require('plugins')
 
 -- always display statusline
-o.laststatus = 2 
+o.laststatus = 2
 
 -- Copy/Paste on right register
 o.clipboard = 'unnamedplus'
@@ -174,5 +174,11 @@ require'nvim-web-devicons'.setup {
         default = true;
 }
 
+-- colorscheme
+o.background = 'dark'
+-- g.colors_name = 'my_theme'
+require'lush'(require'lush_theme.my_theme')
+-- cmd("colorscheme my_theme")
+
 -- feline
-require'feline'.setup({})
+require'feline'.setup(require'my_feline')

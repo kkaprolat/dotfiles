@@ -24,4 +24,5 @@ return require('packer').startup(function()
                 run = ':TSUpdate'
         }
         use 'lervag/vimtex' -- LaTeX
+        use 'rktjmp/lush.nvim' -- for color schemes
 end)
