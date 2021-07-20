@@ -87,6 +87,7 @@ map('i', '<silent><expr> <C-d>', 'compe#scroll({ "delta": -4 })', nr)
 -- languages
 local lspconfig = require'lspconfig'
 lspconfig.pyright.setup{}
+lspconfig.texlab.setup{}
 lspconfig.ccls.setup {
         init_options = {
                 compilationDatabaseDirectory = 'build';
