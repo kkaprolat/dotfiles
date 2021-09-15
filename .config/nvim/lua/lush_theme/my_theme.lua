@@ -281,6 +281,35 @@ local theme = lush(function()
     GitSignsAdd             { fg = colors.green, gui = "bold" };
     GitSignsChange          { fg = colors.yellow, gui = "bold" };
     GitSignsDelete          { fg = colors.red, gui = "bold" };
+
+
+    -- barbar.nvim
+
+    BufferCurrent           { fg = colors.blue, bg = colors.bg4 };    -- current buffer
+    BufferCurrentIndex      { BufferCurrent };    -- current buffer, buffer index
+    BufferCurrentMod        { BufferCurrent, gui = "bold" };    -- current buffer, when modified
+    BufferCurrentSign       { BufferCurrent };    -- current buffer, separator between buffers
+    BufferCurrentTarget     { BufferCurrent };    -- current buffer, letter in buffer-picking mode
+    BufferVisible           { fg = colors.green, bg = colors.bg4 };    -- buffer visible but not current
+    BufferVisibleIndex      { BufferVisible };
+    BufferVisibleMod        { BufferVisible, gui = "bold" };
+    BufferVisibleSign       { BufferVisible };
+    BufferVisibleTarget     { BufferVisible };
+    BufferInactive          { fg = colors.purple, bg = colors.bg1 };    -- buffer invisible and not current
+    BufferInactiveIndex     { BufferInactive };
+    BufferInactiveMod       { BufferInactive, gui = "bold" };
+    BufferInactiveSign      { BufferInactive };
+    BufferInactiveTarget    { BufferInactive };
+    BufferTabpages          { bg = colors.bg1 };    -- tabpage indicator
+    BufferTabpageFill       { bg = colors.bg1 };    -- filler after the buffer section
+    -- BufferOffset         { };    -- offset section, created with set_offset()
+   
+    -- indent-blankline.nvim
+
+   IndentBlankLineChar                  { fg = colors.fg.darken(35) }; -- highlight of indent character
+   IndentBlanklineSpaceChar             { IndentBlankLineChar }; -- highlight of space character
+   IndentBlanklineSpaceCharBlankline    { IndentBlankLineChar }; -- highlight of space character on blank lines.
+   IndentBlankLineContextChar           { fg = colors.fg.darken(15) }; -- highlight of indent character when base of current context. Only used when g:indent_blankline_show_current_context is active
   }
 end)
 
