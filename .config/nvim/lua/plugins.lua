@@ -25,4 +25,9 @@ return require('packer').startup(function()
         }
         use 'lervag/vimtex' -- LaTeX
         use 'rktjmp/lush.nvim' -- for color schemes
+        use {
+                'romgrk/barbar.nvim',
+                requires = {'kyazdani42/nvim-web-devicons'}
+        }
+        use 'lukas-reineke/indent-blankline.nvim'
 end)
