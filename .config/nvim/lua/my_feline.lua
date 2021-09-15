@@ -5,13 +5,15 @@ local vlsp = vim.lsp
 -- from https://github.com/famiu/feline.nvim/blob/master/lua/feline/providers/lsp.lua
 
 local components = {
-    left = {active = {}, inactive = {}},
-    mid = {active = {}, inactive = {}},
-    right = {active = {}, inactive = {}}
+        active = {},
+        inactive = {},
 }
+table.insert(components.active, {}) -- left
+table.insert(components.active, {}) -- mid
+table.insert(components.active, {}) -- right
 
 -- vi_mode
-table.insert(components.left.active, {
+table.insert(components.active[1], {
         provider = 'vi_mode',
         hl = function()
                 local val = {}
@@ -26,7 +28,7 @@ table.insert(components.left.active, {
 })
 
 -- file info
-table.insert(components.left.active, {
+table.insert(components.active[1], {
         provider = 'file_info',
         hl = function()
                 local val = {}
@@ -39,7 +41,7 @@ table.insert(components.left.active, {
 })
 
 -- file size
-table.insert(components.left.active, {
+table.insert(components.active[1], {
         provider = 'file_size',
         hl = function()
                 local val = {}
@@ -61,12 +63,13 @@ table.insert(components.left.active, {
 })
 
 -- git branch
-table.insert(components.left.active, {
+table.insert(components.active[1], {
         provider = 'git_branch',
+        left_sep = ' ',
 })
 
 -- git changes
-table.insert(components.left.active, {
+table.insert(components.active[1], {
         provider = 'git_diff_added',
         icon = '+',
         hl = function()
@@ -77,7 +80,7 @@ table.insert(components.left.active, {
         end,
         left_sep = ' '
 })
-table.insert(components.left.active, {
+table.insert(components.active[1], {
         provider = 'git_diff_changed',
         icon = '~',
         hl = function()
@@ -88,7 +91,7 @@ table.insert(components.left.active, {
         end,
         left_sep = ' '
 })
-table.insert(components.left.active, {
+table.insert(components.active[1], {
         provider = 'git_diff_removed',
         icon = '-',
         hl = function()
@@ -101,7 +104,7 @@ table.insert(components.left.active, {
 })
 
 -- diagnostics
-table.insert(components.right.active, {
+table.insert(components.active[3], {
         provider = 'diagnostic_errors',
         enabled = function() return lsp.diagnostics_exist('Error') end,
         hl = function()
@@ -113,7 +116,7 @@ table.insert(components.right.active, {
         left_sep = 'left_rounded',
         right_sep = 'block',
 })
-table.insert(components.right.active, {
+table.insert(components.active[3], {
         provider = 'diagnostic_warnings',
         enabled = function() return lsp.diagnostics_exist('Warning') end,
         hl = function()
@@ -133,7 +136,7 @@ table.insert(components.right.active, {
                 return val
         end,
 })
-table.insert(components.right.active, {
+table.insert(components.active[3], {
         provider = 'diagnostic_hints',
         enabled = function() return lsp.diagnostics_exist('Hint') end,
         hl = function()
@@ -153,7 +156,7 @@ table.insert(components.right.active, {
                 return val
         end,
 })
-table.insert(components.right.active, {
+table.insert(components.active[3], {
         provider = 'diagnostic_info',
         enabled = function() return lsp.diagnostics_exist('Information') end,
         hl = function()
@@ -175,7 +178,7 @@ table.insert(components.right.active, {
 })
 
 -- file type
-table.insert(components.right.active, {
+table.insert(components.active[3], {
         provider = 'file_encoding',
         hl = function()
                 local val = {}
@@ -196,7 +199,7 @@ table.insert(components.right.active, {
 })
 
 -- position
-table.insert(components.right.active, {
+table.insert(components.active[3], {
         provider = 'position',
         hl = function()
                 local val = {}
@@ -210,7 +213,7 @@ table.insert(components.right.active, {
 })
 
 -- line_percentage
-table.insert(components.right.active, {
+table.insert(components.active[3], {
         provider = 'line_percentage',
         hl = function()
                 local val = {}
@@ -223,21 +226,9 @@ table.insert(components.right.active, {
         left_sep = 'block',
 })
 
-
-local properties = {
-        force_inactive = {
-                filetypes = {},
-                buftypes = {},
-                bufnames = {}
-        }
-}
-
 return {
-        default_fg = require'colors'.fg,
-        default_bg = require'colors'.bg1,
         colors = require'colors',
         components = components,
-        properties = properties,
         vi_mode_colors = { 
                 NORMAL = 'green',
                 OP = 'green',
@@ -253,5 +244,10 @@ return {
                 SHELL = 'green',
                 TERM = 'green',
                 NONE = '#ffffff',
+        },
+        force_inactive = {
+                filetypes = {},
+                buftypes = {},
+                bufnames = {}
         }
 }
