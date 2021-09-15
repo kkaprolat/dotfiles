@@ -126,7 +126,7 @@ local theme = lush(function()
     -- TabLine      { }, -- tab pages line, not active tab page label
     -- TabLineFill  { }, -- tab pages line, where there are no labels
     -- TabLineSel   { }, -- tab pages line, active tab page label
-    -- Title        { }, -- titles for output from ":set all", ":autocmd" etc.
+    Title        { fg = colors.red, gui = "bold" }, -- titles for output from ":set all", ":autocmd" etc.
     Visual       { fg = colors.orange, gui = "bold" }, -- Visual mode selection
     -- VisualNOS    { }, -- Visual mode selection when vim is "Not Owning the Selection".
     -- WarningMsg   { }, -- warning messages
@@ -273,7 +273,7 @@ local theme = lush(function()
     -- TSEmphasis           { };    -- For text to be represented with emphasis.
     -- TSUnderline          { };    -- For text to be represented with an underline.
     -- TSStrike             { };    -- For strikethrough text.
-    -- TSTitle              { };    -- Text that is part of a title.
+    TSTitle              { Title };    -- Text that is part of a title.
     -- TSLiteral            { };    -- Literal text.
     -- TSURI                { };    -- Any URI like a link or email.
 
