@@ -16,6 +16,8 @@ end
 
 require('plugins')
 
+o.mouse = 'a'
+
 -- always display statusline
 o.laststatus = 2
 
