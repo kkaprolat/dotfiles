@@ -105,7 +105,7 @@ local theme = lush(function()
     -- MsgArea      { }, -- Area for messages and cmdline
     -- MsgSeparator { }, -- Separator for scrolled messages, `msgsep` flag of 'display'
     MoreMsg      { fg = colors.green, gui = "bold" }, -- |more-prompt|
-    -- NonText      { }, -- '@' at the end of the window, characters from 'showbreak' and other characters that do not really exist in the text (e.g., ">" displayed when a double-wide character doesn't fit at the end of the line). See also |hl-EndOfBuffer|.
+    NonText      { fg = colors.blue }, -- '@' at the end of the window, characters from 'showbreak' and other characters that do not really exist in the text (e.g., ">" displayed when a double-wide character doesn't fit at the end of the line). See also |hl-EndOfBuffer|.
     Normal       { fg = colors.fg }, -- normal text
     NormalFloat  { fg = colors.fg, bg = colors.bg1 }, -- Normal text in floating windows.
     -- NormalNC     { }, -- normal text in non-current windows
@@ -129,7 +129,7 @@ local theme = lush(function()
     Title        { fg = colors.red, gui = "bold" }, -- titles for output from ":set all", ":autocmd" etc.
     Visual       { fg = colors.orange, gui = "bold" }, -- Visual mode selection
     -- VisualNOS    { }, -- Visual mode selection when vim is "Not Owning the Selection".
-    -- WarningMsg   { }, -- warning messages
+    WarningMsg   { fg = colors.red }, -- warning messages
     -- Whitespace   { }, -- "nbsp", "space", "tab" and "trail" in 'listchars'
     -- WildMenu     { }, -- current match in 'wildmenu' completion
 
