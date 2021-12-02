@@ -1,0 +1,14 @@
+configuration {
+	modi: "combi";
+	show-icons: true;
+	terminal: "konsole";
+	combi-modi: "window,drun,ssh";
+	theme: "/home/kay/.config/rofi/carbo.rasi";
+	display-window: "win:";
+	display-run: "run:";
+	display-ssh: "ssh:";
+	display-drun: "run:";
+	display-combi: " ";
+}
+
+/* vim:ft=css

@@ -1,7 +1,0 @@
-rofi.theme:		/home/kay/.cache/wal/colors-rofi-light.rasi
-rofi.font		Overpass 20
-rofi.fullscreen:	true
-rofi.show-icons:	true
-rofi.modi:		combi
-rofi.combi-modi:	window,drun,ssh
-rofi.terminal:		konsole
