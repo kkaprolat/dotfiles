@@ -1,12 +1,3 @@
-configuration {
-
-    display-ssh:    "ssh:";
-    display-drun:   "run:";
-    display-run:    "run:";
-    display-window: "win:";
-    display-combi:  " ";
-    show-icons:     true;
-}
 
 * {
     accent: #FFFFFF;
