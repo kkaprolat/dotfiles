@@ -1,0 +1,8 @@
+mode=run
+matching=contains
+dynamic_lines=true
+layer=overlay
+allow_images=true
+allow_markup=true
+term=kitty
+insensitive=true
