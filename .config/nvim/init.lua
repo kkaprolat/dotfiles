@@ -272,9 +272,6 @@ require'nvim-web-devicons'.setup {
         default = true;
 }
 
-require'indent_blankline'.setup {
-        show_current_context = true,
-}
 
 -- colorscheme
 o.background = 'dark'
