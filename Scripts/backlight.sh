@@ -8,7 +8,7 @@ then
         then
                 xbacklight -dec 5
         fi
-        NOW="$(xbacklight -get)"
+        NOW="$(xbacklight -get | xargs printf '%.*f\n' 0)"
         notify-send.py --replaces-process "backlight.sh"  "Brightness" "$NOW%" --hint int:value:$NOW
 elif [ "$(hostname)" == Technetium ]
 then
