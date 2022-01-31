@@ -19,6 +19,9 @@ require('plugins')
 -- enable mouse support
 o.mouse = 'a'
 
+-- keep line in center
+o.scrolloff = 9999
+
 -- concealment for LaTeX
 o.conceallevel = 2
 
