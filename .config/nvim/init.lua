@@ -284,3 +284,10 @@ require'lush'(require'lush_theme.my_theme')
 
 -- feline
 require'feline'.setup(require'my_feline')
+
+-- lightspeed
+require'lightspeed'.setup {
+        exit_after_idle_msecs = { unlabeled = nil, labeled = nil },
+        limit_ft_matches = 16,
+
+}

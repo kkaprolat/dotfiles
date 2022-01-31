@@ -39,4 +39,5 @@ return require('packer').startup(function()
                 'romgrk/barbar.nvim',
                 requires = {'kyazdani42/nvim-web-devicons'}
         }
+        use 'ggandor/lightspeed.nvim'
 end)
