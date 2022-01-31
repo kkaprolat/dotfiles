@@ -339,10 +339,11 @@ local theme = lush(function()
    
     -- indent-blankline.nvim
 
-   IndentBlankLineChar                  { fg = colors.fg.darken(35) }, -- highlight of indent character
-   IndentBlanklineSpaceChar             { IndentBlankLineChar }, -- highlight of space character
-   IndentBlanklineSpaceCharBlankline    { IndentBlankLineChar }, -- highlight of space character on blank lines.
-   IndentBlankLineContextChar           { fg = colors.fg.darken(15) }, -- highlight of indent character when base of current context. Only used when g:indent_blankline_show_current_context is active
+    IndentBlankLineChar                  { fg = colors.fg.darken(35) }, -- highlight of indent character
+    IndentBlanklineSpaceChar             { IndentBlankLineChar }, -- highlight of space character
+    IndentBlanklineSpaceCharBlankline    { IndentBlankLineChar }, -- highlight of space character on blank lines.
+    IndentBlankLineContextChar           { fg = colors.fg.darken(15) }, -- highlight of indent character when base of current context. Only used when g:indent_blankline_show_current_context is active
+   
   }
 end)
 
