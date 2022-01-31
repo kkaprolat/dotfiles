@@ -37,6 +37,7 @@ table.insert(components.active[1], {
                 return val
         end,
         type = 'relative',
+        colored_icon = false,
         right_sep = 'block',
 })
 
@@ -106,7 +107,7 @@ table.insert(components.active[1], {
 -- diagnostics
 table.insert(components.active[3], {
         provider = 'diagnostic_errors',
-        enabled = function() return lsp.diagnostics_exist('Error') end,
+        enabled = function() return lsp.diagnostics_exist(vim.diagnostic.severity.ERROR) end,
         hl = function()
                 local val = {}
                 val.bg = 'red'
@@ -118,7 +119,7 @@ table.insert(components.active[3], {
 })
 table.insert(components.active[3], {
         provider = 'diagnostic_warnings',
-        enabled = function() return lsp.diagnostics_exist('Warning') end,
+        enabled = function() return lsp.diagnostics_exist(vim.diagnostic.severity.WARN) end,
         hl = function()
                 local val = {}
                 val.bg = 'orange'
@@ -138,7 +139,7 @@ table.insert(components.active[3], {
 })
 table.insert(components.active[3], {
         provider = 'diagnostic_hints',
-        enabled = function() return lsp.diagnostics_exist('Hint') end,
+        enabled = function() return lsp.diagnostics_exist(vim.diagnostic.severity.HINT) end,
         hl = function()
                 local val = {}
                 val.bg = 'blue'
@@ -148,7 +149,7 @@ table.insert(components.active[3], {
         right_sep = 'block',
         left_sep = function()
                 local val = { hl = { fg = 'blue', bg = 'black' } }
-                if (lsp.diagnostics_exist('Warning') or lsp.diagnostics_exist('Error')) then
+                if (lsp.diagnostics_exist(vim.diagnostic.severity.WARN) or lsp.diagnostics_exist(vim.diagnostic.severity.ERROR)) then
                         val.str = 'block'
                 else
                         val.str = 'left_rounded'
@@ -158,7 +159,7 @@ table.insert(components.active[3], {
 })
 table.insert(components.active[3], {
         provider = 'diagnostic_info',
-        enabled = function() return lsp.diagnostics_exist('Information') end,
+        enabled = function() return lsp.diagnostics_exist(vim.diagnostic.severity.INFO) end,
         hl = function()
                 local val = {}
                 val.bg = 'white'
@@ -168,7 +169,7 @@ table.insert(components.active[3], {
         right_sep = 'block',
         left_sep = function()
                 local val = { hl = { fg = 'blue', bg = 'black' } }
-                if (lsp.diagnostics_exist('Hint') or lsp.diagnostics_exist('Warning') or lsp.diagnostics_exist('Error')) then
+                if (lsp.diagnostics_exist(vim.diagnostic.severity.HINT) or lsp.diagnostics_exist(vim.diagnostic.severity.WARN) or lsp.diagnostics_exist(vim.diagnostic.severity.ERROR)) then
                         val.str = 'block'
                 else
                         val.str = 'left_rounded'
@@ -189,7 +190,7 @@ table.insert(components.active[3], {
         right_sep = 'block',
         left_sep = function()
                 local val = { hl = { fg = vi_mode_utils.get_mode_color() } }
-                if (lsp.diagnostics_exist('Information') or lsp.diagnostics_exist('Hint') or lsp.diagnostics_exist('Warning') or lsp.diagnostics_exist('Error')) then
+                if (lsp.diagnostics_exist(vim.diagnostic.severity.INFO) or lsp.diagnostics_exist(vim.diagnostic.severity.HINT) or lsp.diagnostics_exist(vim.diagnostic.severity.WARN) or lsp.diagnostics_exist(vim.diagnostic.severity.ERROR)) then
                         val.str = 'block'
                 else
                         val.str = 'left_rounded'
@@ -227,7 +228,7 @@ table.insert(components.active[3], {
 })
 
 return {
-        colors = require'colors',
+        theme = require'colors',
         components = components,
         vi_mode_colors = { 
                 NORMAL = 'green',
