@@ -91,6 +91,87 @@ map('i', '<silent><expr> <C-e>', 'compe#close("<C-e>")', nr)
 map('i', '<silent><expr> <C-f>', 'compe#scroll({ "delta": +4 })', nr)
 map('i', '<silent><expr> <C-d>', 'compe#scroll({ "delta": -4 })', nr)
 
+-- lsp diagnostics in hover window
+vim.o.updatetime = 250
+vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+
+-- automatic formatting
+vim.cmd [[autocmd BufWritePre *.cpp lua vim.lsp.buf.formatting()]]
+
+
+local cmp = require'cmp'
+cmp.setup({
+        snippet = {
+                expand = function(args)
+                        require'luasnip'.lsp_expand(args.body)
+                end
+        },
+        mapping = {
+                ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+                ['<CR>'] = cmp.mapping.confirm({ select = true }),
+                ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), {'i', 's' }),
+        },
+
+        sources = {
+                { name = 'luasnip' },
+                { name = 'nvim_lsp' },
+                { name = 'calc' },
+                { name = 'path' },
+                { name = 'buffer',
+                  option = {
+                        keyword_pattern = [[\%(-\?\d\+\%(\.\d\+\)\?\|\h\w*\%([\-.]\w*\)*\)]],
+                        },
+                },
+
+        },
+        formatting = {
+                format = function(entry, vim_item)
+                        vim_item.menu = ({
+                                luasnip = '[SNP]',
+                                nvim_lsp = '[LSP]',
+                                calc = '[CLC]',
+                                path = '[PTH]',
+                                buffer = '[BUF]',
+                        })[entry.source.name]
+                        vim_item.kind = ({
+                                Text =          '', -- Text
+                                Method =        '', -- Method
+                                Function =      '', -- Function
+                                Constructor =   '', -- Constructor
+                                Field =         'ﰠ', -- Field
+                                Variable =      '', -- Variable
+                                Class =         'ﴯ', -- Class
+                                Interface =     'ﰮ', -- Interface
+                                Module =        '', -- Module
+                                Property =      '', -- Property
+                                Unit =          '塞', -- Unit
+                                Value =         '', -- Value
+                                Enum =          '', -- Enum
+                                Keyword =       '', -- Keyword
+                                Snippet =       '', -- Snippet
+                                Color =         '', -- Color
+                                File =          '', -- File
+                                Reference =     '', -- Reference
+                                Folder =        '', -- Folder
+                                EnumMember =    '', -- EnumMember
+                                Constant =      '', -- Constant
+                                Struct =        '', -- Struct
+                                Event =         '', -- Event
+                                Operator =      '', -- Operator
+                                TypeParamter =  '', -- TypeParameter
+                        })[vim_item.kind]
+                        return vim_item
+                end
+        }
+})
+
+require'nvim-autopairs'.setup{}
+local cmp_autopairs = require'nvim-autopairs.completion.cmp'
+cmp.event:on( 'confirm_done', cmp_autopairs.on_confirm_done({ map_char = { tex = '' } }))
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+
 
 -- languages
 local lspconfig = require'lspconfig'
@@ -122,29 +203,9 @@ lspconfig.ccls.setup {
                 index = {
                         threads = 0;
                 };
-        }
-}
-require'compe'.setup {
-        enabled = true;
-        autocomplete = true;
-        debug = false;
-        min_length = 1;
-        preselect = 'enable';
-        throttle_time = 80;
-        source_timeout = 200;
-        incomplete_delay = 400;
-        max_abbr_width = 100;
-        max_kind_width = 100;
-        max_menu_width = 100;
-        documentation = true;
-
-        source = {
-                path = true;
-                buffer = true;
-                calc = true;
-                nvim_lua = true;
-                nvim_lsp = true;
-        };
+        },
+        capabilities = capabilities,
+        on_attach = on_attach,
 }
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {

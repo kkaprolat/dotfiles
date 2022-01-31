@@ -12,15 +12,26 @@ return require('packer').startup(function()
         use 'nvim-lua/plenary.nvim'
         use {
                 'nvim-telescope/telescope.nvim',
-                requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}
+                requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}, {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'}}
         }
         use 'lewis6991/gitsigns.nvim'
+        use 'windwp/nvim-autopairs'
         -- languages
         use 'neovim/nvim-lspconfig'
-        use 'hrsh7th/nvim-compe' -- generic autocomplete
+        use {
+                'hrsh7th/nvim-cmp', -- generic autocomplete
+                requires = {
+                        'L3MON4D3/LuaSnip',
+                        'hrsh7th/cmp-buffer',
+                        'hrsh7th/cmp-nvim-lsp',
+                        'hrsh7th/cmp-path',
+                        'hrsh7th/cmp-calc',
+                        'saadparwaiz1/cmp_luasnip',
+                }
+        }
         use {
                 'nvim-treesitter/nvim-treesitter',
-                run = ':TSUpdate'
+                run = ':TSUpdate',
         }
         use 'lervag/vimtex' -- LaTeX
         use 'rktjmp/lush.nvim' -- for color schemes
