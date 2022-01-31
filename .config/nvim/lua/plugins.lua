@@ -1,5 +1,4 @@
 return require('packer').startup(function()
-
         use 'wbthomason/packer.nvim'
         use 'scrooloose/nerdcommenter'
         use 'Xuyuanp/nerdtree-git-plugin'

@@ -16,7 +16,11 @@ end
 
 require('plugins')
 
+-- enable mouse support
 o.mouse = 'a'
+
+-- concealment for LaTeX
+o.conceallevel = 2
 
 -- always display statusline
 o.laststatus = 2
@@ -37,6 +41,7 @@ o.rnu = true
 
 -- color scheme
 o.syntax = 'on'
+
 
 -- Tabs
 o.tabstop = 4         -- visual spaces per tab
@@ -77,6 +82,7 @@ g.maplocalleader = ' '
 
 -- Telescope
 map('n', '<leader>ff', "<cmd>lua require('telescope.builtin').find_files()<cr>", nr)
+map('n', '<leader>fs', "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>", nr)
 
 -- nvim-compe
 map('i', '<silent><expr> <C-Space>', 'compe#complete()', nr)
@@ -88,8 +94,28 @@ map('i', '<silent><expr> <C-d>', 'compe#scroll({ "delta": -4 })', nr)
 
 -- languages
 local lspconfig = require'lspconfig'
-lspconfig.pyright.setup{}
-lspconfig.texlab.setup{}
+lspconfig.pyright.setup{
+        capabilities = capabilities,
+        on_attach = on_attach,
+
+}
+lspconfig.texlab.setup{
+        cmd = { 'texlab' },
+        filetypes = { 'tex', 'bib' },
+        settings = {
+                latex = {
+                        lint = {
+                                onChange = true,
+                                onSave = true
+                        }
+                }
+        },
+        texlab = {
+                latexFormatter = 'latexindent',
+        },
+        capabilities = capabilities,
+        on_attach = on_attach,
+}
 lspconfig.ccls.setup {
         init_options = {
                 compilationDatabaseDirectory = 'build';
@@ -120,6 +146,14 @@ require'compe'.setup {
                 nvim_lsp = true;
         };
 }
+
+vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+        virtual_text = true,
+        signs = true,
+        underline = true,
+        update_in_insert = true,
+})
+
 
 local t = function(str)
         return vim.api.nvim_replace_termcodes(str, true, true, true)
@@ -160,7 +194,7 @@ map("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
 map("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
 
 require'nvim-treesitter.configs'.setup {
-        ensure_installed = { "c", "javascript", "python", "bash", "json", "lua" },
+        ensure_installed = { "c", "javascript", "python", "bash", "json", "lua", "cpp" },
         highlight = {
                 enable = true,
                 },
