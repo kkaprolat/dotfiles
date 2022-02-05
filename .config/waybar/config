@@ -1,0 +1,93 @@
+[{
+    "layer": "top",
+    "output": ["eDP-1", "HDMI-0"],
+    "position": "top",
+    "height": 30,
+    "spacing": 4,
+    "modules-left": ["wlr/taskbar"],
+    "modules-center": ["clock"],
+    "modules-right": ["backlight", "battery", "network", "pulseaudio"],
+    "fixed-center": true,
+
+    "wlr/taskbar": {
+        "format": "{icon}",
+        "icon-size": 20,
+        "tooltip-format": "{title}",
+        "active-first": true,
+        "on-click": "activate"
+        },
+
+    "backlight": {
+        "interval": 2,
+        "format": "{percent}% {icon}",
+        "format-icons": ["", "", "", "", "", "", ""]
+
+    },
+
+    "battery": {
+        "design-capacity": true,
+        "interval": 60,
+        "format": "{capacity}% {icon}",
+        "format-icons": ["", "", "", "", "", "", "", "", "", ""],
+        "tooltip": true,
+        "tooltip-format": "{timeTo}"
+
+    },
+
+    "clock": {
+        "interval": 60,
+        "format": "{:%H:%M - %a %e.%C.%g}"
+    },
+
+    "network": {
+        "interval": 20,
+        "format-wifi": "{essid} {icon}",
+        "format-icons": ["w", "W"],
+        "format-ethernet": "",
+        "format-disconnected": ""
+    },
+
+    "pulseaudio": {
+        "format": "{volume}% {icon}",
+        "format-muted": "ﱝ",
+        "format-bluetooth": "{volume}% {icon}B",
+        "format-icons": {
+                "default": ["奄", "奔", "墳"],
+                "headphone": ""
+        }
+    },
+
+    "custom/updates": {
+        "exec": "~/Scripts/updatecount.sh",
+        "format": " {} ",
+        "interval": 600
+    }
+},
+
+{
+    "layer": "top",
+    "output": "eDP-1",
+    "position": "bottom",
+    "height": 30,
+    "spacing": 4,
+    "modules-left": [],
+    "modules-center": ["clock", "cpu"],
+    "modules-right": [ "memory"],
+    "fixed-center": true,
+
+    "clock": {
+        "interval": 60,
+        "format": "{:%H:%M - %a %e.%C.%g}"
+    },
+    "memory": {
+        "interval": 10,
+        "format": "{percentage}% "
+    },
+    "cpu": {
+        "interval": 3,
+        "format": "{icon0}{icon1}{icon2}{icon3}{icon4}{icon5}{icon6}{icon7} {usage:>2}% ",
+        "format-icons": ["c", "C"]
+    }
+}]
+
+// vi: syntax=json 
