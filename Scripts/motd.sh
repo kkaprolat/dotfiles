@@ -13,8 +13,8 @@ if [ "$pacnewcount" != 0 ]
 then
 echo "    There are ${pacnewcount} .pacnew-files to be merged." >> "$motdfile"
 fi
-sbstate=$( (mokutil --sb-state;) )
+sbstate=$( (mokutil --sb-state 2>&1) )
 if [ "$sbstate" != "SecureBoot enabled" ]
 then
-echo "    SecureBoot is disabled!"
+echo "    SecureBoot is disabled!" >> "$motdfile"
 fi
