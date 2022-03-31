@@ -60,4 +60,7 @@ alias vi='nvim'
 alias sudo='sudo ' # so that aliases are applied when using sudo
 alias diff='diff --color=auto'
 alias grep='grep --color=auto'
+alias adoc='asciidoctor -d book'
+alias youtube-dl='yt-dlp'
+alias step='step-cli'
 cat $HOME/.motd
