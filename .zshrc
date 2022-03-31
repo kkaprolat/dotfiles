@@ -60,4 +60,4 @@ alias vi='nvim'
 alias sudo='sudo ' # so that aliases are applied when using sudo
 alias diff='diff --color=auto'
 alias grep='grep --color=auto'
-cat $HOME/.motd | lolcat -t
+cat $HOME/.motd
