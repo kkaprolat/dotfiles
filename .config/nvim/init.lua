@@ -94,6 +94,9 @@ map('i', '<silent><expr> <C-e>', 'compe#close("<C-e>")', nr)
 map('i', '<silent><expr> <C-f>', 'compe#scroll({ "delta": +4 })', nr)
 map('i', '<silent><expr> <C-d>', 'compe#scroll({ "delta": -4 })', nr)
 
+-- lightspeed.nvim
+map('n', 's', '<Plug>Lightspeed_omni_s', {})
+
 -- lsp diagnostics in hover window
 vim.o.updatetime = 250
 vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
