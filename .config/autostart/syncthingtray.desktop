@@ -1,0 +1,21 @@
+[Desktop Entry]
+Comment[en_US]=Tray application for Syncthing
+Comment=Tray application for Syncthing
+Exec="/usr/bin/syncthingtray --wait"
+GenericName[en_US]=
+GenericName=
+Icon=syncthingtray --wait
+MimeType=
+Name[en_US]=Syncthing Tray
+Name=Syncthing Tray
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-GNOME-Autostart-Delay=0
+X-GNOME-Autostart-enabled=true
+X-KDE-SubstituteUID=false
+X-KDE-Username=
