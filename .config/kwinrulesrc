@@ -1,0 +1,166 @@
+[$Version]
+update_info=kwinrules.upd:replace-placement-string-to-enum,kwinrules.upd:use-virtual-desktop-ids
+
+[1]
+Description=Firefox Indicator
+above=true
+aboverule=2
+desktops=b03e14cc-451b-4942-946c-51714d066417
+noborder=true
+noborderrule=2
+title=Firefox — Sharing Indicator
+titlematch=1
+wmclass=firefox
+wmclassmatch=1
+
+[2]
+Description=Firefox Desktop
+desktops=b03e14cc-451b-4942-946c-51714d066417
+desktopsrule=3
+wmclass=firefox
+wmclassmatch=1
+
+[25f91dea-9bac-4a8d-99eb-4deb71753b66]
+Description=Firefox Indicator
+above=true
+aboverule=2
+noborder=true
+noborderrule=2
+title=Firefox — Sharing Indicator
+titlematch=1
+wmclass=firefox
+wmclassmatch=1
+
+[3]
+Description=Steam Desktop
+desktops=ca00adbe-7061-4c5f-a139-6ad2e000ec67
+desktopsrule=3
+minsize=0,0
+wmclass=steam
+wmclassmatch=1
+
+[36274fcd-0139-4bd5-a939-4dffc3f56bf1]
+Description=Firefox Desktop
+desktops=b03e14cc-451b-4942-946c-51714d066417
+desktopsrule=3
+wmclass=firefox
+wmclassmatch=1
+
+[4]
+Description=Discord Desktop
+desktops=d8a86db5-32de-4229-9f16-43dd347f69a5
+desktopsrule=3
+skippager=true
+skiptaskbar=true
+title=Firefox — Sharing Indicator
+type=16
+wmclass=discord
+wmclassmatch=1
+
+[451eb206-2eb8-42df-9511-ebf4aaf30728]
+Description=Discord Desktop
+desktops=d8a86db5-32de-4229-9f16-43dd347f69a5
+desktopsrule=3
+wmclass=discord
+wmclassmatch=1
+
+[5]
+Description=Signal Desktop
+desktops=d8a86db5-32de-4229-9f16-43dd347f69a5
+desktopsrule=3
+fsplevel=4
+minsize=0,0
+title=Firefox — Sharing Indicator
+wmclass=signal
+wmclassmatch=1
+
+[6]
+Description=Disable Minimum Geometry Size
+fsplevel=4
+fsplevelrule=2
+minsize=0,0
+minsizerule=2
+skippager=true
+skiptaskbar=true
+title=Firefox — Sharing Indicator
+type=16
+types=1
+
+[675aa444-4c00-4826-b06e-621620311bc1]
+Description=Disable Minimum Geometry Size
+minsizerule=2
+types=1
+
+[7]
+Description=Firefox Sharing Indicator
+above=true
+aboverule=2
+closeablerule=2
+desktops=d8a86db5-32de-4229-9f16-43dd347f69a5
+skippager=true
+skippagerrule=2
+skiptaskbar=true
+skiptaskbarrule=2
+title=Firefox — Sharing Indicator
+titlematch=1
+type=16
+typerule=2
+wmclass=firefox
+wmclassmatch=1
+
+[7da44e98-b5f2-426f-beb5-d6d971363b5d]
+Description=Mediathekview Fix
+maximizehorizrule=2
+maximizevertrule=2
+wmclass=mediathek-main
+wmclassmatch=1
+
+[8]
+Description=Thunderbird Desktop
+desktops=d8a86db5-32de-4229-9f16-43dd347f69a5
+desktopsrule=3
+wmclass=thunderbird
+wmclassmatch=1
+
+[85097958-d230-498a-ba5d-091e6eebc762]
+Description=Firefox Sharing Indicator
+skippager=true
+skippagerrule=2
+skiptaskbar=true
+skiptaskbarrule=2
+title=Firefox — Sharing Indicator
+titlematch=1
+type=16
+typerule=2
+
+[9]
+Description=Mediathekview Fix
+maximizehorizrule=2
+maximizevertrule=2
+wmclass=mediathek-main
+wmclassmatch=1
+
+[9acf36e8-e573-4fd4-bfcf-a9c57d6fb4b7]
+Description=Thunderbird Desktop
+desktops=d8a86db5-32de-4229-9f16-43dd347f69a5
+desktopsrule=3
+wmclass=thunderbird
+wmclassmatch=1
+
+[9ad4e2e9-b28c-4cdb-9804-a7c9787f9c33]
+Description=Steam Desktop
+desktops=ca00adbe-7061-4c5f-a139-6ad2e000ec67
+desktopsrule=3
+wmclass=steam
+wmclassmatch=1
+
+[9f2b87af-fe5f-4a30-8d44-0e10e9358687]
+Description=Signal Desktop
+desktops=d8a86db5-32de-4229-9f16-43dd347f69a5
+desktopsrule=3
+wmclass=signal
+wmclassmatch=1
+
+[General]
+count=9
+rules=1,2,3,4,5,6,7,8,9
