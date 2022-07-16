@@ -97,93 +97,21 @@ map('i', '<silent><expr> <C-d>', 'compe#scroll({ "delta": -4 })', nr)
 vim.o.updatetime = 250
 vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
 
--- automatic formatting
-vim.cmd [[autocmd BufWritePre *.cpp lua vim.lsp.buf.formatting()]]
-
-
-local cmp = require'cmp'
-cmp.setup({
-        snippet = {
-                expand = function(args)
-                        require'luasnip'.lsp_expand(args.body)
-                end
-        },
-        mapping = {
-                ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-                ['<CR>'] = cmp.mapping.confirm({ select = true }),
-                ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), {'i', 's' }),
-        },
-
-        sources = {
-                { name = 'luasnip' },
-                { name = 'nvim_lsp' },
-                { name = 'calc' },
-                { name = 'path' },
-                { name = 'buffer',
-                  option = {
-                        keyword_pattern = [[\%(-\?\d\+\%(\.\d\+\)\?\|\h\w*\%([\-.]\w*\)*\)]],
-                        },
-                },
-
-        },
-        formatting = {
-                format = function(entry, vim_item)
-                        vim_item.menu = ({
-                                luasnip = '[SNP]',
-                                nvim_lsp = '[LSP]',
-                                calc = '[CLC]',
-                                path = '[PTH]',
-                                buffer = '[BUF]',
-                        })[entry.source.name]
-                        vim_item.kind = ({
-                                Text =          '', -- Text
-                                Method =        '', -- Method
-                                Function =      '', -- Function
-                                Constructor =   '', -- Constructor
-                                Field =         'ﰠ', -- Field
-                                Variable =      '', -- Variable
-                                Class =         'ﴯ', -- Class
-                                Interface =     'ﰮ', -- Interface
-                                Module =        '', -- Module
-                                Property =      '', -- Property
-                                Unit =          '塞', -- Unit
-                                Value =         '', -- Value
-                                Enum =          '', -- Enum
-                                Keyword =       '', -- Keyword
-                                Snippet =       '', -- Snippet
-                                Color =         '', -- Color
-                                File =          '', -- File
-                                Reference =     '', -- Reference
-                                Folder =        '', -- Folder
-                                EnumMember =    '', -- EnumMember
-                                Constant =      '', -- Constant
-                                Struct =        '', -- Struct
-                                Event =         '', -- Event
-                                Operator =      '', -- Operator
-                                TypeParamter =  '', -- TypeParameter
-                        })[vim_item.kind]
-                        return vim_item
-                end
-        }
+-- LSP
+local lsp = require'lsp-zero'
+lsp.preset('system-lsp')
+lsp.set_preferences({
+        suggest_lsp_servers = false,     -- suggest lsp server on new file type
+})
+lsp.setup_servers({
+        'html',
+        'pyright',
+        'texlab',
+        'ccls',
 })
 
-require'nvim-autopairs'.setup{}
-local cmp_autopairs = require'nvim-autopairs.completion.cmp'
-cmp.event:on( 'confirm_done', cmp_autopairs.on_confirm_done({ map_char = { tex = '' } }))
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
-
-
--- languages
-local lspconfig = require'lspconfig'
-lspconfig.pyright.setup{
-        capabilities = capabilities,
-        on_attach = on_attach,
-
-}
-lspconfig.texlab.setup{
-        cmd = { 'texlab' },
+-- language specific stuff
+lsp.configure('texlab', {
         filetypes = { 'tex', 'bib' },
         settings = {
                 latex = {
@@ -194,28 +122,23 @@ lspconfig.texlab.setup{
                 }
         },
         texlab = {
-                latexFormatter = 'latexindent',
-        },
-        capabilities = capabilities,
-        on_attach = on_attach,
-}
-lspconfig.ccls.setup {
-        init_options = {
-                compilationDatabaseDirectory = 'build';
-                index = {
-                        threads = 0;
-                };
-        },
-        capabilities = capabilities,
-        on_attach = on_attach,
-}
-
-vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-        virtual_text = true,
-        signs = true,
-        underline = true,
-        update_in_insert = true,
+                latexFormatter = 'latexindent'
+        }
 })
+
+lsp.configure('ccls', {
+        init_options = {
+                compilationDatabaseDirectory = 'build',
+                index = {
+                        threads = 0
+                },
+                filetypes = { 'c', 'cpp' }
+        }
+})
+lsp.setup()
+
+require'nvim-autopairs'.setup{}
+local cmp_autopairs = require'nvim-autopairs.completion.cmp'
 
 
 local t = function(str)
