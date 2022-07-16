@@ -1,6 +1,6 @@
 [Appearance]
 AntiAliasFonts=true
-ColorScheme=New Color Scheme
+ColorScheme=MyColors
 Font=Iosevka Nerd Font Mono,9,-1,5,50,0,0,0,0,0
 UseFontLineChararacters=false
 
