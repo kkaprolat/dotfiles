@@ -60,7 +60,7 @@ o.lazyredraw = true
 o.showmatch = true
 
 -- search
-o. incsearch = true   -- search as characters are entered
+o.incsearch = true   -- search as characters are entered
 o.hlsearch = true     -- highlight matches
 
 -- folding
@@ -92,9 +92,6 @@ map('i', '<silent><expr> <CR>', 'compe#confirm("<CR>")', nr)
 map('i', '<silent><expr> <C-e>', 'compe#close("<C-e>")', nr)
 map('i', '<silent><expr> <C-f>', 'compe#scroll({ "delta": +4 })', nr)
 map('i', '<silent><expr> <C-d>', 'compe#scroll({ "delta": -4 })', nr)
-
--- lightspeed.nvim
-map('n', 's', '<Plug>Lightspeed_omni_s', {})
 
 -- lsp diagnostics in hover window
 vim.o.updatetime = 250
