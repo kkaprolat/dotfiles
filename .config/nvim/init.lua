@@ -25,8 +25,8 @@ o.scrolloff = 9999
 -- concealment for LaTeX
 o.conceallevel = 2
 
--- always display statusline
-o.laststatus = 2
+-- always display statusline globally
+o.laststatus = 3
 
 -- Copy/Paste on right register
 o.clipboard = 'unnamedplus'
@@ -44,7 +44,6 @@ o.rnu = true
 
 -- color scheme
 o.syntax = 'on'
-
 
 -- Tabs
 o.tabstop = 4         -- visual spaces per tab
@@ -288,9 +287,13 @@ require'lush'(require'lush_theme.my_theme')
 -- feline
 require'feline'.setup(require'my_feline')
 
--- lightspeed
-require'lightspeed'.setup {
-        exit_after_idle_msecs = { unlabeled = nil, labeled = nil },
-        limit_ft_matches = 16,
+-- leap
+function leap_all_windows()
+        local focusable_windows_on_tabpage = vim.tbl_filter(
+                function (win) return vim.api.nvim_win_get_config(win).focusable end,
+                vim.api.nvim_tabpage_list_wins(0)
+        )
+        require'leap'.leap { target_windows = focusable_windows_on_tabpage }
+end
 
-}
+vim.keymap.set('n', 's', leap_all_windows, { silent = true })
