@@ -344,22 +344,6 @@ local theme = lush(function()
     IndentBlanklineSpaceCharBlankline   { IndentBlankLineChar }, -- highlight of space character on blank lines.
     IndentBlankLineContextChar          { fg = colors.fg.darken(15) }, -- highlight of indent character when base of current context. Only used when g:indent_blankline_show_current_context is active
 
-    -- lightspeed.nvim
-    LightspeedLabel                     { },  -- the character needed to be pressed to jump to the match positions, after the whole search pattern has been given
-    LightspeedLabelOverlapped           { },  -- when matches overlap, labels get next to each other - in that case they get different highlights (slightly lighter or darker, depending on the global background)
-    LightspeedLabelDistant              { },  -- if the number of matches exceeds the available target labels, the next group of labeled targets are shown with a different color
-    LightspeedLabelDistantOverlapped    { },
-    LightspeedShortcut                  { },  -- labels for positions that can be jumped to right after the first input
-    LightspeedShortcutOverlapped        { },
-    LightspeedMaskedChar                { },  -- the second character of the match, that is shown on top of the first one, as a reminder, when the beacon is squeezed into the 2-column box of the match
-    LightspeedGreyWash                  { Comment, gui="" },  -- foreground color of the "washed out" area for 2-character search
-    LightspeedUnlabeledMatch            { },  -- matches that can be jumped to automatically
-    LightspeedOneCharMatch              { },  -- matching characters of f/t search
-    LightspeedUniqueChar                { },  -- unique characters in the search direction
-    LightspeedPendingOpArea             { },  -- when jumping based on partial input in operator-pending mode, we do not see the operation executed right away (see lightspeed-jump-on-partial-input), therefore we set a temporary highlight
-    LightspeedCursor                    { }
-    
-    
    
   }
 end)
@@ -367,4 +351,4 @@ end)
 -- return our parsed theme for extension or use else where.
 return theme
 
--- vi:nowrap ts=4
+-- vi: ts=4
