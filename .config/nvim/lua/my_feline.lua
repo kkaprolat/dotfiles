@@ -178,7 +178,7 @@ table.insert(components.active[3], {
         end,
 })
 
--- file type
+-- file encoding
 table.insert(components.active[3], {
         provider = 'file_encoding',
         hl = function()
