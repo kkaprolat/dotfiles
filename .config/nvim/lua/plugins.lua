@@ -1,8 +1,6 @@
 return require('packer').startup(function(use)
         use 'wbthomason/packer.nvim'
         use 'scrooloose/nerdcommenter'
-        use 'Xuyuanp/nerdtree-git-plugin'
-        use 'tiagofumo/vim-nerdtree-syntax-highlight'
         use { 'kyazdani42/nvim-web-devicons',
                 config = function()
                         require'nvim-web-devicons'.setup {
@@ -18,9 +16,6 @@ return require('packer').startup(function(use)
         }
         use 'tpope/vim-surround'
         use 'vimwiki/vimwiki'
-        use 'Shougo/context_filetype.vim'
-        use 'nvim-lua/popup.nvim'
-        use 'nvim-lua/plenary.nvim'
         use { 'nvim-telescope/telescope.nvim',
                 requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}, {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'}}
         }
