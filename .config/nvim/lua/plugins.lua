@@ -14,7 +14,7 @@ return require('packer').startup(function(use)
                         'SmiteshP/nvim-navic'
                 }
         }
-        use 'tpope/vim-surround'
+--        use 'tpope/vim-surround'
         use 'vimwiki/vimwiki'
         use { 'nvim-telescope/telescope.nvim',
                 requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}, {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'}}
@@ -69,4 +69,85 @@ return require('packer').startup(function(use)
                 requires = {'kyazdani42/nvim-web-devicons'}
         }
         use 'ggandor/leap.nvim'
+
+        use { 'folke/which-key.nvim',
+                config = function()
+                        local wk = require'which-key'
+
+                        local leader_mappings = {
+                                f = {
+                                        name = 'Find...',
+                                        f = 'Find File',
+                                        s = 'Find Symbols'
+                                },
+                                l = {
+                                        name = 'VimTex',
+                                        m = "Open Context Menu",
+                                        u = "Count Letters",
+                                        w = "Count Words",
+                                        d = "Open Doc for package",
+                                        e = "Look at the errors",
+                                        s = "Look at the status",
+                                        a = "Toggle Main",
+                                        v = "View pdf",
+                                        i = "Vimtex Info",
+                                        l = {
+                                                name = "Clean",
+                                                l = "Clean Project",
+                                                c = "Clean Cache",
+                                        },
+                                        c = {
+                                                name = "Compile",
+                                                c = "Compile Project",
+                                                o = "Compile Project and Show Output",
+                                                s = "Compile project super fast",
+                                                e = "Compile Selected",
+                                        },
+                                        r = {
+                                                name = "Reload",
+                                                r = "Reload",
+                                                s = "Reload State",
+                                        },
+                                        o = {
+                                                name = "Stop",
+                                                p = "Stop",
+                                                a = "Stop All",
+                                        },
+                                        t = {
+                                                name = "TOC",
+                                                o = "Open TOC",
+                                                t = "Toggle TOC",
+                                        },
+                                },
+                        }
+
+                        local normal_mappings =  {
+                                [']'] = {
+                                        [']'] = 'next [sub*]section',
+                                        m = 'next environment',
+                                        n = 'next math zone',
+                                        r = 'next frame'
+
+                                },
+                                ['['] = {
+                                        ['['] = 'prev [sub*]section',
+                                        m = 'prev environment',
+                                        n = 'prev math zone',
+                                        r = 'prev frame'
+
+                                }
+                        }
+
+                        wk.register(leader_mappings, { prefix = '<leader>' })
+                        wk.register(normal_mappings)
+                        wk.setup{
+                                ignore_missing = false
+                        }
+                end
+        }
+        use { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
+                config = function()
+                        require'lsp_lines'.setup()
+                end
+        }
 end)

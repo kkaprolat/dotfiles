@@ -26,5 +26,4 @@ local function leap_all_windows()
         )
         require'leap'.leap { target_windows = focusable_windows_on_tabpage }
 end
-
 vim.keymap.set('n', 's', leap_all_windows, { silent = true })
