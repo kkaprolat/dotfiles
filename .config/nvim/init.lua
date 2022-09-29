@@ -8,6 +8,8 @@ if fn.empty(fn.glob(install_path)) > 0 then
         execute 'packadd packer.nvim'
 end
 
+require'impatient'
+
 require'plugins'
 require'options'
 require'lsp'

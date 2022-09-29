@@ -150,4 +150,5 @@ return require('packer').startup(function(use)
                         require'lsp_lines'.setup()
                 end
         }
+        use 'lewis6991/impatient.nvim'
 end)
