@@ -14,7 +14,12 @@ return require('packer').startup(function(use)
                         'SmiteshP/nvim-navic'
                 }
         }
---        use 'tpope/vim-surround'
+        use { 'kylechui/nvim-surround',
+                tag = "*",
+                config = function()
+                        require'nvim-surround'.setup({})
+                end
+        }
         use 'vimwiki/vimwiki'
         use { 'nvim-telescope/telescope.nvim',
                 requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}, {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'}}
