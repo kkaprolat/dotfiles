@@ -9,64 +9,64 @@ vim.diagnostic.config({ virtual_lines = { only_current_line = true } })
 
 local lsp_status = require'lsp-status'
 lsp_status.config {
-        diagnostics = false,
-        status_symbol = ''
+    diagnostics = false,
+    status_symbol = ''
 }
 lsp_status.register_progress()
 
 local lsp = require'lsp-zero'
 lsp.preset('system-lsp')
 lsp.setup_servers({
-        'html',
-        'pyright',
-        'bashls',
+    'html',
+    'pyright',
+    'bashls',
 })
 
 -- language specific stuff
 lsp.configure('texlab', {
-        filetypes = { 'tex', 'bib' },
-        settings = {
-                latex = {
-                        lint = {
-                                onChange = true,
-                                onSave = true
-                        }
-                }
-        },
-        texlab = {
-                latexFormatter = 'latexindent'
-        },
+    filetypes = { 'tex', 'bib' },
+    settings = {
+        latex = {
+            lint = {
+                onChange = true,
+                onSave = true
+            }
+        }
+    },
+    texlab = {
+        latexFormatter = 'latexindent'
+    },
 })
 
 lsp.configure('ccls', {
-        init_options = {
---                compilationDatabaseDirectory = 'build',
-                index = {
-                        threads = 0
-                },
-                filetypes = { 'c', 'cpp' }
+    init_options = {
+        --                compilationDatabaseDirectory = 'build',
+        index = {
+            threads = 0
         },
+        filetypes = { 'c', 'cpp' }
+    },
 })
 lsp.configure('sumneko_lua', {
-        settings = {
-                Lua = {
-                        runtime = {
-                                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-                                version = 'LuaJIT',
-                        },
-                        diagnostics = {
-                                -- Get the language server to recognize the `vim` global
-                                globals = { 'vim' },
-                        },
-                        workspace = {
-                                -- Make the server aware of Neovim runtime files
-                                library = vim.api.nvim_get_runtime_file("", true),
-                        },
-                        telemetry = {
-                                enable = false
-                        },
-                },
+    settings = {
+        Lua = {
+            runtime = {
+                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+                version = 'LuaJIT',
+            },
+            diagnostics = {
+                -- Get the language server to recognize the `vim` global
+                globals = { 'vim' },
+            },
+            workspace = {
+                -- Make the server aware of Neovim runtime files
+                library = vim.api.nvim_get_runtime_file("", true),
+            },
+            telemetry = {
+                enable = false
+            },
         },
+    },
 })
 -- lsp.setup_nvim_cmp({
 --         sources = {
@@ -84,83 +84,83 @@ lsp.setup()
 local client_notifs = {}
 
 local function get_notif_data(client_id, token)
-        if not client_notifs[client_id] then
-                client_notifs[client_id] = {}
-        end
+    if not client_notifs[client_id] then
+        client_notifs[client_id] = {}
+    end
 
-        if not client_notifs[client_id][token] then
-                client_notifs[client_id][token] = {}
-        end
+    if not client_notifs[client_id][token] then
+        client_notifs[client_id][token] = {}
+    end
 
-        return client_notifs[client_id][token]
+    return client_notifs[client_id][token]
 end
 
 local spinner_frames = { "", "", "", "", "", "" } -- this requires Fira Code!
 
 local function update_spinner(client_id, token)
-        local notif_data = get_notif_data(client_id, token)
+    local notif_data = get_notif_data(client_id, token)
 
-        if notif_data.spinner then
-                local new_spinner = (notif_data.spinner + 1) % #spinner_frames
-                notif_data.spinner = new_spinner
+    if notif_data.spinner then
+        local new_spinner = (notif_data.spinner + 1) % #spinner_frames
+        notif_data.spinner = new_spinner
 
-                notif_data.notification = vim.notify(nil, nil, {
-                        hide_from_history = true,
-                        icon = spinner_frames[new_spinner],
-                        replace = notif_data.notification,
-                })
+        notif_data.notification = vim.notify(nil, nil, {
+            hide_from_history = true,
+            icon = spinner_frames[new_spinner],
+            replace = notif_data.notification,
+        })
 
-                vim.defer_fn(function()
-                        update_spinner(client_id, token)
-                end, 100)
-        end
+        vim.defer_fn(function()
+            update_spinner(client_id, token)
+        end, 100)
+    end
 end
 
 local function format_title(title, client_name)
-        return client_name .. (#title > 0 and ": " .. title or "")
+    return client_name .. (#title > 0 and ": " .. title or "")
 end
 
 local function format_message(message, percentage)
-        return (percentage and percentage .. "%\t" or "") .. (message or "")
+    return (percentage and percentage .. "%\t" or "") .. (message or "")
 end
 
 vim.lsp.handlers["$/progress"] = function(_, result, ctx)
-        local client_id = ctx.client_id
+    local client_id = ctx.client_id
 
-        local val = result.value
+    local val = result.value
 
-        if not val.kind then
-                return
-        end
+    if not val.kind then
+        return
+    end
 
-        local notif_data = get_notif_data(client_id, result.token)
+    local notif_data = get_notif_data(client_id, result.token)
 
-        if val.kind == 'begin' then
-                local message = format_message(val.message, val.percentage)
+    if val.kind == 'begin' then
+        local message = format_message(val.message, val.percentage)
 
-                notif_data.notification = vim.notify(message, 'info', {
-                        title = format_title(val.title, vim.lsp.get_client_by_id(client_id).name),
-                        icon = spinner_frames[1],
-                        timeout = false,
-                        hide_from_history = false,
-                })
+        notif_data.notification = vim.notify(message, 'info', {
+            title = format_title(val.title, vim.lsp.get_client_by_id(client_id).name),
+            icon = spinner_frames[1],
+            timeout = false,
+            hide_from_history = false,
+        })
 
-                notif_data.spinner = 1
-                update_spinner(client_id, result.token)
-        elseif val.kind == 'report' and notif_data then
-                notif_data.notification = vim.notify(format_message(val.message, val.percentage), 'info', {
-                        replace = notif_data.notification,
-                        hide_from_history = false,
-                })
-        elseif val.kind == 'end' and notif_data then
-                notif_data.notification = vim.notify(val.message and format_message(val.message) or 'Complete', 'info', {
-                        icon = '',
-                        replace = notif_data.notification,
-                        timeout = 3000,
-                })
+        notif_data.spinner = 1
+        update_spinner(client_id, result.token)
+    elseif val.kind == 'report' and notif_data then
+        notif_data.notification = vim.notify(format_message(val.message, val.percentage), 'info', {
+            replace = notif_data.notification,
+            hide_from_history = false,
+        })
+    elseif val.kind == 'end' and notif_data then
+        notif_data.notification = vim.notify(val.message and format_message(val.message) or 'Complete', 'info', {
+            icon = '',
+            replace = notif_data.notification,
+            timeout = 3000,
+        })
 
-                notif_data.spinner = nil
-        end
+        notif_data.spinner = nil
+    end
 end
 
 
