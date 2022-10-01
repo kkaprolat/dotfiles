@@ -33,9 +33,12 @@ o.rnu = true
 o.syntax = 'on'
 
 -- Tabs
-o.tabstop = 4         -- visual spaces per tab
-o.softtabstop = 4     -- number of spaces in tab when editing
-o.expandtab = true    -- tabs are spaces
+local indentsize = 4
+o.tabstop = indentsize      -- visual spaces per tab
+o.softtabstop = indentsize  -- number of spaces in tab when editing
+o.shiftwidth = indentsize   -- for existing indentation
+o.autoindent = true
+o.expandtab = true          -- tabs are spaces
 
 -- highlight current line
 o.cursorline = true
