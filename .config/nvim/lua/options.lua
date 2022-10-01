@@ -66,3 +66,6 @@ o.encoding = 'UTF-8'
 o.completeopt = 'menuone,noselect'
 
 o.timeoutlen = 500
+
+-- hide command line unless used
+o.cmdheight = 0
