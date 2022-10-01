@@ -11,7 +11,6 @@ return require('packer').startup(function(use)
         use { 'rebelot/heirline.nvim',
                 requires = {
                         'nvim-lua/lsp-status.nvim',
-                        'SmiteshP/nvim-navic'
                 }
         }
         use { 'kylechui/nvim-surround',
@@ -167,4 +166,26 @@ return require('packer').startup(function(use)
                 end
         }
         use 'lewis6991/impatient.nvim'
+        use { 'rcarriga/nvim-notify',
+                config = function()
+                        require'notify'.setup({
+                                fps = 60,
+                                icons = {
+                                        DEBUG = " ",
+                                        ERROR = " ",
+                                        INFO = " ",
+                                        TRACE = "✎ ",
+                                        WARN = " "
+                                },
+                                level = 2,
+                                minimum_width = 50,
+                                render = "default",
+                                stages = "fade",
+                                timeout = 5000,
+                                top_down = true
+
+                        })
+                        vim.notify = require'notify'
+                end
+        }
 end)
