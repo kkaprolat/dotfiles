@@ -27,7 +27,7 @@ o.whichwrap = 'b,s,<,>,[,]'
 
 -- line numbers
 o.number = true
-o.rnu = true
+o.rnu = false
 
 -- color scheme
 o.syntax = 'on'
