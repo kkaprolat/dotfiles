@@ -7,6 +7,9 @@ DefaultProfile=MyProfile.profile
 scrollbackUseCacheLocation=true
 scrollbackUseSystemLocation=false
 
+[General]
+ConfigVersion=1
+
 [KonsoleWindow]
 RememberWindowSize=false
 RemoveWindowTitleBarAndFrame=true
