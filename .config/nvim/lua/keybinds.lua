@@ -12,13 +12,6 @@ g.maplocalleader = ' '
 map('n', '<leader>ff', "<cmd>lua require'telescope.builtin'.find_files()<cr>", nr)
 map('n', '<leader>fs', "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>", nr)
 
--- nvim-compe
-map('i', '<silent><expr> <C-Space>', 'compe#complete()', nr)
-map('i', '<silent><expr> <CR>', 'compe#confirm("<CR>")', nr)
-map('i', '<silent><expr> <C-e>', 'compe#close("<C-e>")', nr)
-map('i', '<silent><expr> <C-f>', 'compe#scroll({ "delta": +4 })', nr)
-map('i', '<silent><expr> <C-d>', 'compe#scroll({ "delta": -4 })', nr)
-
 local t = function(str)
     return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
