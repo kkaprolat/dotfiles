@@ -188,4 +188,7 @@ return require('packer').startup(function(use)
             vim.notify = require'notify'
         end
     }
+    use { 'martineausimon/nvim-lilypond-suite',
+        requires = { 'MunifTanjim/nui.nvim' }
+    }
 end)
