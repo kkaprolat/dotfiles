@@ -67,7 +67,12 @@ return require('packer').startup(function(use)
             }
         end
     }
-    use 'lervag/vimtex' -- LaTeX
+    use { 'lervag/vimtex', -- LaTeX
+        config = function()
+            vim.g.vimtex_view_method = 'zathura'
+            vim.g.vimtex_compiler_progname = 'nvr'
+        end
+    }
     use 'rktjmp/lush.nvim' -- for color schemes
     use { 'romgrk/barbar.nvim',
         requires = {'kyazdani42/nvim-web-devicons'}
@@ -106,11 +111,7 @@ return require('packer').startup(function(use)
                     a = "Toggle Main",
                     v = "View pdf",
                     i = "Vimtex Info",
-                    l = {
-                        name = "Clean",
-                        l = "Clean Project",
-                        c = "Clean Cache",
-                    },
+                    l = "Compile",
                     c = {
                         name = "Compile",
                         c = "Compile Project",
