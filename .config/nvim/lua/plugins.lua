@@ -57,7 +57,7 @@ return require('packer').startup(function(use)
         run = ':TSUpdate',
         config = function()
             require'nvim-treesitter.configs'.setup {
-                ensure_installed = { "c", "javascript", "python", "bash", "json", "lua", "cpp" },
+                ensure_installed = { "c", "javascript", "python", "bash", "json", "lua", "cpp", "vim", "regex", "markdown", "markdown_inline" },
                 highlight = {
                     enable = true,
                 },
@@ -166,7 +166,50 @@ return require('packer').startup(function(use)
         end
     }
     use 'lewis6991/impatient.nvim'
-    use { 'rcarriga/nvim-notify',
+    use {
+        'folke/noice.nvim',
+        config = function()
+            require'noice'.setup({
+                lsp = {
+                    -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+                    override = {
+                        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+                        ["vim.lsp.util.stylize_markdown"] = true,
+                        ["cmp.entry.get_documentation"] = true,
+                    },
+                    progress = {
+                        enabled = false,
+                    },
+                },
+                -- show @recording messages
+                routes = {
+                    {
+                        view = "notify",
+                        filter = { event = "msg_showmode" },
+                    },
+                },
+                cmdline = {
+                    format = {
+                        cmdline = { pattern = "^:", icon = ":", lang = "vim" },
+                        search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex"},
+                        search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex"},
+                        filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
+                        lua = { pattern = "^:%s*lua%s+", icon = "", lang = "lua" },
+                        help = { pattern = "^:%s*he?l?p?%s+", icon = "", lang = "bash" },
+                        search_replace = { icon = "", kind = "search", title = " Search and Replace ", pattern = "^:%s*%%s/", lang = "regex", conceal = false },
+                    },
+                },
+                messages = {
+                    view_search = false
+                }
+
+        })
+        end,
+        requires = {
+            'MunifTanjim/nui.nvim'
+        }
+    }
+    use { 'rcarriga/nvim-notify', -- also used for noice.nvim, but not necessary
         config = function()
             require'notify'.setup({
                 fps = 60,
