@@ -44,7 +44,7 @@ o.expandtab = true          -- tabs are spaces
 o.cursorline = true
 
 -- redraw only when we need to
-o.lazyredraw = true
+-- o.lazyredraw = true
 
 -- highlight matching [{()}]
 o.showmatch = true
@@ -62,10 +62,13 @@ o.termguicolors = true
 -- for devicons
 o.encoding = 'UTF-8'
 
--- for nvim-compe
+-- for nvim-cmp
 o.completeopt = 'menuone,noselect'
 
 o.timeoutlen = 500
 
 -- hide command line unless used
 o.cmdheight = 0
+
+-- don't notify when mode changes
+o.showmode = false
