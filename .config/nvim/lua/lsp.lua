@@ -5,7 +5,7 @@
 -- vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
 
 -- expand diagnostics only on current line
-vim.diagnostic.config({ virtual_lines = { only_current_line = true } })
+-- vim.diagnostic.config({ virtual_lines = { only_current_line = true } })
 
 local lsp_status = require'lsp-status'
 lsp_status.config {
@@ -20,6 +20,10 @@ lsp.setup_servers({
     'html',
     'pyright',
     'bashls',
+    'ansiblels',
+    'dockerls',
+    'yamlls',
+    'rust_analyzer'
 })
 
 -- language specific stuff
