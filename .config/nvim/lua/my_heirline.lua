@@ -398,4 +398,9 @@ local StatusLines = {
 }
 
 
-require'heirline'.setup(StatusLines)
+require'heirline'.setup({
+    statusline = StatusLines,
+--    winbar = ...,
+--    tabline = ...,
+--    statuscolumn = ...,
+})
