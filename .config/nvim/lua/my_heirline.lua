@@ -36,10 +36,9 @@ local RightCapColored = {
     end,
 }
 local function RightCapStatic(color)
-    local col = utils.get_highlight('Heirline'..color)
     return {
         provider = "┃ ",
-        hl = { fg = col.fg, bg = col.bg, bold = true }
+        hl = { fg = color.fg, bg = color.bg, bold = true }
     }
 end
 
@@ -125,7 +124,7 @@ local FileIcon = {
             { default = true })
     end,
     provider = function(self)
-        return self.icon and (' ' .. self.icon .. ' ')
+        return self.icon and ('' .. self.icon .. ' ')
     end,
 }
 
@@ -171,7 +170,7 @@ local FileSize = {
 -- let's add the children to our FileNameBlock component
 FileNameBlock = utils.insert(
     FileNameBlock,
-    RightCapStatic('White'),
+    RightCapStatic(colors.white),
     FileIcon,
     FileName,
     FileFlags, -- A small optimisation, since their parent does nothing
@@ -181,10 +180,11 @@ FileNameBlock = utils.insert(
 
 -- right
 local ScrollBar = {
-    provider = " %P - %l:%c ",
-    hl = function(self)
-        return { bg = self:mode_color().bg, fg = utils.get_highlight("Heirline").bg }
-    end,
+    RightCapStatic(colors.orange),
+    {
+        provider = " %P - %l:%c ",
+        hl = colors.orange
+    }
 }
 
 local LspMessages = {
@@ -214,29 +214,61 @@ local Diagnostics = {
     update = { "DiagnosticChanged", "BufEnter" },
 
     {
-        provider = function(self)
-            -- 0 is just another output, we can decide to print it or not!
-            return self.errors > 0 and (self.error_icon .. self.errors .. "  ")
+        condition = function(self)
+            return self.errors > 0
         end,
-        hl = "DiagnosticError"
+
+        RightCapStatic(utils.get_highlight('DiagnosticError')),
+        {
+            provider = function(self)
+                -- 0 is just another output, we can decide to print it or not!
+                return self.errors > 0 and (self.error_icon .. self.errors .. " ")
+            end,
+            hl = "DiagnosticError"
+        },
+        Space
     },
     {
-        provider = function(self)
-            return self.warnings > 0 and (self.warn_icon .. self.warnings .. "  ")
+        condition = function(self)
+            return self.warnings > 0
         end,
-        hl = "DiagnosticWarn"
+
+        RightCapStatic(utils.get_highlight('DiagnosticWarn')),
+        {
+            provider = function(self)
+                return self.warnings > 0 and (self.warn_icon .. self.warnings .. " ")
+            end,
+            hl = "DiagnosticWarn"
+        },
+        Space
     },
     {
-        provider = function(self)
-            return self.info > 0 and (self.info_icon .. self.info .. "  ")
+        condition = function(self)
+            return self.info > 0
         end,
-        hl = "DiagnosticInfo"
+
+        RightCapStatic(utils.get_highlight('DiagnosticInfo')),
+        {
+            provider = function(self)
+                return self.info > 0 and (self.info_icon .. self.info .. " ")
+            end,
+            hl = "DiagnosticInfo"
+        },
+        Space
     },
     {
-        provider = function(self)
-            return self.hints > 0 and (self.hint_icon .. self.hints .. "  ")
+        condition = function(self)
+            return self.hints > 0
         end,
-        hl = "DiagnosticHint"
+
+        RightCapStatic(utils.get_highlight('DiagnosticHint')),
+        {
+            provider = function(self)
+                return self.hints > 0 and (self.hint_icon .. self.hints .. " ")
+            end,
+            hl = "DiagnosticHint"
+        },
+        Space
     },
 }
 
@@ -248,7 +280,7 @@ local Git = {
         self.has_changes = self.status_dict.added ~= 0 or self.status_dict.removed ~= 0 or self.status_dict.changed ~= 0
     end,
     -- hl = {}
-    RightCapStatic('orange'),
+    RightCapStatic(utils.get_highlight('HeirlineOrange')),
     {
         provider = " ",
         hl = 'HeirlineOrange'
@@ -312,14 +344,15 @@ local SearchResults = {
         return true
     end,
     {
-        provider = function(self)
-            return table.concat({
-                ' ', self.query, ' ', self.count.current, '/', self.count.total, ' '
-            })
-        end,
-        hl = function(self)
-            return { bg = self:mode_color().bg, fg = utils.get_highlight("Heirline").bg }
-        end,
+        RightCapStatic(colors.green),
+        {
+            provider = function(self)
+                return table.concat({
+                    ' ', self.query, ' ', self.count.current, '/', self.count.total, ' '
+                })
+            end,
+            hl = colors.green
+        }
     }
 }
 
@@ -327,7 +360,7 @@ local SearchResults = {
 
 local DefaultStatusLine = {
     -- ViMode, FileNameBlock, RightCap, Space, Git, Align, Navic, LspMessages, Space, Diagnostics, Space, RightCap, SearchResults, ScrollBar
-    ViMode, Space, FileNameBlock, Space, Git
+    Space, Space, ViMode, Space, FileNameBlock, Space, Git, Align, Diagnostics, Align, SearchResults, ScrollBar
 }
 
 local StatusLines = {
@@ -364,4 +397,5 @@ local StatusLines = {
     DefaultStatusLine
 }
 
-require 'heirline'.setup(StatusLines)
+
+require'heirline'.setup(StatusLines)
