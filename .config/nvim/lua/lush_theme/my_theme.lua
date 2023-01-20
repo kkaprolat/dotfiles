@@ -81,7 +81,8 @@ colors = {
 -- support an annotation like the following. Consult your server documentation.
 ---@diagnostic disable: undefined-global
 
-local theme = lush(function()
+local theme = lush(function(injected_functions)
+    local sym = injected_functions.sym
     return {
         -- Lush.hsl provides a number of conveniece functions for:
         --
@@ -173,13 +174,15 @@ local theme = lush(function()
         -- Uncomment and edit if you want more specific syntax highlighting.
 
         Constant                            { fg = colors.red }, -- (preferred) any constant
-        String                              { Constant }, --   a string constant: "this is a string"
-        -- Character                        { }, --  a character constant: 'c', '\n'
+        String                              { fg = colors.green }, --   a string constant: "this is a string"
+        Character                           { fg = colors.green }, --  a character constant: 'c', '\n'
         Number                              { Constant }, --   a number constant: 234, 0xff
-        Boolean                             { Constant }, --  a boolean constant: TRUE, false
+        Boolean                             { fg = colors.peach }, --  a boolean constant: TRUE, false
         -- Float                            { }, --    a floating point constant: 2.3e10
 
         Identifier                          { Normal }, -- (preferred) any variable name
+        sym"@variable"                           { Identifier },
+        sym"@field"                              { fg = colors.blue },
         Function                            { fg = colors.blue }, -- function name (also: methods for classes)
 
         Statement                           { fg = colors.yellow, gui = "bold" }, -- (preferred) any statement
@@ -389,6 +392,11 @@ local theme = lush(function()
         HeirlineGitChange                   { fg = colors.yellow },
 
         NotifyBackground                    { bg = colors.crust },
+
+        -- Asciidoctor
+        asciidocQuotedMonospaced2           { fg = colors.blue },
+        asciidocQuotedBold                  { fg = colors.text, gui = "bold" },
+        asciidocQuotedUnconstrainedBold     { asciidocQuotedBold },
 
 
 }
