@@ -235,4 +235,8 @@ return require('packer').startup(function(use)
     use { 'martineausimon/nvim-lilypond-suite',
         requires = { 'MunifTanjim/nui.nvim' }
     }
+
+    use {
+        'nvim-treesitter/playground'
+    }
 end)
