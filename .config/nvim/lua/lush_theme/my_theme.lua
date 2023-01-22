@@ -118,10 +118,18 @@ local theme = lush(function(injected_functions)
         -- CursorColumn                     { }, -- Screen-column at the cursor, when 'cursorcolumn' is set.
         CursorLine                          { bg = colors.surface0 }, -- Screen-line at the cursor, when 'cursorline' is set.  Low-priority if foreground (ctermfg OR guifg) is not set.
         Directory                           { }, -- directory names (and other special names in listings)
+        diffAdded                           { fg = colors.green }, -- diff mode: Added line |diff.txt|
+        diffRemoved                         { fg = colors.red }, -- diff mode: Added line |diff.txt|
+        diffChanged                         { fg = colors.blue }, -- diff mode: Added line |diff.txt|
+        diffOldFile                         { fg = colors.yellow }, -- diff mode: Added line |diff.txt|
+        diffNewFile                         { fg = colors.peach }, -- diff mode: Added line |diff.txt|
+        diffFile                            { fg = colors.blue }, -- diff mode: Added line |diff.txt|
+        diffLine                            { fg = colors.overlay0 }, -- diff mode: Added line |diff.txt|
+        diffIndexLine                       { fg = colors.teal }, -- diff mode: Added line |diff.txt|
         DiffAdd                             { bg = colors.green, fg = colors.crust  }, -- diff mode: Added line |diff.txt|
-        DiffChange                          { bg = colors.yellow, fg = colors.crust }, -- diff mode: Changed line |diff.txt|
+        DiffChange                          { bg = colors.blue, fg = colors.crust }, -- diff mode: Changed line |diff.txt|
         DiffDelete                          { bg = colors.red, fg = colors.crust }, -- diff mode: Deleted line |diff.txt|
-        DiffText                            { DiffDelete }, -- diff mode: Changed text within a changed line |diff.txt|
+        DiffText                            { DiffChange }, -- diff mode: Changed text within a changed line |diff.txt|
         EndOfBuffer                         { fg = colors.blue }, -- filler lines (~) after the end of the buffer.  By default, this is highlighted like |hl-NonText|.
         -- TermCursor                       { }, -- cursor in a focused terminal
         -- TermCursorNC                     { }, -- cursor in an unfocused terminal
@@ -142,11 +150,12 @@ local theme = lush(function(injected_functions)
         NonText                             { fg = colors.blue, gui = 'bold' }, -- '@' at the end of the window, characters from 'showbreak' and other characters that do not really exist in the text (e.g., ">" displayed when a double-wide character doesn't fit at the end of the line). See also |hl-EndOfBuffer|.
         Normal                              { fg = colors.text }, -- normal text
         NormalFloat                         { fg = colors.subtext0, bg = colors.surface1 }, -- Normal text in floating windows.
+        FloatBorder                         { fg = colors.blue },
         -- NormalNC                         { }, -- normal text in non-current windows
         Pmenu                               { NormalFloat }, -- Popup menu: normal item.
-        PmenuSel                            { bg = colors.surface2, gui = 'bold'}, -- Popup menu: selected item.
-        PmenuSbar                           { fg = colors.green }, -- Popup menu: scrollbar.
-        -- PmenuThumb                       { }, -- Popup menu: Thumb of the scrollbar.
+        PmenuSel                            { bg = colors.surface1, gui = 'bold'}, -- Popup menu: selected item.
+        PmenuSbar                           { fg = colors.surface1 }, -- Popup menu: scrollbar.
+        PmenuThumb                          { bg = colors.overlay0 }, -- Popup menu: Thumb of the scrollbar.
         Question                            { fg = colors.green, gui = "bold,italic" }, -- |hit-enter| prompt and yes/no questions
         QuickFixLine                        { CursorLine }, -- Current |quickfix| item in the quickfix window. Combined with |hl-CursorLine| when the cursor is there.
         Search                              { IncSearch }, -- Last search pattern highlighting (see 'hlsearch').  Also used for similar items that need to stand out.
@@ -173,55 +182,210 @@ local theme = lush(function(injected_functions)
         -- default,
         -- Uncomment and edit if you want more specific syntax highlighting.
 
-        Constant                            { fg = colors.red }, -- (preferred) any constant
-        String                              { fg = colors.green }, --   a string constant: "this is a string"
-        Character                           { fg = colors.green }, --  a character constant: 'c', '\n'
-        Number                              { Constant }, --   a number constant: 234, 0xff
-        Boolean                             { fg = colors.peach }, --  a boolean constant: TRUE, false
-        -- Float                            { }, --    a floating point constant: 2.3e10
+        Error                               {  fg = colors.red }, -- (preferred) any erroneous construct
 
-        Identifier                          { Normal }, -- (preferred) any variable name
-        sym"@variable"                           { Identifier },
-        sym"@field"                              { fg = colors.blue },
+        Constant                            { fg = colors.peach }, -- (preferred) any constant
+        String                              { fg = colors.green }, --   a string constant: "this is a string"
+        Character                           { fg = colors.teal }, --  a character constant: 'c', '\n'
+        Number                              { fg = colors.peach }, --   a number constant: 234, 0xff
+        Boolean                             { fg = colors.peach }, --  a boolean constant: TRUE, false
+        Float                               { Number }, --    a floating point constant: 2.3e10
+
+        Identifier                          { fg = colors.flamingo }, -- (preferred) any variable name
         Function                            { fg = colors.blue }, -- function name (also: methods for classes)
 
-        Statement                           { fg = colors.yellow, gui = "bold" }, -- (preferred) any statement
-        -- Conditional                      { }, --  if, then, else, endif, switch, etc.
-        -- Repeat                           { }, --   for, do, while, etc.
-        -- Label                            { }, --    case, default, etc.
-        Operator                            { Statement }, -- "sizeof", "+", "*", etc.
-        Keyword                             { Statement }, --  any other keyword
+        Statement                           { fg = colors.mauve }, -- (preferred) any statement
+        Conditional                         { fg = colors.mauve }, --  if, then, else, endif, switch, etc.
+        Repeat                              { fg = colors.mauve }, --   for, do, while, etc.
+        Label                               { fg = colors.sapphire }, --    case, default, etc.
+        Operator                            { fg = colors.sky }, -- "sizeof", "+", "*", etc.
+        Keyword                             { fg = colors.mauve }, --  any other keyword
         -- Exception                        { }, --  try, catch, throw
 
-        PreProc                             { fg = colors.lavender }, -- (preferred) generic Preprocessor
-        Include                             { PreProc }, --  preprocessor #include
-        -- Define                           { }, --   preprocessor #define
-        -- Macro                            { }, --    same as Define
-        -- PreCondit                        { }, --  preprocessor #if, #else, #endif, etc.
+        PreProc                             { fg = colors.pink }, -- (preferred) generic Preprocessor
+        Include                             { fg = colors.mauve }, --  preprocessor #include
+        Define                              { PreProc }, --   preprocessor #define
+        Macro                               { fg = colors.mauve }, --    same as Define
+        PreCondit                           { PreProc }, --  preprocessor #if, #else, #endif, etc.
 
-        Type                                { fg = colors.green, gui = "bold" }, -- (preferred) int, long, char, etc.
-        -- StorageClass                     { }, -- static, register, volatile, etc.
-        -- Structure                        { }, --  struct, union, enum, etc.
-        Structure                           { Type }, --  struct, union, enum, etc.
-        -- Typedef                          { }, --  A typedef
+        Type                                { fg = colors.yellow }, -- (preferred) int, long, char, etc.
+        StorageClass                        { fg = colors.yellow }, -- static, register, volatile, etc.
+        Structure                           { fg = colors.yellow }, --  struct, union, enum, etc.
+        Typedef                             { Type }, --  A typedef
 
-        Special                             { fg = colors.peach }, -- (preferred) any special symbol
-        -- SpecialChar                      { }, --  special character in a constant
-        -- Tag                              { }, --    you can use CTRL-] on this
-        -- Delimiter                        { }, --  character that needs attention
-        -- SpecialComment                   { }, -- special things inside a comment
-        -- Debug                            { }, --    debugging statements
+        Special                             { fg = colors.pink }, -- (preferred) any special symbol
+        SpecialChar                         { Special }, --  special character in a constant
+        Tag                                 { Special }, --    you can use CTRL-] on this
+        Delimiter                           { Special }, --  character that needs attention
+        SpecialComment                      { Special }, -- special things inside a comment
+        Debug                               { Special }, --    debugging statements
 
         Underlined                          { gui = "underline" }, -- (preferred) text that stands out, HTML links
-        -- Bold                             { gui = "bold" },
-        -- Italic                           { gui = "italic" },
+        Bold                                { gui = "bold" },
+        Italic                              { gui = "italic" },
+
+        -- treesitter syntax from https://github.com/catppuccin/nvim/blob/main/lua/catppuccin/groups/integrations/treesitter.lua
+
+        -- Misc
+        sym"@comment"                       { Comment },
+        sym"@error"                         { Error },
+        sym"@preproc"                       { PreProc },
+        sym"@define"                        { Define },
+        sym"@operator"                      { Operator },
+
+        -- Punctuation
+        sym"@punctuation.delimiter"         { fg = colors.overlay2 },
+        sym"@punctuation.bracket"           { fg = colors.overlay2 },
+        sym"@punctuation.special"           { fg = colors.sky },
+
+        -- Literals
+        sym"@string"                        { String },
+        sym"@string.regex"                  { fg = colors.peach },
+        sym"@string.escape"                 { fg = colors.blue },
+
+        sym"@character"                     { Character },
+        sym"@character.special"             { SpecialChar },
+
+        sym"@boolean"                       { Boolean },
+        sym"@number"                        { Number },
+        sym"@float"                         { Number },
+
+        -- Functions
+        sym"@function"                      { Function },
+        sym"@function.builtin"              { fg = colors.peach },
+        sym"@function.call"                 { sym"@function" },
+        sym"@function.macro"                { fg = colors.teal },
+        sym"@method"                        { fg = colors.peach },
+
+        sym"@method.call"                   { sym"@method" },
+
+        sym"@constructor"                   { fg = colors.sapphire },
+        sym"@parameter"                     { fg = colors.maroon, gui = "italic" },
+
+        -- Keywords
+        sym"@keyword"                       { Keyword },
+        sym"@keyword.function"              { fg = colors.mauve },
+        sym"@keyword.operator"              { fg = colors.mauve },
+        sym"@keyword.return"                { fg = colors.mauve },
+
+        -- JS & derivative
+        sym"@keyword.export"                { fg = colors.sky, gui = "bold" },
+
+        sym"@conditional"                   { Conditional },
+        sym"@repeat"                        { Repeat },
+
+        -- debugging
+        sym"@label"                         { Label },
+        sym"@include"                       { Include },
+        sym"@exception"                     { fg = colors.mauve },
+
+        -- Types
+        sym"@type"                          { Type },
+        sym"@type.builtin"                  { fg = colors.yellow, gui = "italic" },
+        sym"@type.definition"               { sym"@type" },
+        sym"@type.qualifier"                { sym"@type" },
+
+        sym"@storageclass"                  { StorageClass },
+        sym"@attribute"                     { Constant },
+        sym"@field"                         { fg = colors.lavender },
+        sym"@property"                      { fg = colors.lavender },
+
+        -- Identifiers
+        sym"@variable"                      { fg = colors.text },
+        sym"@variable.builtin"              { fg = colors.red },
+
+        sym"@constant"                      { fg = colors.peach },
+        sym"@constant.builtin"              { fg = colors.peach },
+        sym"@constant.macro"                { Macro },
+
+        sym"@namespace"                     { fg = colors.lavender, gui = "italic" },
+        sym"@symbol"                        { fg = colors.flamingo },
+
+        -- Text
+        sym"@text"                          { fg = colors.text },
+        sym"@text.strong"                   { fg = colors.maroon, gui = "bold" },
+        sym"@text.emphasis"                 { fg = colors.maroon, gui = "italic" },
+        sym"@text.underline"                { Underlined },
+        sym"@text.strike"                   { fg = colors.text, gui = "strikethrough" },
+        sym"@text.title"                    { fg = colors.blue, gui = "bold" },
+        sym"@text.literal"                  { fg = colors.teal },
+        sym"@text.uri"                      { fg = colors.rosewater, gui = "italic,underline" },
+        sym"@text.math"                     { fg = colors.blue },
+        sym"@text.environment"              { fg = colors.pink },
+        sym"@text.environment.name"         { fg = colors.blue },
+        sym"@text.reference"                { fg = colors.lavender, gui = "bold" },
+
+
+        sym"@text.todo"                     { fg = colors.base, bg = colors.yellow },
+        sym"@text.todo.checked"             { fg = colors.green },
+        sym"@text.todo.unchecked"           { fg = colors.overlay1 },
+        sym"@text.note"                     { fg = colors.base, bg = colors.blue },
+        sym"@text.warning"                  { fg = colors.base, bg = colors.yellow },
+        sym"@text.danger"                   { fg = colors.base, bg = colors.red },
+
+        sym"@text.diff.add"                 { diffAdded },
+        sym"@text.diff.delete"              { diffRemoved },
+
+        -- Tags
+        sym"@tag"                           { fg = colors.mauve },
+        sym"@tag.attribute"                 { fg = colors.teal, gui = "italic" },
+        sym"@tag.delimiter"                 { fg = colors.sky },
+
+        -- Semantic tokens
+        sym"@class"                         { fg = colors.blue },
+        sym"@struct"                        { fg = colors.blue },
+        sym"@enum"                          { fg = colors.teal },
+        sym"@enumMember"                    { fg = colors.flamingo },
+        sym"@event"                         { fg = colors.flamingo },
+        sym"@interface"                     { fg = colors.flamingo },
+        sym"@modifier"                      { fg = colors.flamingo },
+        sym"@regexp"                        { fg = colors.pink },
+        sym"@typeParamter"                  { fg = colors.yellow },
+        sym"@decorator"                     { fg = colors.flamingo },
+
+        -- Language specific
+        -- css
+        sym"@property.css"                  { fg = colors.lavender },
+        sym"@property.id.css"               { fg = colors.blue },
+        sym"@property.class.css"            { fg = colors.yellow },
+        sym"@type.css"                      { fg = colors.lavender },
+        sym"@type.tag.css"                  { fg = colors.mauve },
+        sym"@string.plain.css"              { fg = colors.peach },
+        sym"@number.css"                    { fg = colors.peach },
+
+        -- toml
+        sym"@property.toml"                 { fg = colors.blue },
+
+        -- json
+        sym"@label.json"                    { fg = colors.blue },
+
+        -- lua
+        sym"@constructor.lua"               { fg = colors.flamingo },
+
+        -- typescript
+        sym"@constructor.typescript"        { fg = colors.lavender },
+
+        -- TSX (Typescript React)
+        sym"@constructor.tsx"               { fg = colors.lavender },
+        sym"@tag.attribute.tsx"             { fg = colors.mauve, gui = "italic" },
+
+        -- cpp
+        sym"@property.cpp"                  { fg = colors.rosewater },
+
+        -- yaml
+        sym"@field.yaml"                    { fg = colors.blue },
+
+        -- ruby
+        sym"@symbol.ruby"                   { fg = colors.flamingo },
+
+        -- PHP
+        sym"@type.qualifier.php"            { fg = colors.pink },
 
         -- ("Ignore", below, may be invisible...)
         -- Ignore         { }, -- (preferred) left blank, hidden  |hl-Ignore|
 
-        Error                               { bg = colors.red, fg = colors.crust }, -- (preferred) any erroneous construct
 
-        Todo                                { fg = colors.yellow,  gui = "bold,italic" }, -- (preferred) anything that needs extra attention; mostly the keywords TODO FIXME and XXX
+        Todo                                { bg = colors.yellow, fg = colors.base,  gui = "bold,italic" }, -- (preferred) anything that needs extra attention; mostly the keywords TODO FIXME and XXX
 
         -- These groups are for the native LSP client and diagnostic system. Some
         -- other LSP clients may use these groups, or use their own. Consult your
@@ -242,18 +406,18 @@ local theme = lush(function(injected_functions)
         DiagnosticWarn                      { fg = colors.peach }, -- Used as the base highlight group. Other LspDiagnostic highlights link to this by default (except Underline)
         DiagnosticInfo                      { fg = colors.text }, -- Used as the base highlight group. Other LspDiagnostic highlights link to this by default (except Underline)
         DiagnosticHint                      { fg = colors.blue }, -- Used as the base highlight group. Other LspDiagnostic highlights link to this by default (except Underline)
-        -- DiagnosticVirtualTextError       { } , -- Used for "Error" diagnostic virtual text.
-        -- DiagnosticVirtualTextWarn        { } , -- Used for "Warn" diagnostic virtual text.
-        -- DiagnosticVirtualTextInfo        { } , -- Used for "Info" diagnostic virtual text.
-        -- DiagnosticVirtualTextHint        { } , -- Used for "Hint" diagnostic virtual text.
+        DiagnosticVirtualTextError          { DiagnosticError, gui = "italic" } , -- Used for "Error" diagnostic virtual text.
+        DiagnosticVirtualTextWarn           { DiagnosticWarn, gui = "italic" } , -- Used for "Warn" diagnostic virtual text.
+        DiagnosticVirtualTextInfo           { DiagnosticInfo, gui = "italic" } , -- Used for "Info" diagnostic virtual text.
+        DiagnosticVirtualTextHint           { DiagnosticHint, gui = "italic" } , -- Used for "Hint" diagnostic virtual text.
         DiagnosticUnderlineError            {  DiagnosticError, gui = "underline" }, -- Used to underline "Error" diagnostics
         DiagnosticUnderlineWarn             {  DiagnosticWarn, gui = "underline" }, -- Used to underline "Warning" diagnostics
         DiagnosticUnderlineInfo             {  DiagnosticInfo, gui = "underline" }, -- Used to underline "Information" diagnostics
         DiagnosticUnderlineHint             {  DiagnosticHint, gui = "underline" }, -- Used to underline "Hint" diagnostics
-        -- DiagnosticFloatingError          { } , -- Used to color "Error" diagnostic messages in diagnostics float. See |vim.diagnostic.open_float()|
-        -- DiagnosticFloatingWarn           { } , -- Used to color "Warn" diagnostic messages in diagnostics float.
-        -- DiagnosticFloatingInfo           { } , -- Used to color "Info" diagnostic messages in diagnostics float.
-        -- DiagnosticFloatingHint           { } , -- Used to color "Hint" diagnostic messages in diagnostics float.
+        DiagnosticFloatingError             { DiagnosticVirtualTextError } , -- Used to color "Error" diagnostic messages in diagnostics float. See |vim.diagnostic.open_float()|
+        DiagnosticFloatingWarn              { DiagnosticVirtualTextWarn } , -- Used to color "Warn" diagnostic messages in diagnostics float.
+        DiagnosticFloatingInfo              { DiagnosticVirtualTextInfo } , -- Used to color "Info" diagnostic messages in diagnostics float.
+        DiagnosticFloatingHint              { DiagnosticVirtualTextHint } , -- Used to color "Hint" diagnostic messages in diagnostics float.
         DiagnosticSignError                 { DiagnosticError, gui = "bold" }, -- Used for "Error" signs in sign column
         DiagnosticSignWarn                  { DiagnosticWarn, gui = "bold" }, -- Used for "Warning" signs in sign column
         DiagnosticSignInfo                  { DiagnosticInfo, gui = "bold" }, -- Used for "Information" signs in sign column
@@ -266,24 +430,25 @@ local theme = lush(function(injected_functions)
 
 
         -- barbar.nvim
+        -- adapted from https://github.com/catppuccin/nvim/blob/main/lua/catppuccin/groups/integrations/barbar.lua
 
-        BufferCurrent                       { fg = colors.blue, bg = colors.bg4 },    -- current buffer
-        BufferCurrentIndex                  { BufferCurrent },    -- current buffer, buffer index
-        BufferCurrentMod                    { BufferCurrent, gui = "bold" },    -- current buffer, when modified
-        BufferCurrentSign                   { BufferCurrent },    -- current buffer, separator between buffers
-        BufferCurrentTarget                 { BufferCurrent },    -- current buffer, letter in buffer-picking mode
-        BufferVisible                       { fg = colors.green, bg = colors.bg4 },    -- buffer visible but not current
-        BufferVisibleIndex                  { BufferVisible },
-        BufferVisibleMod                    { BufferVisible, gui = "bold" },
-        BufferVisibleSign                   { BufferVisible },
-        BufferVisibleTarget                 { BufferVisible },
-        BufferInactive                      { fg = colors.lavender, bg = colors.bg },    -- buffer invisible and not current
-        BufferInactiveIndex                 { BufferInactive },
-        BufferInactiveMod                   { BufferInactive, gui = "bold" },
-        BufferInactiveSign                  { BufferInactive },
-        BufferInactiveTarget                { BufferInactive },
-        BufferTabpages                      { bg = colors.bg },    -- tabpage indicator
-        BufferTabpageFill                   { bg = colors.bg },    -- filler after the buffer section
+        BufferCurrent                       { bg = colors.surface2, fg = colors.text },    -- current buffer
+        BufferCurrentIndex                  { bg = colors.surface2, fg = colors.blue },    -- current buffer, buffer index
+        BufferCurrentMod                    { bg = colors.surface2, fg = colors.teal, gui = "bold" },    -- current buffer, when modified
+        BufferCurrentSign                   { bg = colors.surface2, fg = colors.blue },    -- current buffer, separator between buffers
+        BufferCurrentTarget                 { bg = colors.surface2, fg = colors.red },    -- current buffer, letter in buffer-picking mode
+        BufferVisible                       { bg = colors.surface1, fg = colors.text },    -- buffer visible but not current
+        BufferVisibleIndex                  { bg = colors.surface1, fg = colors.blue },
+        BufferVisibleMod                    { bg = colors.surface1, fg = colors.teal, gui = "bold" },
+        BufferVisibleSign                   { bg = colors.surface1, fg = colors.blue },
+        BufferVisibleTarget                 { bg = colors.surface1, fg = colors.red },
+        BufferInactive                      { bg = colors.surface1, fg = colors.text },    -- buffer invisible and not current
+        BufferInactiveIndex                 { bg = colors.surface1, fg = colors.text },
+        BufferInactiveMod                   { bg = colors.surface1, fg = colors.teal, gui = "bold" },
+        BufferInactiveSign                  { bg = colors.surface1, fg = colors.blue },
+        BufferInactiveTarget                { bg = colors.surface1, fg = colors.red },
+        BufferTabpages                      {  },    -- tabpage indicator
+        BufferTabpageFill                   {  },    -- filler after the buffer section
         -- BufferOffset                     { },    -- offset section, created with set_offset()
 
         -- indent-blankline.nvim
@@ -306,12 +471,95 @@ local theme = lush(function(injected_functions)
         HeirlineGitRemove                   { fg = colors.red },
         HeirlineGitChange                   { fg = colors.yellow },
 
+        -- from https://github.com/catppuccin/nvim/blob/main/lua/catppuccin/groups/integrations/notify.lua
+        NotifyERRORBorder                   { fg = colors.red },
+        NotifyERRORIcon                     { fg = colors.red },
+        NotifyERRORTitle                    { fg = colors.red, gui = "italic" },
+        NotifyWARNBorder                    { fg = colors.yellow },
+        NotifyWARNIcon                      { fg = colors.yellow },
+        NotifyWARNTitle                     { fg = colors.yellow, gui = "italic" },
+        NotifyINFOBorder                    { fg = colors.blue },
+        NotifyINFOIcon                      { fg = colors.blue },
+        NotifyINFOTitle                     { fg = colors.blue, gui = "italic" },
+        NotifyDEBUGBorder                   { fg = colors.peach },
+        NotifyDEBUGIcon                     { fg = colors.peach },
+        NotifyDEBUGTitle                    { fg = colors.peach, gui = "italic" },
+        NotifyTRACEBorder                   { fg = colors.rosewater },
+        NotifyTRACEIcon                     { fg = colors.rosewater },
+        NotifyTRACETitle                    { fg = colors.rosewater, gui = "italic" },
         NotifyBackground                    { bg = colors.crust },
+
+        -- from https://github.com/catppuccin/nvim/blob/main/lua/catppuccin/groups/integrations/noice.lua
+        NoiceCmdline                        { fg = colors.text },
+        NoiceCmdlineIcon                    { fg = colors.sky },
+        NoiceCmdlineIconSearch              { fg = colors.yellow },
+        NoiceCmdlinePopup                   { fg = colors.text },
+        NoiceCmdlinePopupBorder             { fg = colors.lavender },
+        NoiceCmdlinePopupBorderSearch       { fg = colors.yellow },
+        NoiceConfirm                        { fg = colors.text },
+        NoiceConfirmBorder                  { fg = colors.blue },
+        NoiceCursor                         { fg = colors.text },
+        NoiceMini                           { fg = colors.text },
+        NoicePopup                          { fg = colors.text },
+        NoicePopupBorder                    { FloatBorder },
+        NoicePopupmenu                      { Pmenu },
+        NoicePopupmenuBorder                { FloatBorder },
+        NoicePopupmenuMatch                 { Special },
+        NoicePopupmenuSelected              { PmenuSel },
+        NoiceScrollbar                      { PmenuSbar },
+        NoiceScrollbarThumb                 { PmenuThumb },
+        NoiceSplit                          { fg = colors.text, bg = Normal.bg },
+        NoiceSplitBorder                    { FloatBorder },
+        NoiceVirtualText                    { DiagnosticVirtualTextInfo },
 
         -- Asciidoctor
         asciidocQuotedMonospaced2           { fg = colors.blue },
         asciidocQuotedBold                  { fg = colors.text, gui = "bold" },
         asciidocQuotedUnconstrainedBold     { asciidocQuotedBold },
+
+        -- Cmp (from https://github.com/catppuccin/nvim/blob/main/lua/catppuccin/groups/integrations/cmp.lua)
+        CmpItemAbbr                         { fg = colors.overlay2 },
+        CmpItemAbbrDeprecated               { fg = colors.overlay0, gui = "strikethrough" },
+        CmpItemKind                         { fg = colors.blue },
+        CmpItemMenu                         { fg = colors.text },
+        CmpItemAbbrMatch                    { fg = colors.text },
+        CmpItemAbbrMatchFuzzy               { fg = colors.text },
+
+        CmpItemKindSnippet                  { fg = colors.mauve },
+        CmpItemKindKeyword                  { fg = colors.red },
+        CmpItemKindColor                    { fg = colors.red },
+        CmpItemKindReference                { fg = colors.red },
+        CmpItemKindEnumMember               { fg = colors.red },
+        CmpItemKindText                     { fg = colors.teal },
+        CmpItemKindMethod                   { fg = colors.blue },
+        CmpItemKindConstructor              { fg = colors.blue },
+        CmpItemKindFunction                 { fg = colors.blue },
+        CmpItemKindFolder                   { fg = colors.blue },
+        CmpItemKindModule                   { fg = colors.blue },
+        CmpItemKindFile                     { fg = colors.blue },
+        CmpItemKindStruct                   { fg = colors.blue },
+        CmpItemKindEvent                    { fg = colors.blue },
+        CmpItemKindOperator                 { fg = colors.blue },
+        CmpItemKindTypeParameter            { fg = colors.blue },
+        CmpItemKindConstant                 { fg = colors.peach },
+        CmpItemKindValue                    { fg = colors.peach },
+        CmpItemKindField                    { fg = colors.green },
+        CmpItemKindProperty                 { fg = colors.green },
+        CmpItemKindEnum                     { fg = colors.green },
+        CmpItemKindUnit                     { fg = colors.green },
+        CmpItemKindClass                    { fg = colors.yellow },
+        CmpItemKindInterface                { fg = colors.yellow },
+        CmpItemKindVariable                 { fg = colors.flamingo },
+
+        -- from https://github.com/catppuccin/nvim/blob/main/lua/catppuccin/groups/integrations/which_key.lua
+        WhichKey                            { fg = colors.flamingo },
+        WhichKeyGroup                       { fg = colors.blue },
+        WhichKeySeperator                   { fg = colors.overlay0 },
+        WhichKeyDesc                        { fg = colors.pink },
+        WhichKeyBorder                      { fg = colors.blue },
+        WhichKeyValue                       { fg = colors.overlay0 },
+        WhichKeyFloat                       { Normal },
+
 
 
 }
