@@ -14,20 +14,27 @@ lsp_status.config {
 }
 lsp_status.register_progress()
 
-local lsp = require'lsp-zero'
-lsp.preset('system-lsp')
-lsp.setup_servers({
-    'html',
-    'pyright',
-    'bashls',
-    'ansiblels',
-    'dockerls',
-    'yamlls',
-    'rust_analyzer'
-})
+vim.diagnostic.config{
+    signs = true,
+    underline = true,
+    update_in_insert = true
+}
+
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+local lspc = require'lspconfig'
+
+local servers = { 'html', 'pyright', 'bashls', 'ansiblels', 'dockerls', 'yamlls', 'rust_analyzer' }
+
+-- basic settings for all servers
+for _, lsp in ipairs(servers) do
+    lspc[lsp].setup {
+        capabilities = capabilities,
+    }
+end
 
 -- language specific stuff
-lsp.configure('texlab', {
+lspc.texlab.setup {
+    capabilities = capabilities,
     filetypes = { 'tex', 'bib' },
     settings = {
         latex = {
@@ -40,9 +47,10 @@ lsp.configure('texlab', {
     texlab = {
         latexFormatter = 'latexindent'
     },
-})
+}
 
-lsp.configure('ccls', {
+lspc.ccls.setup {
+    capabilities = capabilities,
     init_options = {
         --                compilationDatabaseDirectory = 'build',
         index = {
@@ -50,8 +58,11 @@ lsp.configure('ccls', {
         },
         filetypes = { 'c', 'cpp' }
     },
-})
-lsp.configure('sumneko_lua', {
+
+}
+
+lspc.sumneko_lua.setup {
+    capabilities = capabilities,
     settings = {
         Lua = {
             runtime = {
@@ -65,13 +76,17 @@ lsp.configure('sumneko_lua', {
             workspace = {
                 -- Make the server aware of Neovim runtime files
                 library = vim.api.nvim_get_runtime_file("", true),
+                -- stop asking for luassert
+                checkThirdParty = false
             },
             telemetry = {
                 enable = false
             },
         },
     },
-})
+
+}
+
 -- lsp.setup_nvim_cmp({
 --         sources = {
 --                 name = 'buffer',
@@ -80,7 +95,9 @@ lsp.configure('sumneko_lua', {
 --                 }
 --         }
 -- })
-lsp.setup()
+
+
+
 
 -- LSP notifications via rcarriga/nvim-notify
 -- from https://github.com/rcarriga/nvim-notify/wiki/Usage-Recipes
@@ -167,4 +184,9 @@ vim.lsp.handlers["$/progress"] = function(_, result, ctx)
     end
 end
 
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+    local hl = "DiagnosticSign" .. type
+    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
 
