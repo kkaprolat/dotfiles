@@ -1,63 +1,169 @@
-return require('packer').startup(function(use)
-    use 'wbthomason/packer.nvim'
-    use 'scrooloose/nerdcommenter'
-    use { 'kyazdani42/nvim-web-devicons',
+return {
+    'scrooloose/nerdcommenter',
+    {
+        'kyazdani42/nvim-web-devicons',
         config = function()
             require'nvim-web-devicons'.setup {
                 default = true;
             }
         end
-    }
-    use { 'rebelot/heirline.nvim',
-        requires = {
+    },
+    {
+        'rebelot/heirline.nvim',
+        dependencies = {
             'nvim-lua/lsp-status.nvim',
-        }
-    }
-    use { 'kylechui/nvim-surround',
-        tag = "*",
+            'rktjmp/lush.nvim', -- color schemes
+        },
+    },
+    {
+        'kylechui/nvim-surround',
+        event = "VeryLazy",
+        version = '*',
         config = function()
-            require'nvim-surround'.setup({})
+            require'nvim-surround'.setup{}
         end
-    }
-    use 'vimwiki/vimwiki'
-    use { 'nvim-telescope/telescope.nvim',
-        requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}, {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'}}
-    }
-    use { 'lewis6991/gitsigns.nvim',
-        config = function()
-            require'gitsigns'.setup()
-        end
-    }
-    use { 'windwp/nvim-autopairs',
+    },
+    'vimwiki/vimwiki',
+    {
+        'nvim-telescope/telescope.nvim',
+        event = "VeryLazy",
+        dependencies = {
+            'nvim-lua/popup.nvim',
+            'nvim-lua/plenary.nvim',
+            'nvim-telescope/telescope-fzf-native.nvim',
+        },
+        build = 'make'
+    },
+    {
+        'lewis6991/gitsigns.nvim',
+        config = true
+    },
+    {
+        'windwp/nvim-autopairs',
+        event = "VeryLazy",
         config = function()
             require'nvim-autopairs'.setup{}
-            require'nvim-autopairs.completion.cmp'
+            local cmp_autopairs = require'nvim-autopairs.completion.cmp'
+            local cmp = require'cmp'
+            cmp.event:on(
+            'confirm_done',
+            cmp_autopairs.on_confirm_done()
+            )
         end
-    }
-    -- languages
-    use { 'VonHeikemen/lsp-zero.nvim',
-        requires = {
-            -- LSP Support
-            {'neovim/nvim-lspconfig'},
-
-            -- Autocompletion
-            {'hrsh7th/nvim-cmp'},
-            {'hrsh7th/cmp-buffer'},
-            {'hrsh7th/cmp-path'},
-            {'saadparwaiz1/cmp_luasnip'},
-            {'hrsh7th/cmp-nvim-lsp'},
-            {'hrsh7th/cmp-nvim-lua'},
-
-            -- Snippets
-            {'L3MON4D3/LuaSnip'},
-            {'rafamadriz/friendly-snippets'},
-        }
-    }
-    use { 'nvim-treesitter/nvim-treesitter',
-        run = ':TSUpdate',
+    },
+    -- LSP
+    -- LSP Support
+    'neovim/nvim-lspconfig',
+    -- Autocompletion
+    {
+        'hrsh7th/nvim-cmp',
         config = function()
-            require'nvim-treesitter.configs'.setup {
-                ensure_installed = { "c", "javascript", "python", "bash", "json", "lua", "cpp", "vim", "regex", "markdown", "markdown_inline" },
+            local cmp = require'cmp'
+            local luasnip = require'luasnip'
+
+            local has_words_before = function()
+                unpack = unpack or table.unpack
+                local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+                return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+            end
+
+            cmp.setup {
+                snippet = {
+                    expand = function(args)
+                        luasnip.lsp_expand(args.body)
+                    end,
+                },
+                sources = {
+                    { name = 'nvim_lsp' },
+                    { name = 'luasnip' },
+                    { name = 'buffer' },
+                    { name = 'path' },
+                },
+                mapping = cmp.mapping.preset.insert{
+                    ['<C-Space>'] = cmp.mapping.complete(),
+                    ['<CR>'] = cmp.mapping.confirm{ select = false },
+                    -- Super-Tab like mappings from https://github.com/hrsh7th/nvim-cmp/wiki/Example-mappings#luasnip
+                    ['<Tab>'] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item()
+                        elseif luasnip.expand_or_jumpable() then
+                            luasnip.expand_or_jump()
+                        elseif has_words_before() then
+                            cmp.complete()
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+                    ['<S-Tab'] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item()
+                        elseif luasnip.jumpable(-1) then
+                            luasnip.jump(-1)
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" })
+                },
+                formatting = {
+                    format = function (entry, vim_item)
+                        if vim.tbl_contains({ 'path' }, entry.source.name) then
+                            local icon, hl_group = require'nvim-web-devicons'.get_icon(entry:get_completion_item().label)
+                            if icon then
+                                vim_item.kind = icon
+                                vim_item.kind_hl_group = hl_group
+                                return vim_item
+                            end
+                        end
+                        return require'lspkind'.cmp_format{
+                            mode = 'symbol_text',
+                            preset = 'codicons',
+                            menu = ({
+                                buffer = "[Buffer]",
+                                nvim_lsp = "[LSP]",
+                                luasnip = "[LuaSnip]",
+                                nvim_lua = "[Lua]",
+                                latex_symbols = "[LaTeX]",
+                            })
+                        }(entry, vim_item)
+                    end
+                }
+            }
+        end,
+        dependencies = {
+            'hrsh7th/cmp-buffer',
+            'hrsh7th/cmp-path',
+            'hrsh7th/cmp-nvim-lsp',
+            'hrsh7th/cmp-nvim-lua',
+            'onsails/lspkind.nvim',
+            'kyazdani42/nvim-web-devicons',
+            'saadparwaiz1/cmp_luasnip',
+        }
+    },
+
+    -- Snippets
+    'L3MON4D3/LuaSnip',
+    'rafamadriz/friendly-snippets',
+    {
+        'nvim-treesitter/nvim-treesitter',
+        build = ':TSUpdate',
+        event = "BufReadPost",
+        dependencies = {
+            'nvim-treesitter/playground'
+        },
+        opts = {
+                ensure_installed = {
+                    'bash',
+                    'c',
+                    'cpp',
+                    'javascript',
+                    'json',
+                    'lua',
+                    'markdown',
+                    'markdown_inline',
+                    'python',
+                    'regex',
+                    'vim',
+                },
                 highlight = {
                     enable = true,
                 },
@@ -65,32 +171,46 @@ return require('packer').startup(function(use)
                     enable = true,
                 },
             }
-        end
-    }
-    use { 'lervag/vimtex', -- LaTeX
+    },
+    {
+        'lervag/vimtex', -- LaTeX
+        ft = {"tex", "bib"},
         config = function()
             vim.g.vimtex_view_method = 'zathura'
             vim.g.vimtex_compiler_progname = 'nvr'
         end
-    }
-    use 'rktjmp/lush.nvim' -- for color schemes
-    use { 'romgrk/barbar.nvim',
-        requires = {'kyazdani42/nvim-web-devicons'}
-    }
-    use { 'ggandor/leap.nvim',
+    },
+    {
+        'rktjmp/lush.nvim', -- color schemes
+        lazy = false, -- load it during startup
+        priority = 1000, -- load before other start plugins
+        config = function()
+            require'lush'(require'lush_theme.my_theme')
+        end
+    },
+    {
+        'romgrk/barbar.nvim',
+        dependencies = {
+            'kyazdani42/nvim-web-devicons'
+        }
+    },
+    {
+        'ggandor/leap.nvim',
+        event = "VeryLazy",
         config = function()
             local function leap_all_windows()
                 local focusable_windows_on_tabpage = vim.tbl_filter(
-                    function (win) return vim.api.nvim_win_get_config(win).focusable end,
-                    vim.api.nvim_tabpage_list_wins(0)
+                function (win) return vim.api.nvim_win_get_config(win).focusable end,
+                vim.api.nvim_tabpage_list_wins(0)
                 )
                 require'leap'.leap { target_windows = focusable_windows_on_tabpage }
             end
             vim.keymap.set('n', 's', leap_all_windows, { silent = true })
         end
-    }
-
-    use { 'folke/which-key.nvim',
+    },
+    {
+        'folke/which-key.nvim',
+        event = "VeryLazy",
         config = function()
             local wk = require'which-key'
 
@@ -137,7 +257,7 @@ return require('packer').startup(function(use)
                 },
             }
 
-            local normal_mappings =  {
+            local normal_mappings = {
                 [']'] = {
                     [']'] = 'next [sub*]section',
                     m = 'next environment',
@@ -160,59 +280,63 @@ return require('packer').startup(function(use)
                 ignore_missing = false
             }
         end
-    }
-    use { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
+    },
+    {
+        'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
         config = function()
             require'lsp_lines'.setup()
+            vim.diagnostic.config{
+                virtual_text = false,
+            }
         end
-    }
-    use 'lewis6991/impatient.nvim'
-    use {
+    },
+    {
         'folke/noice.nvim',
-        config = function()
-            require'noice'.setup({
-                lsp = {
-                    -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-                    override = {
-                        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-                        ["vim.lsp.util.stylize_markdown"] = true,
-                        ["cmp.entry.get_documentation"] = true,
-                    },
-                    progress = {
-                        enabled = false,
-                    },
+        config = true,
+        opts = {
+            lsp = {
+                -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+                override = {
+                    ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+                    ['vim.lsp.util.stylize_markdown'] = true,
+                    ['cmp.entry.get_documentation'] = true,
                 },
-                -- show @recording messages
-                routes = {
-                    {
-                        view = "notify",
-                        filter = { event = "msg_showmode" },
-                    },
+                progress = {
+                    enabled = false,
                 },
-                cmdline = {
-                    format = {
-                        cmdline = { pattern = "^:", icon = ":", lang = "vim" },
-                        search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex"},
-                        search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex"},
-                        filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
-                        lua = { pattern = "^:%s*lua%s+", icon = "", lang = "lua" },
-                        help = { pattern = "^:%s*he?l?p?%s+", icon = "", lang = "bash" },
-                        search_replace = { icon = "", kind = "search", title = " Search and Replace ", pattern = "^:%s*%%s/", lang = "regex", conceal = false },
-                    },
+            },
+            -- show @recording messages
+            routes = {
+                {
+                    view = "notify",
+                    filter = { event = "msg_showmode" },
                 },
-                messages = {
-                    view_search = false
-                }
+            },
+            cmdline = {
+                format = {
+                    cmdline = { pattern = "^:", icon = ":", lang = "vim" },
+                    search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex"},
+                    search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex"},
+                    filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
+                    lua = { pattern = "^:%s*lua%s+", icon = "", lang = "lua" },
+                    help = { pattern = "^:%s*he?l?p?%s+", icon = "", lang = "bash" },
+                    search_replace = { icon = "", kind = "search", title = " Search and Replace ", pattern = "^:%s*%%s/", lang = "regex", conceal = false },
+                },
+            },
+            messages = {
+                view_search = false
+            }
 
-        })
-        end,
-        requires = {
-            'MunifTanjim/nui.nvim'
-        }
-    }
-    use { 'rcarriga/nvim-notify', -- also used for noice.nvim, but not necessary
+        },
+        dependencies = {
+            'MunifTanjim/nui.nvim',
+            'rcarriga/nvim-notify'
+        },
+    },
+    {
+        'rcarriga/nvim-notify', -- also used for noice.nvim
         config = function()
-            require'notify'.setup({
+            require'notify'.setup{
                 fps = 60,
                 icons = {
                     DEBUG = " ",
@@ -227,16 +351,15 @@ return require('packer').startup(function(use)
                 stages = "fade",
                 timeout = 5000,
                 top_down = true
-
-            })
+            }
             vim.notify = require'notify'
         end
-    }
-    use { 'martineausimon/nvim-lilypond-suite',
-        requires = { 'MunifTanjim/nui.nvim' }
-    }
-
-    use {
-        'nvim-treesitter/playground'
-    }
-end)
+    },
+    {
+        'martineausimon/nvim-lilypond-suite',
+        ft = "ly",
+        dependencies = {
+            'MunifTanjim/nui.nvim'
+        }
+    },
+}

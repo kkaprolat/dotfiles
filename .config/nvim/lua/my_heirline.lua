@@ -318,6 +318,18 @@ local Git = {
     },
 }
 
+local Updates = {
+    {
+        condition = require'lazy.status'.has_updates,
+        RightCapStatic(utils.get_highlight('HeirlineGitChange')),
+    },
+    {
+        condition = require'lazy.status'.has_updates,
+        provider = require'lazy.status'.updates,
+        hl = { fg = colors.git_change.fg, bg = colors.git_change.bg }
+    }
+}
+
 
 local SearchResults = {
     condition = function(self)
@@ -360,7 +372,7 @@ local SearchResults = {
 
 local DefaultStatusLine = {
     -- ViMode, FileNameBlock, RightCap, Space, Git, Align, Navic, LspMessages, Space, Diagnostics, Space, RightCap, SearchResults, ScrollBar
-    Space, Space, ViMode, Space, FileNameBlock, Space, Git, Align, Diagnostics, Align, SearchResults, ScrollBar
+    Space, Space, ViMode, Space, FileNameBlock, Space, Git, Space, Updates, Align, Diagnostics, Align, SearchResults, ScrollBar
 }
 
 local StatusLines = {

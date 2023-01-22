@@ -1,21 +1,32 @@
 local fn = vim.fn
 local execute = vim.api.nvim_command
 
--- bootstrap packer.nvim
-local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
-if fn.empty(fn.glob(install_path)) > 0 then
-        fn.system({'git', 'clone', 'https://github.com/wbthomason/packer.nvim', install_path})
-        execute 'packadd packer.nvim'
+-- bootstrap lazy.nvim
+local lazypath = fn.stdpath('data') .. '/lazy/lazy.nvim'
+if not vim.loop.fs_stat(lazypath) then
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable",
+        lazypath
+    })
 end
+vim.opt.rtp:prepend(lazypath)
 
-require'impatient'
-
-require'plugins'
 require'options'
-require'lsp'
 require'keybinds'
+require'lazy'.setup('plugins', {
+    checker = {
+        enabled = true,
+        concurrency = 5,
+        notify = true,
+        frequency = 3600,
+    }
+})
 
-require'lush'(require'lush_theme.my_theme')
+require'lsp'
 
 -- heirline
 require'my_heirline'
