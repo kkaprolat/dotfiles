@@ -17,17 +17,18 @@ Name=MyProfile
 Parent=FALLBACK/
 ShowTerminalSizeHint=false
 TerminalCenter=true
-TerminalMargin=0
+TerminalMargin=2
 
 [Keyboard]
 KeyBindings=default
 
 [Scrolling]
 HistoryMode=2
+ScrollBarPosition=2
 
 [Terminal Features]
 BellMode=2
 BidiLineLTR=false
-BlinkingCursorEnabled=false
+BlinkingCursorEnabled=true
 UrlHintsModifiers=67108864
 VerticalLine=false
