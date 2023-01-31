@@ -32,7 +32,20 @@ return {
             'nvim-lua/plenary.nvim',
             'nvim-telescope/telescope-fzf-native.nvim',
         },
-        build = 'make'
+        build = 'make',
+        config = function()
+            local actions = require'telescope.actions'
+            require'telescope'.setup{
+                defaults = {
+                    mappings = {
+                        i = {
+                            ["<esc>"] = actions.close
+                        }
+                    }
+                }
+            }
+        end
+
     },
     {
         'lewis6991/gitsigns.nvim',
