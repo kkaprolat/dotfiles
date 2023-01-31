@@ -86,12 +86,25 @@ return {
                         luasnip.lsp_expand(args.body)
                     end,
                 },
-                sources = {
+                sources = cmp.config.sources(
+                {
                     { name = 'nvim_lsp' },
-                    { name = 'luasnip' },
-                    { name = 'buffer' },
-                    { name = 'path' },
                 },
+                {
+                    { name = 'luasnip' }
+                },
+                {
+                    {
+                        name = 'buffer',
+                        option = {
+                            keyword_pattern = [[\k\+]]
+                        },
+                    }
+                },
+                {
+                    { name = 'path' }
+                }
+                ),
                 mapping = cmp.mapping.preset.insert{
                     ['<C-Space>'] = cmp.mapping.complete(),
                     ['<CR>'] = cmp.mapping.confirm{ select = false },
