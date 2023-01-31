@@ -30,82 +30,119 @@ end
 local Align = { provider = "%=" }
 local Space = { provider = " " }
 local RightCapColored = {
-    provider = "┃ ",
+    provider = "",
     hl = function(self)
-        return { fg = self:mode_color().fg, bg = self:mode_color().bg, bold = true }
+        return { fg = self:mode_color().bg, bg = self:mode_color().fg, bold = true }
     end,
 }
 local function RightCapStatic(color)
     return {
-        provider = "┃ ",
-        hl = { fg = color.fg, bg = color.bg, bold = true }
+        provider = "",
+        hl = { fg = color.bg, bg = color.fg, bold = true }
+    }
+end
+local LeftCapColored = {
+    provider = "",
+    hl = function(self)
+        return { fg = self:mode_color().bg, bg = self:mode_color().fg, bold = true }
+    end,
+}
+local function LeftCapStatic(color)
+    return {
+        provider = "",
+        hl = { fg = color.bg, bg = color.fg, bold = true }
     }
 end
 
+local function SpaceStatic(color)
+    return {
+        provider = " ",
+        hl = { fg = color.fg, bg = color.bg, bold = true }
+    }
+end
+local ColoredSpace = {
+    provider = " ",
+    hl = function(self)
+        return { bg = self:mode_color().bg }
+    end
+}
+
 -- left
 
-local ViMode = { RightCapColored, {
+local FileFlags = {
+    { -- edited
+        provider = function() if vim.bo.modified then return "" else return "" end end,
+    }, { -- modifiable
+        provider = function() if (not vim.bo.modifiable) or vim.bo.readonly then return "" end end,
+    }
+}
+
+local ViMode = { RightCapColored,
+FileFlags,
+{
     -- Now we define some dictionaries to map the output of mode() to the
     -- corresponding string. We can put these into `static` to compute
     -- them at initialization time.
     static = {
         mode_names = { -- change the strings if you like it verbose
-            n = "NORMAL",
-            no = "NORMAL-OPERATOR?",
-            nov = "NORMAL-OPERATOR?",
-            noV = "NORMAL-OPERATOR?",
-            ["no\22"] = "NORMAL-OPERATOR?",
-            niI = "NORMAL (INSERT)",
-            niR = "NORMAL (REPLACE)",
-            niV = "NORMAL (VIRT-REPLACE)",
-            nt = "NORMAL (TERM)",
-            v = "VISUAL",
-            vs = "Vs",
-            V = "VISUAL (LINE)",
-            Vs = "VISUAL (LINE)",
-            ["\22"] = "VISUAL (BLOCK)",
-            ["\22s"] = "VISUAL (BLOCK)",
-            s = "SELECT",
-            S = "SELECT (LINE)",
-            ["\19"] = "SELECT (BLOCK)",
-            i = "INSERT",
-            ic = "INSERT (COMPL)",
-            ix = "INSERT (X-COMPL)",
-            R = "REPLACE",
-            Rc = "REPLACE (COMPL)",
-            Rx = "REPLACE (X-COMPL)",
-            Rv = "REPLACE (VIRTUAL)",
-            Rvc = "REPLACE (VIRTUAL-COMPL)",
-            Rvx = "REPLACE (VIRTUAL-X-COMPL)",
-            c = "COMMAND",
-            cv = "EX",
-            r = "...",
-            rm = "+++",
-            ["r?"] = "?",
-            ["!"] = "!",
-            t = "T",
-        },
+        n = "",
+        no = "NORMAL-OPERATOR?",
+        nov = "NORMAL-OPERATOR?",
+        noV = "NORMAL-OPERATOR?",
+        ["no\22"] = "NORMAL-OPERATOR?",
+        niI = "NORMAL (INSERT)",
+        niR = "NORMAL (REPLACE)",
+        niV = "NORMAL (VIRT-REPLACE)",
+        nt = "NORMAL (TERM)",
+        v = "VISUAL",
+        vs = "Vs",
+        V = "VISUAL (LINE)",
+        Vs = "VISUAL (LINE)",
+        ["\22"] = "VISUAL (BLOCK)",
+        ["\22s"] = "VISUAL (BLOCK)",
+        s = "SELECT",
+        S = "SELECT (LINE)",
+        ["\19"] = "SELECT (BLOCK)",
+        i = "INSERT",
+        ic = "INSERT (COMPL)",
+        ix = "INSERT (X-COMPL)",
+        R = "REPLACE",
+        Rc = "REPLACE (COMPL)",
+        Rx = "REPLACE (X-COMPL)",
+        Rv = "REPLACE (VIRTUAL)",
+        Rvc = "REPLACE (VIRTUAL-COMPL)",
+        Rvx = "REPLACE (VIRTUAL-X-COMPL)",
+        c = "COMMAND",
+        cv = "EX",
+        r = "...",
+        rm = "+++",
+        ["r?"] = "?",
+        ["!"] = "!",
+        t = "T",
     },
-    -- We can now access the value of mode() that, by now, would have been
-    -- computed by `init()` and use it to index our strings dictionary.
-    -- note how `static` fields become just regular attributes once the
-    -- component is instantiated.
-    -- To be extra meticulous, we can also add some vim statusline syntax to
-    -- control the padding and make sure our string is always at least 2
-    -- characters long. Plus a nice Icon.
-    provider = function(self)
-        return "%2(" .. self.mode_names[vim.fn.mode(1)] .. " %)"
-    end,
-    -- Same goes for the highlight. Now the background will change according to the current mode.
-    hl = function(self)
-        local color = self:mode_color()
-        return { bg = color.bg, fg = color.fg, bold = true, }
-    end,
-    -- Re-evaluate the component only on ModeChanged event.
-    -- This is not required in any way, but it's there, and it's a small
-    -- performance improvement.
-    update = 'ModeChanged'
-}}
+},
+-- We can now access the value of mode() that, by now, would have been
+-- computed by `init()` and use it to index our strings dictionary.
+-- note how `static` fields become just regular attributes once the
+-- component is instantiated.
+-- To be extra meticulous, we can also add some vim statusline syntax to
+-- control the padding and make sure our string is always at least 2
+-- characters long. Plus a nice Icon.
+provider = function(self)
+    return "%2( ".. self.mode_names[vim.fn.mode(1)] .. " %)"
+end,
+-- Re-evaluate the component only on ModeChanged event.
+-- This is not required in any way, but it's there, and it's a small
+-- performance improvement.
+-- does not work with Noice
+-- update = 'ModeChanged'
+},
+-- Same goes for the highlight. Now the background will change according to the current mode.
+hl = function(self)
+    local color = self:mode_color()
+    return { bg = color.bg, fg = color.fg, bold = true, }
+end,
+}
 
 local FileNameBlock = {
     -- let's first set up some attributes needed by this component and its children
@@ -144,14 +181,6 @@ local FileName = {
     end,
 }
 
-local FileFlags = {
-    { -- edited
-        provider = function() if vim.bo.modified then return "  " else return "   " end end,
-    }, { -- modifiable
-        provider = function() if (not vim.bo.modifiable) or vim.bo.readonly then return " " end end,
-    }
-}
-
 local FileSize = {
     provider = function()
         -- stackoverflow, compute human readable file size
@@ -166,15 +195,20 @@ local FileSize = {
     end,
 }
 
+local Spacer = {
+    provider = " | "
+}
+
 
 -- let's add the children to our FileNameBlock component
 FileNameBlock = utils.insert(
     FileNameBlock,
-    RightCapStatic(colors.white),
+    Spacer,
     FileIcon,
     FileName,
-    FileFlags, -- A small optimisation, since their parent does nothing
+    Spacer,
     FileSize,
+    LeftCapStatic(colors.white),
     { provider = '%<' }-- this means that the statusline is cut here when there's not enough space
 )
 
@@ -182,9 +216,10 @@ FileNameBlock = utils.insert(
 local ScrollBar = {
     RightCapStatic(colors.orange),
     {
-        provider = " %P - %l:%c ",
+        provider = " %P | %l:%c ",
         hl = colors.orange
-    }
+    },
+    LeftCapStatic(colors.orange),
 }
 
 local LspMessages = {
@@ -218,57 +253,57 @@ local Diagnostics = {
             return self.errors > 0
         end,
 
-        RightCapStatic(utils.get_highlight('DiagnosticError')),
+        RightCapStatic(utils.get_highlight('HeirlineError')),
         {
             provider = function(self)
                 -- 0 is just another output, we can decide to print it or not!
                 return self.errors > 0 and (self.error_icon .. self.errors .. " ")
             end,
-            hl = "DiagnosticError"
+            hl = "HeirlineError"
         },
-        Space
+        LeftCapStatic(utils.get_highlight('HeirlineError')),
     },
     {
         condition = function(self)
             return self.warnings > 0
         end,
 
-        RightCapStatic(utils.get_highlight('DiagnosticWarn')),
+        RightCapStatic(utils.get_highlight('HeirlineWarn')),
         {
             provider = function(self)
                 return self.warnings > 0 and (self.warn_icon .. self.warnings .. " ")
             end,
-            hl = "DiagnosticWarn"
+            hl = "HeirlineWarn"
         },
-        Space
+        LeftCapStatic(utils.get_highlight('HeirlineWarn')),
     },
     {
         condition = function(self)
             return self.info > 0
         end,
 
-        RightCapStatic(utils.get_highlight('DiagnosticInfo')),
+        RightCapStatic(utils.get_highlight('HeirlineInfo')),
         {
             provider = function(self)
                 return self.info > 0 and (self.info_icon .. self.info .. " ")
             end,
-            hl = "DiagnosticInfo"
+            hl = "HeirlineInfo"
         },
-        Space
+        LeftCapStatic(utils.get_highlight('HeirlineInfo')),
     },
     {
         condition = function(self)
             return self.hints > 0
         end,
 
-        RightCapStatic(utils.get_highlight('DiagnosticHint')),
+        RightCapStatic(utils.get_highlight('HeirlineHint')),
         {
             provider = function(self)
                 return self.hints > 0 and (self.hint_icon .. self.hints .. " ")
             end,
-            hl = "DiagnosticHint"
+            hl = "HeirlineHint"
         },
-        Space
+        LeftCapStatic(utils.get_highlight('HeirlineHint')),
     },
 }
 
@@ -327,7 +362,11 @@ local Updates = {
         condition = require'lazy.status'.has_updates,
         provider = require'lazy.status'.updates,
         hl = { fg = colors.git_change.fg, bg = colors.git_change.bg }
-    }
+    },
+    {
+        condition = require'lazy.status'.has_updates,
+        LeftCapStatic(utils.get_highlight('HeirlineGitChange')),
+    },
 }
 
 
@@ -364,7 +403,8 @@ local SearchResults = {
                 })
             end,
             hl = colors.green
-        }
+        },
+        LeftCapStatic(colors.green),
     }
 }
 
@@ -372,7 +412,7 @@ local SearchResults = {
 
 local DefaultStatusLine = {
     -- ViMode, FileNameBlock, RightCap, Space, Git, Align, Navic, LspMessages, Space, Diagnostics, Space, RightCap, SearchResults, ScrollBar
-    Space, Space, ViMode, Space, FileNameBlock, Space, Git, Space, Updates, Align, Diagnostics, Align, SearchResults, ScrollBar
+    ViMode, FileNameBlock, Space, Git, Space, Updates, Align, Diagnostics, Align, SearchResults, Space, ScrollBar
 }
 
 local StatusLines = {
