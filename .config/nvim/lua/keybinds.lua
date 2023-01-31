@@ -25,3 +25,5 @@ local check_back_space = function()
     end
 end
 
+-- Color Theme
+-- map('n', '<leader>cc', "<cmd>lua require'lush_theme.my_theme'", nr)

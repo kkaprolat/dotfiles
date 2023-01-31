@@ -45,10 +45,11 @@
 local lush = require('lush')
 local hsl = lush.hsl
 local colors = {}
+local light = false
 
--- colors based on Catpuccin Mocha
+-- colors based on Catppuccin Mocha
 
-colors = {
+local mocha = {
     rosewater =     hsl(10,     56,     91),
     flamingo =      hsl(0,      59,     88),
     pink =          hsl(316,    72,     86),
@@ -76,6 +77,42 @@ colors = {
     mantle =        hsl(240,    21,     12),
     crust =         hsl(240,    23,     9),
 }
+
+-- colors based on Catppuccin Latte
+local latte = {
+    rosewater =     hsl(11,     59,     67),
+    flamingo =      hsl(0,      60,     67),
+    pink =          hsl(316,    73,     69),
+    mauve =         hsl(266,    85,     58),
+    red =           hsl(347,    87,     44),
+    maroon =        hsl(355,    76,     59),
+    peach =         hsl(22,     99,     52),
+    yellow =        hsl(35,     77,     49),
+    green =         hsl(109,    58,     40),
+    teal =          hsl(183,    74,     35),
+    sky =           hsl(197,    97,     46),
+    sapphire =      hsl(189,    70,     42),
+    blue =          hsl(220,    91,     54),
+    lavender =      hsl(231,    97,     72),
+    text =          hsl(234,    16,     35),
+    subtext1 =      hsl(233,    13,     41),
+    subtext0 =      hsl(233,    10,     47),
+    overlay2 =      hsl(232,    10,     53),
+    overlay1 =      hsl(231,    10,     59),
+    overlay0 =      hsl(228,    11,     65),
+    surface2 =      hsl(227,    12,     71),
+    surface1=       hsl(225,    14,     77),
+    surface0 =      hsl(223,    16,     83),
+    base =          hsl(220,    23,     95),
+    mantle =        hsl(220,    22,     92),
+    crust =         hsl(220,    21,     89),
+}
+
+if light then
+    colors = latte
+else
+    colors = mocha
+end
 
 -- LSP/Linters mistakenly show `undefined global` errors in the spec, they may
 -- support an annotation like the following. Consult your server documentation.
@@ -153,7 +190,7 @@ local theme = lush(function(injected_functions)
         FloatBorder                         { fg = colors.blue },
         -- NormalNC                         { }, -- normal text in non-current windows
         Pmenu                               { NormalFloat }, -- Popup menu: normal item.
-        PmenuSel                            { bg = colors.surface1, gui = 'bold'}, -- Popup menu: selected item.
+        PmenuSel                            { bg = colors.surface2, gui = 'bold'}, -- Popup menu: selected item.
         PmenuSbar                           { fg = colors.surface1 }, -- Popup menu: scrollbar.
         PmenuThumb                          { bg = colors.overlay0 }, -- Popup menu: Thumb of the scrollbar.
         Question                            { fg = colors.green, gui = "bold,italic" }, -- |hit-enter| prompt and yes/no questions
@@ -402,10 +439,10 @@ local theme = lush(function(injected_functions)
 
         -- See :h diagnostic-highlights, some groups may not be listed, submit a PR fix to lush-template!
         --
-        DiagnosticError                     { fg = colors.red }, -- Used as the base highlight group. Other LspDiagnostic highlights link to this by default (except Underline)
-        DiagnosticWarn                      { fg = colors.peach }, -- Used as the base highlight group. Other LspDiagnostic highlights link to this by default (except Underline)
-        DiagnosticInfo                      { fg = colors.text }, -- Used as the base highlight group. Other LspDiagnostic highlights link to this by default (except Underline)
-        DiagnosticHint                      { fg = colors.blue }, -- Used as the base highlight group. Other LspDiagnostic highlights link to this by default (except Underline)
+        DiagnosticError                     { fg = colors.red, bg = 'NONE' }, -- Used as the base highlight group. Other LspDiagnostic highlights link to this by default (except Underline)
+        DiagnosticWarn                      { fg = colors.peach, bg = 'NONE' }, -- Used as the base highlight group. Other LspDiagnostic highlights link to this by default (except Underline)
+        DiagnosticInfo                      { fg = colors.text, bg = 'NONE' }, -- Used as the base highlight group. Other LspDiagnostic highlights link to this by default (except Underline)
+        DiagnosticHint                      { fg = colors.blue, bg = 'NONE' }, -- Used as the base highlight group. Other LspDiagnostic highlights link to this by default (except Underline)
         DiagnosticVirtualTextError          { DiagnosticError, gui = "italic" } , -- Used for "Error" diagnostic virtual text.
         DiagnosticVirtualTextWarn           { DiagnosticWarn, gui = "italic" } , -- Used for "Warn" diagnostic virtual text.
         DiagnosticVirtualTextInfo           { DiagnosticInfo, gui = "italic" } , -- Used for "Info" diagnostic virtual text.
@@ -458,18 +495,22 @@ local theme = lush(function(injected_functions)
         IndentBlanklineSpaceCharBlankline   { IndentBlankLineChar }, -- highlight of space character on blank lines.
         IndentBlankLineContextChar          { fg = colors.overlay0 }, -- highlight of indent character when base of current context. Only used when g:indent_blankline_show_current_context is active
 
-        Heirline                            { bg = colors.green, fg = colors.red },
-        HeirlineRed                         { fg = colors.red },
-        HeirlineWhite                       { fg = colors.text },
-        HeirlineGreen                       { fg = colors.green },
-        HeirlineBlue                        { fg = colors.blue },
-        HeirlineGray                        { fg = colors.overlay0 },
-        HeirlineOrange                      { fg = colors.peach },
-        HeirlinePurple                      { fg = colors.lavender },
-        HeirlineCyan                        { fg = colors.blue },
-        HeirlineGitAdd                      { fg = colors.green },
-        HeirlineGitRemove                   { fg = colors.red },
-        HeirlineGitChange                   { fg = colors.yellow },
+        Heirline                            { fg = colors.base, bg = colors.green },
+        HeirlineRed                         { fg = colors.base, bg = colors.red },
+        HeirlineWhite                       { fg = colors.base, bg = colors.text },
+        HeirlineGreen                       { fg = colors.base, bg = colors.green },
+        HeirlineBlue                        { fg = colors.base, bg = colors.blue },
+        HeirlineGray                        { fg = colors.base, bg = colors.overlay0 },
+        HeirlineOrange                      { fg = colors.base, bg = colors.peach },
+        HeirlinePurple                      { fg = colors.base, bg = colors.lavender },
+        HeirlineCyan                        { fg = colors.base, bg = colors.blue },
+        HeirlineGitAdd                      { fg = colors.base, bg = colors.green },
+        HeirlineGitRemove                   { fg = colors.base, bg = colors.red },
+        HeirlineGitChange                   { fg = colors.base, bg = colors.yellow },
+        HeirlineError                       { bg = DiagnosticError.fg, fg = colors.base },
+        HeirlineWarn                        { bg = DiagnosticWarn.fg, fg = colors.base },
+        HeirlineInfo                        { bg = DiagnosticInfo.fg, fg = colors.base },
+        HeirlineHint                        { bg = DiagnosticHint.fg, fg = colors.base },
 
         -- from https://github.com/catppuccin/nvim/blob/main/lua/catppuccin/groups/integrations/notify.lua
         NotifyERRORBorder                   { fg = colors.red },
