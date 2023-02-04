@@ -70,11 +70,15 @@ local ColoredSpace = {
 -- left
 
 local FileFlags = {
-    { -- edited
-        provider = function() if vim.bo.modified then return "" else return "" end end,
-    }, { -- modifiable
-        provider = function() if (not vim.bo.modifiable) or vim.bo.readonly then return "" end end,
-    }
+    provider = function ()
+        if vim.bo.modified then
+            return ""
+        end
+        if (not vim.bo.modifiable) or vim.bo.readonly then
+            return ""
+        end
+        return " "
+    end
 }
 
 local ViMode = { RightCapColored,
