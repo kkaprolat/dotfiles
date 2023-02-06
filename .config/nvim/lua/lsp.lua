@@ -23,6 +23,13 @@ vim.diagnostic.config{
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local lspc = require'lspconfig'
 
+-- for folding
+capabilities.textDocument.foldingRange = {
+    dynamicRegistration = false,
+    lineFoldingOnly = true
+}
+require'ufo'.setup()
+
 local servers = { 'html', 'pyright', 'bashls', 'ansiblels', 'dockerls', 'yamlls', 'rust_analyzer' }
 
 -- basic settings for all servers

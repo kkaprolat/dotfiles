@@ -389,4 +389,26 @@ return {
         'MunifTanjim/nui.nvim'
     }
 },
+{
+    'kevinhwang91/nvim-ufo',
+    dependencies = {
+        'kevinhwang91/promise-async',
+    },
+    config = function ()
+        vim.o.foldcolumn = '1' -- '0' is not bad
+        vim.o.foldlevel = 99 -- ufo provider needs a large value
+        vim.o.foldlevelstart = 99
+        vim.o.foldenable = true
+
+        vim.keymap.set('n', 'zR', require'ufo'.openAllFolds)
+        vim.keymap.set('n', 'zM', require'ufo'.closeAllFolds)
+
+        -- nvim lsp as LSP client
+        local capabilities = vim.lsp.protocol.make_client_capabilities()
+        capabilities.textDocument.foldingRange = {
+            dynamicRegistration = false,
+            lineFoldingOnly = true
+        }
+    end
+}
 }
