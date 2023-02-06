@@ -32,32 +32,32 @@ local Space = { provider = " " }
 local RightCapColored = {
     provider = "",
     hl = function(self)
-        return { fg = self:mode_color().bg, bg = self:mode_color().fg, bold = true }
+        return { fg = self:mode_color().bg, bg = 'NONE', bold = true }
     end,
 }
 local function RightCapStatic(color)
     return {
         provider = "",
-        hl = { fg = color.bg, bg = color.fg, bold = true }
+        hl = { fg = color.bg, bg = 'NONE', bold = true }
     }
 end
 local LeftCapColored = {
     provider = "",
     hl = function(self)
-        return { fg = self:mode_color().bg, bg = self:mode_color().fg, bold = true }
+        return { fg = self:mode_color().bg, bg = 'NONE', bold = true }
     end,
 }
 local function LeftCapStatic(color)
     return {
         provider = "",
-        hl = { fg = color.bg, bg = color.fg, bold = true }
+        hl = { fg = color.bg, bg = 'NONE', bold = true }
     }
 end
 
 local function SpaceStatic(color)
     return {
         provider = " ",
-        hl = { fg = color.fg, bg = color.bg, bold = true }
+        hl = { fg = color.fg, bg = 'NONE', bold = true }
     }
 end
 local ColoredSpace = {
