@@ -384,7 +384,7 @@ return {
 },
 {
     'martineausimon/nvim-lilypond-suite',
-    ft = "ly",
+    ft = "lilypond",
     dependencies = {
         'MunifTanjim/nui.nvim'
     }
