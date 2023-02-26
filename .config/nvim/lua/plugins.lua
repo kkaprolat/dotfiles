@@ -26,6 +26,7 @@ return {
     'vimwiki/vimwiki',
     {
         'nvim-telescope/telescope.nvim',
+        branch = '0.1.x',
         event = "VeryLazy",
         dependencies = {
             'nvim-lua/popup.nvim',
@@ -49,7 +50,8 @@ return {
     },
     {
         'lewis6991/gitsigns.nvim',
-        config = true
+        config = true,
+        tag = 'release',
     },
     {
         'windwp/nvim-autopairs',
