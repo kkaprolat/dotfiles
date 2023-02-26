@@ -11,6 +11,7 @@ local colors = {
     purple = utils.get_highlight("HeirlinePurple"),
     cyan = utils.get_highlight("HeirlineCyan"),
     white = utils.get_highlight("HeirlineWhite"),
+    yellow = utils.get_highlight("HeirlineYellow"),
     git_add = utils.get_highlight("HeirlineGitAdd"),
     git_change = utils.get_highlight("HeirlineGitChange"),
     git_remove = utils.get_highlight("HeirlineGitRemove"),
@@ -326,50 +327,47 @@ local Git = {
     },
     {
         provider = function(self)
-            return self.status_dict.head
+            return ' ' .. self.status_dict.head
         end,
-        hl = { fg = colors.white.fg, bg = colors.orange.bg }
+        hl = { fg = colors.white.bg, bg = colors.git_change.bg }
     },
     {
         provider = function(self)
             local count = self.status_dict.added or 0
             return count > 0 and (" +" .. count)
         end,
-        hl = { fg = colors.git_add.fg, bg = colors.orange.bg }
+        hl = { fg = colors.git_add.fg, bg = colors.git_add.bg }
     },
     {
         provider = function(self)
             local count = self.status_dict.removed or 0
             return count > 0 and (" -" .. count)
         end,
-        hl = { fg = colors.git_remove.fg, bg = colors.orange.bg }
+        hl = { fg = colors.git_remove.fg, bg = colors.git_remove.bg }
     },
     {
         provider = function(self)
             local count = self.status_dict.changed or 0
             return count > 0 and (" ~" .. count)
         end,
-        hl = { fg = colors.git_change.fg, bg = colors.orange.bg }
+        hl = { fg = colors.git_change.fg, bg = colors.git_change.bg }
     },
-    {
-        provider = " ",
-        hl = 'HeirlineOrange'
-    },
+    LeftCapStatic({fg = 'NONE', bg = colors.git_change.bg }),
 }
 
 local Updates = {
     {
         condition = require'lazy.status'.has_updates,
-        RightCapStatic(utils.get_highlight('HeirlineGitChange')),
+        RightCapStatic(utils.get_highlight('HeirlineYellow')),
     },
     {
         condition = require'lazy.status'.has_updates,
         provider = require'lazy.status'.updates,
-        hl = { fg = colors.git_change.fg, bg = colors.git_change.bg }
+        hl = { fg = colors.yellow.fg, bg = colors.yellow.bg }
     },
     {
         condition = require'lazy.status'.has_updates,
-        LeftCapStatic(utils.get_highlight('HeirlineGitChange')),
+        LeftCapStatic(utils.get_highlight('HeirlineYellow')),
     },
 }
 
@@ -399,7 +397,7 @@ local SearchResults = {
 
 local DefaultStatusLine = {
     -- ViMode, FileNameBlock, RightCap, Space, Git, Align, Navic, LspMessages, Space, Diagnostics, Space, RightCap, SearchResults, ScrollBar
-    ViMode, FileNameBlock, Space, Git, Space, Updates, Align, Diagnostics, Align, SearchResults, Space, ScrollBar
+    ViMode, FileNameBlock, Space, Updates, Space, Git, Align, Diagnostics, Align, SearchResults, Space, ScrollBar
 }
 
 local StatusLines = {
