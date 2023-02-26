@@ -27,3 +27,7 @@ end
 
 -- Color Theme
 -- map('n', '<leader>cc', "<cmd>lua require'lush_theme.my_theme'", nr)
+
+-- move lines and fix indentation
+map('n', '<A-j>', '<cmd>m .+1<cr>==', nr)
+map('n', '<A-k>', '<cmd>m .-2<cr>==', nr)
