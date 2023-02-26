@@ -68,7 +68,7 @@ lspc.ccls.setup {
 
 }
 
-lspc.sumneko_lua.setup {
+lspc.lua_ls.setup {
     capabilities = capabilities,
     settings = {
         Lua = {
