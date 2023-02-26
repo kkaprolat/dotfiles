@@ -192,6 +192,7 @@ return {
             'cpp',
             'javascript',
             'json',
+            'latex',
             'lua',
             'markdown',
             'markdown_inline',
@@ -199,6 +200,7 @@ return {
             'regex',
             'vim',
         },
+        auto_install = true,
         highlight = {
             enable = true,
             additional_vim_regex_highlighting = false,
