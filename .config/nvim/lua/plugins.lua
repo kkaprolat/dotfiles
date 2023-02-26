@@ -107,6 +107,9 @@ return {
                     { name = 'path' }
                 }
                 ),
+                matching = {
+                    disallow_partial_fuzzy_matching = false,
+                },
                 mapping = cmp.mapping.preset.insert{
                     ['<C-Space>'] = cmp.mapping.complete(),
                     ['<CR>'] = cmp.mapping.confirm{ select = false },
