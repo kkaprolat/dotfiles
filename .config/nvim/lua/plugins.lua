@@ -23,7 +23,6 @@ return {
             require'nvim-surround'.setup{}
         end
     },
-    'vimwiki/vimwiki',
     {
         'nvim-telescope/telescope.nvim',
         branch = '0.1.x',
