@@ -320,7 +320,10 @@ return {
         wk.register(leader_mappings, { prefix = '<leader>' })
         wk.register(normal_mappings)
         wk.setup{
-            ignore_missing = false
+            ignore_missing = false,
+            icons = {
+                group = "",
+            }
         }
     end
 },
