@@ -1,7 +1,7 @@
 return {
     'scrooloose/nerdcommenter',
     {
-        'kyazdani42/nvim-web-devicons',
+        'nvim-tree/nvim-web-devicons',
         config = function()
             require'nvim-web-devicons'.setup {
                 default = true;
@@ -165,7 +165,7 @@ return {
         'hrsh7th/cmp-nvim-lsp',
         'hrsh7th/cmp-nvim-lua',
         'onsails/lspkind.nvim',
-        'kyazdani42/nvim-web-devicons',
+        'nvim-tree/nvim-web-devicons',
         'saadparwaiz1/cmp_luasnip',
     }
 },
@@ -228,7 +228,7 @@ return {
 {
     'romgrk/barbar.nvim',
     dependencies = {
-        'kyazdani42/nvim-web-devicons'
+        'nvim-tree/nvim-web-devicons'
     }
 },
 {
