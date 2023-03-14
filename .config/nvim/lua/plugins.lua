@@ -258,6 +258,22 @@ return {
                 f = 'Find File',
                 s = 'Find Symbols'
             },
+            c = {
+                name = 'Comment...',
+                ['$'] = 'to EOL',
+                ['<space>'] = 'toggle',
+                A = 'append',
+                a = 'alt delims???',
+                b = 'align both',
+                c = 'comment',
+                i = 'invert',
+                l = 'align left',
+                m = 'minimal',
+                n = 'nested',
+                s = 'sexy',
+                u = 'uncomment',
+                y = 'yank',
+            },
             l = {
                 name = 'VimTex',
                 m = "Open Context Menu",
