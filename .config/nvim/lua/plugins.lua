@@ -420,5 +420,35 @@ return {
             lineFoldingOnly = true
         }
     end
+},
+{
+    'glepnir/lspsaga.nvim',
+    event = "BufRead",
+    config = function ()
+        require'lspsaga'.setup({
+            symbol_in_winbar = {
+                separator = "  ",
+                show_file = false,
+            },
+            ui = {
+                code_action = "",
+                border = "solid",
+            }
+        })
+
+        vim.keymap.set({"n", "v"}, "<leader>sa", "<cmd>Lspsaga code_action<CR>")
+        vim.keymap.set("n", "<leader>sr", "<cmd>Lspsaga rename<CR>")
+        vim.keymap.set("n", "<leader>sR", "<cmd>Lspsaga rename ++project<CR>")
+        vim.keymap.set("n", "<leader>sk", "<cmd>Lspsaga peek_definition<CR>")
+        vim.keymap.set("n", "<leader>sK", "<cmd>Lspsaga goto_definition<CR>")
+        vim.keymap.set("n", "<leader>st", "<cmd>Lspsaga peek_type_definition<CR>")
+        vim.keymap.set("n", "<leader>sT", "<cmd>Lspsaga goto_type_definition<CR>")
+        vim.keymap.set("n", "<leader>so", "<cmd>Lspsaga outline<CR>")
+        vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc ++keep<CR>")
+    end,
+    dependencies = {
+        'nvim-tree/nvim-web-devicons',
+        'nvim-treesitter/nvim-treesitter'
+    }
 }
 }
