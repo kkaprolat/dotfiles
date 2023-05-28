@@ -1,0 +1,19 @@
+add_newline = true
+format = '''
+$username @ $hostname$cmd_duration $battery $directory
+ $character(bold blue) 
+'''
+username.show_always = true
+username.format = '[$user]($style)'
+
+hostname.ssh_only = false
+hostname.format = '[$ssh_symbol$hostname]($style) '
+hostname.trim_at = ''
+
+character.format = '$symbol'
+character.success_symbol = '[>](bold green)'
+character.error_symbol =   '[!>](bold red)'
+character.vimcmd_symbol =   '[c>](bold green)'
+character.vimcmd_replace_one_symbol =   '[r>](bold purple)'
+character.vimcmd_replace_symbol =   '[R>](bold purple)'
+character.vimcmd_visual_symbol =   '[v>](bold orange)'
