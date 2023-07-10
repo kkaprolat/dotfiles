@@ -17,6 +17,21 @@ local colors = {
     git_remove = utils.get_highlight("HeirlineGitRemove"),
 }
 
+local function get_signs(self, group)
+    local signs = vim.fn.sign_getplaced(vim.api.nvim_get_current_buf(), {
+        group = '*',
+        lnum = vim.v.lnum
+    })
+
+    if #signs == 0 or signs[1].signs == nil then
+        self.sign = nil
+        self.has_sign = false
+        return
+    end
+
+    return vim.tbl_filter(function(sign) return vim.startswith(sign.group, group) end, signs[1].signs)
+end
+
 require 'heirline'.load_colors(colors)
 
 local function get_highlight_table(color)
@@ -434,10 +449,160 @@ local StatusLines = {
     DefaultStatusLine
 }
 
+local StatusColumn = {
+    static = {
+        -- from https://github.com/olimorris/dotfiles/commit/c2b901076ff04ecade8acc63fb7f8c98f514713e
+        click_args = function (self, minwid, clicks, button, mods)
+            local args = {
+                minwid = minwid,
+                clicks = clicks,
+                button = button,
+                mods = mods,
+                mousepos = vim.fn.getmousepos()
+            }
+            local sign = vim.fn.screenstring(args.mousepos.screenrow, args.mousepos.screencol)
+            if sign == ' ' then sign = vim.fn.screenstring(args.mousepos.screenrow, args.mousepos.screencol - 1) end
+            args.sign = self.signs[sign]
+            vim.api.nvim_set_current_win(args.mousepos.winid)
+            vim.api.nvim_win_set_cursor(0, { args.mousepos.line, 0 })
+            return args
+        end,
+        handlers = {
+            line_number = function(args)
+                local dap_avail, dap = pcall(require, 'dap')
+                if dap_avail then vim.schedule(dap.toggle_breakpoint) end
+            end,
+            diagnostics = function(args) vim.schedule(vim.diagnostic.open_float) end,
+            git_signs = function(args)
+                local gitsigns_avail, gitsigns = pcall(require, 'gitsigns')
+                if gitsigns_avail then vim.schedule(gitsigns.preview_hunk) end
+            end,
+            fold = function(args)
+                local lnum = args.mousepos.line
+                if vim.fn.foldlevel(lnum) <= vim.fn.foldlevel(lnum - 1) then return end
+                vim.cmd.execute("'" .. lnum .. "fold" .. (vim.fn.foldclosed(lnum) == -1 and 'close' or 'open') .. "'")
+            end,
+        }
+    },
+    init = function(self)
+        self.signs = {}
+        for _, sign in ipairs(vim.fn.sign_getdefined()) do
+            if sign.text then self.signs[sign.text:gsub('%s', '')] = sign end
+        end
+    end,
+    -- folding
+    {
+        provider = function()
+            if vim.v.virtnum ~= 0 then return '  ' end
+
+            local lnum = vim.v.lnum
+            local icon = '  '
+
+            if vim.fn.foldlevel(lnum) > vim.fn.foldlevel(lnum - 1) then
+                if vim.fn.foldclosed(lnum) == -1 then
+                    icon = ' '
+                else
+                    icon = ' '
+                end
+            end
+
+            return icon
+        end,
+        on_click = {
+            name = 'fold_click',
+            callback = function(self, ...)
+                if self.handlers.fold then self.handlers.fold(self.click_args(self, ...)) end
+            end,
+        },
+    },
+    -- line number
+    {
+        provider = function()
+            if vim.v.virtnum > 0 then return string.rep(" ", math.floor(math.log(vim.v.lnum)+1)) end
+            return '%=' .. vim.v.lnum
+            -- the other code seems buggy
+            --if vim.v.relnum == 0 then return vim.v.lnum end
+            --return vim.v.relnum
+        end,
+        on_click = {
+            name = 'line_number_click',
+            callback = function(self, ...)
+                if self.handlers.line_number then self.handlers.line_number(self.click_args(self, ...)) end
+            end,
+        },
+    },
+    -- breakpoints
+    {
+        init = function(self)
+            local signs = get_signs(self, 'dap')
+
+            if #signs == 0 or signs == nil then
+                self.sign = nil
+            else
+                self.sign = signs[1]
+            end
+
+            self.has_sign = self.sign ~= nil
+        end,
+        provider = function(self)
+            if self.has_sign then return '' end
+            return ' '
+        end,
+        hl = function(self)
+            if self.has_sign then return 'DebugBreakpoint' end
+        end,
+    },
+    -- Git and boundary
+    {
+        init = function(self)
+            local signs = vim.fn.sign_getplaced(vim.api.nvim_get_current_buf(), {
+                group = 'gitsigns_vimfn_signs_',
+                id = vim.v.lnum,
+                lnum = vim.v.lnum
+            })
+
+            if #signs == 0 or signs[1].signs == nil or #signs[1].signs == 0 or signs[1].signs[1].name == nil then
+                self.sign = nil
+            else
+                self.sign = signs[1].signs[1]
+            end
+
+            self.has_sign = self.sign ~= nil
+        end,
+        provider = function(self)
+            local signs = {
+                GitSignsAdd = '🭳',
+                GitSignsChange = '🭳',
+                GitSignsTopDelete = 'T',
+                GitSignsDelete = '▁',
+                GitSignsUntracked = '',
+                GitSignsChangeDelete = 'c'
+            }
+            if self.has_sign then
+                if signs[self.sign.name] ~= nil then
+                    return signs[self.sign.name]
+                end
+            else
+                return signs.GitSignsAdd
+            end
+        end,
+        hl = function(self)
+            if self.has_sign then return self.sign.name end
+        end,
+        on_click = {
+            name = 'gitsigns_click',
+            callback = function(self, ...)
+                if self.handlers.git_signs then self.handlers.git_signs(self.click_args(self, ...)) end
+            end,
+        }
+    },
+}
+vim.o.laststatus = 3
+
 
 require'heirline'.setup({
     statusline = StatusLines,
 --    winbar = ...,
 --    tabline = ...,
---    statuscolumn = ...,
+    statuscolumn = StatusColumn,
 })
