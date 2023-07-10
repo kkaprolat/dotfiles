@@ -481,6 +481,33 @@ return {
 },
 {
     'mfussenegger/nvim-dap',
+    config = function ()
+        vim.keymap.set("n", "<leader>dc", function() require'dap'.continue() end)
+        vim.keymap.set("n", "<leader>do", function() require'dap'.step_over() end)
+        vim.keymap.set("n", "<leader>di", function() require'dap'.step_into() end)
+        vim.keymap.set("n", "<leader>dO", function() require'dap'.step_out() end)
+        vim.keymap.set("n", "<leader>db", function() require'dap'.toggle_breakpoint() end)
+        vim.keymap.set("n", "<leader>dB", function() require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
+    end
+},
+{
+    'rcarriga/nvim-dap-ui',
+    config = function ()
+        local dapui = require'dapui'
+        local dap = require'dap'
+        dapui.setup()
+        dap.listeners.after.event_initialized["dapui_config"] = function()
+            dapui.open()
+        end
+    end
+},
+{
+    'mfussenegger/nvim-dap-python',
+    config = function ()
+        require'dap-python'.setup('/usr/bin/python3')
+    end
+
+},
 {
     'b0o/incline.nvim',
     config = true,
