@@ -31,3 +31,9 @@ end
 -- move lines and fix indentation
 map('n', '<A-j>', '<cmd>m .+1<cr>==', nr)
 map('n', '<A-k>', '<cmd>m .-2<cr>==', nr)
+
+-- easier window movement
+map('n', '<C-h>', '<C-w>h', nr)
+map('n', '<C-j>', '<C-w>j', nr)
+map('n', '<C-k>', '<C-w>k', nr)
+map('n', '<C-l>', '<C-w>l', nr)
