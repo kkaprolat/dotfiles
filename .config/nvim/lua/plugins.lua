@@ -420,18 +420,19 @@ return {
     end
 },
 {
-    'glepnir/lspsaga.nvim',
-    event = "BufRead",
+    'nvimdev/lspsaga.nvim',
+    event = "LspAttach",
     config = function ()
         require'lspsaga'.setup({
             symbol_in_winbar = {
                 separator = "  ",
-                show_file = false,
+                show_file = true,
             },
             ui = {
                 code_action = "",
                 border = "solid",
-            }
+            },
+
         })
 
         vim.keymap.set({"n", "v"}, "<leader>sa", "<cmd>Lspsaga code_action<CR>")
