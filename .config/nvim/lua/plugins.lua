@@ -452,6 +452,14 @@ return {
 },
 'preservim/vim-markdown',
 'elkowar/yuck.vim',
+{
+    'lukas-reineke/indent-blankline.nvim',
+    config = true,
+    opts = {
+        show_current_context = true,
+        show_first_indent_level = false
+    }
+},
     }
 {
     'folke/trouble.nvim',
