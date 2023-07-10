@@ -227,12 +227,6 @@ return {
     end
 },
 {
-    'romgrk/barbar.nvim',
-    dependencies = {
-        'nvim-tree/nvim-web-devicons'
-    }
-},
-{
     'ggandor/leap.nvim',
     event = "VeryLazy",
     config = function()
