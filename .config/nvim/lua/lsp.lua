@@ -30,7 +30,15 @@ capabilities.textDocument.foldingRange = {
 }
 require'ufo'.setup()
 
-local servers = { 'html', 'pyright', 'bashls', 'ansiblels', 'dockerls', 'yamlls', 'rust_analyzer' }
+local servers = {
+                'html',
+                'pyright',
+                'bashls',
+                'ansiblels',
+                'dockerls',
+                'yamlls',
+                'rust_analyzer'
+            }
 
 -- basic settings for all servers
 for _, lsp in ipairs(servers) do
@@ -70,6 +78,7 @@ lspc.ccls.setup {
 
 lspc.lua_ls.setup {
     capabilities = capabilities,
+    log_level = 0,
     settings = {
         Lua = {
             runtime = {
@@ -88,6 +97,9 @@ lspc.lua_ls.setup {
             },
             telemetry = {
                 enable = false
+            },
+            window = {
+                progressBar = false
             },
         },
     },

@@ -400,7 +400,7 @@ return {
         }
         vim.notify = require'notify'
     end
-},
+    },
 {
     'martineausimon/nvim-lilypond-suite',
     ft = "lilypond",
