@@ -481,6 +481,26 @@ return {
 },
 {
     'mfussenegger/nvim-dap',
+{
+    'b0o/incline.nvim',
+    config = true,
+    opts = {
+        window = {
+            margin = {
+                horizontal = 0,
+                vertical = 0
+            },
+            placement = {
+                vertical = 'top'
+            }
+        },
+        ignore = {
+            buftypes = {},
+            wintypes = {},
+            unlisted_buffers = false,
+        }
+
+    }
 },
 {
     'folke/trouble.nvim',
