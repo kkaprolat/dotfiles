@@ -202,6 +202,7 @@ return {
             'python',
             'regex',
             'vim',
+            'yuck',
         },
         auto_install = true,
         highlight = {
