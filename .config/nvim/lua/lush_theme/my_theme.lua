@@ -461,9 +461,12 @@ local theme = lush(function(injected_functions)
         DiagnosticSignHint                  { DiagnosticHint, gui = "bold" }, -- Used for "Hint" signs in sign column
 
         -- gitsigns
-        GitSignsAdd                         { fg = colors.green, gui = "bold" },
-        GitSignsChange                      { fg = colors.yellow, gui = "bold" },
-        GitSignsDelete                      { fg = colors.red, gui = "bold" },
+        GitSignsAdd                         { fg = colors.green, bg = 'NONE', gui = "bold" }, -- Used for the text of 'add' signs
+        GitSignsChange                      { fg = colors.yellow, bg = 'NONE', gui = "bold" }, -- Used for the text of 'change' signs
+        GitSignsDelete                      { fg = colors.red, bg = 'NONE', gui = "bold" }, -- Used for the text of 'delete' signs
+        GitSignsChangedelete                { GitSignsChange }, -- Used for the text of 'changedelete' signs
+        GitSignsTopdelete                   { GitSignsDelete }, -- Used for the text of 'topdelete' signs
+        GitSignsUntracked                   { GitSignsAdd }, -- used for the text of 'untracked' signs
 
 
         -- barbar.nvim
