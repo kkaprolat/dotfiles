@@ -460,6 +460,21 @@ return {
         show_first_indent_level = false
     }
 },
+{
+    'stevearc/overseer.nvim',
+    config = function ()
+        require'overseer'.setup({
+        })
+
+        require'overseer'.add_template_hook({}, function (task_defn, util)
+            util.add_component(task_defn, { "on_output_quickfix", open = true})
+        end)
+
+        vim.keymap.set("n", "<leader>or", "<cmd>OverseerRun<CR>")
+        vim.keymap.set("n", "<leader>ot", "<cmd>OverseerToggle<CR>")
+    end,
+    dependencies = {
+        'stevearc/dressing.nvim'
     }
 {
     'folke/trouble.nvim',
