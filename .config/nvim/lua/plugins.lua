@@ -448,6 +448,9 @@ return {
     dependencies = {
         'nvim-tree/nvim-web-devicons',
         'nvim-treesitter/nvim-treesitter'
+    },
+},
+'preservim/vim-markdown',
     }
 {
     'folke/trouble.nvim',
