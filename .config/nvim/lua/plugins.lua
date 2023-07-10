@@ -444,5 +444,65 @@ return {
         'nvim-tree/nvim-web-devicons',
         'nvim-treesitter/nvim-treesitter'
     }
+{
+    'folke/trouble.nvim',
+    event = 'VeryLazy',  -- required for todo-comments.nvim...
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function ()
+        require'trouble'.setup {
+            auto_open = true,
+            auto_close = false,
+            use_diagnostic_signs = true,
+            mode = 'document_diagnostics'
+        }
+        vim.keymap.set("n", "<leader>td", "<cmd>TroubleToggle workspace_diagnostics<CR>")
+        vim.keymap.set("n", "<leader>tr", "<cmd>TroubleRefresh<CR>")
+    end,
+},
+{
+    'folke/todo-comments.nvim',
+    event = 'VeryLazy',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function ()
+        require'todo-comments'.setup {
+            signs = false,
+            keywords = {
+                FIX = { icon = 'x ', color = 'fix', alt = { 'FIXME', 'BUG', 'FIXIT', 'ISSUE' }},
+                TODO = { icon = 'y ', color = 'todo' },
+                HACK = { icon = 'z ', color = 'hack' },
+                WARN = { icon = 'a ', color = 'warn', alt = { 'WARNING', 'XXX' }},
+                PERF = { icon = 'b ', color = 'perf', alt = { 'OPTIM', 'PERFORMANCE', 'OPTIMIZE' }},
+                NOTE = { icon = 'c ', color = 'note', alt = { 'INFO' }},
+                TEST = { icon = 'd ', color = 'test', alt = { 'TESTING', 'PASSED', 'FAILED' }},
+            },
+            gui_style = {
+                fg = 'italic'
+            },
+            merge_keywords = true,
+            highlight = {
+                multiline = true,
+                multiline_pattern = '^.',
+                multiline_context = 10,
+                before = '',
+                keyword = 'wide',
+                after = 'fg',
+                pattern = [[<(KEYWORDS)\s*]],
+                comments_only = true,
+                max_line_len = 400,
+                exclude = {},
+            },
+            colors = {
+                fix = { "TodoCommentFix" },
+                todo = { "TodoCommentTodo" },
+                hack = { "TodoCommentHack"},
+                warn = { "TodoCommentWarn" },
+                perf = { "TodoCommentPerf" },
+                note = { "TodoCommentNote" },
+                test = { "TodoCommentTest" },
+            }
+        }
+        vim.keymap.set("n", "<leader>tt", "<cmd>TodoTrouble<CR>")
+    end,
+},
 }
 }

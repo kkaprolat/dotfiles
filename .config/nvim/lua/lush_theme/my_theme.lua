@@ -672,6 +672,15 @@ local theme = lush(function(injected_functions)
         LspKindUnit { },
         LspKindValue { },
 
+        -- todo-comments
+        TodoCommentFix  { fg = colors.peach },
+        TodoCommentTodo { fg = colors.yellow },
+        TodoCommentHack { fg = colors.red },
+        TodoCommentWarn { fg = colors.peach },
+        TodoCommentPerf { fg = colors.green },
+        TodoCommentNote { fg = colors.mauve },
+        TodoCommentTest { fg = colors.sky },
+
 
 
 }
