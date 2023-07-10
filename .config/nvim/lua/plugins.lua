@@ -44,6 +44,8 @@ return {
                     }
                 }
             }
+            vim.keymap.set('n', '<leader>ff', function() require'telescope.builtin'.find_files() end)
+            vim.keymap.set('n', '<leader>fs', function() require('telescope.builtin').lsp_document_symbols() end)
         end
 
     },

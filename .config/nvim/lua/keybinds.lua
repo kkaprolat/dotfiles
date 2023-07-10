@@ -8,10 +8,6 @@ local nr = { noremap = true }
 g.mapleader = ' '
 g.maplocalleader = ' '
 
--- Telescope
-map('n', '<leader>ff', "<cmd>lua require'telescope.builtin'.find_files()<cr>", nr)
-map('n', '<leader>fs', "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>", nr)
-
 local t = function(str)
     return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
@@ -24,9 +20,6 @@ local check_back_space = function()
         return false
     end
 end
-
--- Color Theme
--- map('n', '<leader>cc', "<cmd>lua require'lush_theme.my_theme'", nr)
 
 -- move lines and fix indentation
 map('n', '<A-j>', '<cmd>m .+1<cr>==', nr)
