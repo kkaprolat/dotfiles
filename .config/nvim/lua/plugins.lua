@@ -451,6 +451,7 @@ return {
     },
 },
 'preservim/vim-markdown',
+'elkowar/yuck.vim',
     }
 {
     'folke/trouble.nvim',
