@@ -49,8 +49,11 @@ return {
     },
     {
         'lewis6991/gitsigns.nvim',
-        config = true,
         tag = 'release',
+        config = function ()
+            require'gitsigns'.setup()
+            require'scrollbar.handlers.gitsigns'.setup()
+        end
     },
     {
         'windwp/nvim-autopairs',
@@ -504,5 +507,10 @@ return {
         vim.keymap.set("n", "<leader>tt", "<cmd>TodoTrouble<CR>")
     end,
 },
+{
+    'petertriho/nvim-scrollbar',
+    config = function ()
+        require'scrollbar'.setup()
+    end
 }
 }
