@@ -476,6 +476,10 @@ return {
     dependencies = {
         'stevearc/dressing.nvim'
     }
+},
+{
+    'mfussenegger/nvim-dap',
+},
 {
     'folke/trouble.nvim',
     event = 'VeryLazy',  -- required for todo-comments.nvim...
