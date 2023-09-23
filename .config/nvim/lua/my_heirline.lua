@@ -397,7 +397,7 @@ local SearchResults = {
             provider = function()
                 local ok, search = pcall(vim.fn.searchcount)
                 if ok and search.total then
-                    return ' ' .. vim.fn.getreg("/") .. ' ' .. string.format("%d/%d", search.current, math.min(search.total, search.maxcount))
+                    return ' ' .. vim.fn.getreg("/") .. ' ' .. string.format("%d/%d", search.current, math.min(search.total, search.maxcount))
                 else
                     return "ERROR"
                 end
@@ -407,8 +407,6 @@ local SearchResults = {
         LeftCapStatic(colors.green),
     }
 }
-
-
 
 local DefaultStatusLine = {
     -- ViMode, FileNameBlock, RightCap, Space, Git, Align, Navic, LspMessages, Space, Diagnostics, Space, RightCap, SearchResults, ScrollBar

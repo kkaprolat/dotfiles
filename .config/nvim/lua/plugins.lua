@@ -86,7 +86,6 @@ return {
                 local line, col = unpack(vim.api.nvim_win_get_cursor(0))
                 return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
             end
-
             cmp.setup {
                 snippet = {
                     expand = function(args)
@@ -175,7 +174,6 @@ return {
         'saadparwaiz1/cmp_luasnip',
     }
 },
-
 -- Snippets
 {
     'L3MON4D3/LuaSnip',
@@ -299,24 +297,20 @@ return {
                 X = "reload state",
             },
         }
-
         local normal_mappings = {
             [']'] = {
                 [']'] = 'next [sub*]section',
                 m = 'next environment',
                 n = 'next math zone',
                 r = 'next frame'
-
             },
             ['['] = {
                 ['['] = 'prev [sub*]section',
                 m = 'prev environment',
                 n = 'prev math zone',
                 r = 'prev frame'
-
             }
         }
-
         wk.register(leader_mappings, { prefix = '<leader>' })
         wk.register(normal_mappings)
         wk.setup{
@@ -363,7 +357,6 @@ return {
         messages = {
             view_search = false
         }
-
     },
     dependencies = {
         'MunifTanjim/nui.nvim',
@@ -412,7 +405,6 @@ return {
 
         vim.keymap.set('n', 'zR', require'ufo'.openAllFolds)
         vim.keymap.set('n', 'zM', require'ufo'.closeAllFolds)
-
         -- nvim lsp as LSP client
         local capabilities = vim.lsp.protocol.make_client_capabilities()
         capabilities.textDocument.foldingRange = {
@@ -434,9 +426,7 @@ return {
                 code_action = "",
                 border = "solid",
             },
-
         })
-
         vim.keymap.set({"n", "v"}, "<leader>sa", "<cmd>Lspsaga code_action<CR>")
         vim.keymap.set("n", "<leader>sr", "<cmd>Lspsaga rename<CR>")
         vim.keymap.set("n", "<leader>sR", "<cmd>Lspsaga rename ++project<CR>")
@@ -467,11 +457,9 @@ return {
     config = function ()
         require'overseer'.setup({
         })
-
         require'overseer'.add_template_hook({}, function (task_defn, util)
             util.add_component(task_defn, { "on_output_quickfix", open = true})
         end)
-
         vim.keymap.set("n", "<leader>or", "<cmd>OverseerRun<CR>")
         vim.keymap.set("n", "<leader>ot", "<cmd>OverseerToggle<CR>")
     end,
@@ -526,7 +514,6 @@ return {
             wintypes = {},
             unlisted_buffers = false,
         }
-
     }
 },
 {
