@@ -46,8 +46,8 @@ return {
             }
             vim.keymap.set('n', '<leader>ff', function() require'telescope.builtin'.find_files() end)
             vim.keymap.set('n', '<leader>fs', function() require('telescope.builtin').lsp_document_symbols() end)
+            vim.keymap.set('n', '<leader>fr', function() require('telescope.builtin').live_grep() end)
         end
-
     },
     {
         'lewis6991/gitsigns.nvim',
@@ -249,12 +249,12 @@ return {
     event = "VeryLazy",
     config = function()
         local wk = require'which-key'
-
         local leader_mappings = {
             f = {
                 name = 'Find...',
                 f = 'Find File',
-                s = 'Find Symbols'
+                s = 'Find Symbols',
+                r = 'Live Grep (ripgrep)'
             },
             c = {
                 name = 'Comment...',
