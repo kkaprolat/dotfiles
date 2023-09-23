@@ -1,5 +1,5 @@
 [Background]
-Color=44,46,52
+Color=26,27,38
 
 [BackgroundFaint]
 Color=46,52,64
@@ -94,6 +94,7 @@ Blur=true
 ColorRandomization=false
 Description=MyColors
 FillStyle=Tile
-Opacity=0.6
+Opacity=0.85
 Wallpaper=
+WallpaperFlipType=NoFlip
 WallpaperOpacity=1

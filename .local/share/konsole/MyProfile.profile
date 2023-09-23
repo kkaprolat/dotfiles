@@ -12,9 +12,14 @@ WordModeAttr=false
 CursorShape=0
 
 [General]
+AlternatingBackground=0
+AlternatingBars=0
+ErrorBackground=0
+ErrorBars=0
 InvertSelectionColors=false
 Name=MyProfile
 Parent=FALLBACK/
+SemanticHints=0
 ShowTerminalSizeHint=false
 TerminalCenter=true
 TerminalMargin=2
