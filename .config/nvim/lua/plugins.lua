@@ -458,9 +458,12 @@ return {
 {
     'lukas-reineke/indent-blankline.nvim',
     config = true,
+    main = 'ibl',
     opts = {
-        show_current_context = true,
-        show_first_indent_level = false
+        scope = {
+            enabled = true
+        },
+        --show_first_indent_level = false
     }
 },
 {
