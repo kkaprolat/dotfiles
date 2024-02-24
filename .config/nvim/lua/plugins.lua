@@ -54,7 +54,6 @@ return {
         tag = 'release',
         config = function ()
             require'gitsigns'.setup()
-            require'scrollbar.handlers.gitsigns'.setup()
         end
     },
     {
@@ -592,9 +591,32 @@ return {
     end,
 },
 {
-    'petertriho/nvim-scrollbar',
+    'dstein64/nvim-scrollview',
     config = function ()
-        require'scrollbar'.setup()
-    end
+        require'scrollview'.setup {
+        excluded_filetypes = {'nerdtree'},
+        current_only = true,
+        base = 'right',
+        signs_on_startup = {
+            'conflicts',
+            'diagnostics',
+            'folds',
+            'marks',
+            'search',
+        },
+        hide_on_interact = true,
+        folds_symbol = "",
+        search_symbol = {'-', '=', '≡'},
+        hover = true,
+        winblend = 100,
+    }
+    require 'scrollview.contrib.gitsigns'.setup{
+        enabled = true,
+        hide_full_add = true,
+        winblend_gui = 0,
+        signs_max_per_row = 1,
+        signs_column = 0,
+    }
+end
 }
 }

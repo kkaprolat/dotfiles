@@ -716,6 +716,26 @@ local theme = lush(function(injected_functions)
         DapUIWinSelect                  { fg = colors.blue, gui='bold' },
         DapUIEndofBuffer                { EndOfBuffer },
 
+        -- nvim-scrollview
+        ScrollView                      { bg = colors.overlay1 },
+        ScrollViewConflictsTop          {},
+        ScrollViewConflictsMiddle       {},
+        ScrollViewConflictsBottom       {},
+        ScrollViewCursor                {},
+        ScrollViewDiagnosticsError      { DiagnosticError },
+        ScrollViewDiagnosticsHint       { DiagnosticHint },
+        ScrollViewDiagnosticsInfo       { DiagnosticInfo },
+        ScrollViewDiagnosticsWarn       { DiagnosticWarn },
+        ScrollViewFolds                 { Comment },
+        ScrollViewHover                 { bg=colors.red },
+        ScrollViewLocList               {},
+        ScrollViewMarks                 { fg = colors.yellow, gui='bold' },
+        ScrollViewQuickFix              {},
+        ScrollViewRestricted            {},
+        ScrollViewSearch                { IncSearch, gui='' },
+        ScrollViewSpell                 {},
+        ScrollViewTextWidth             {},
+
 
 
 }
