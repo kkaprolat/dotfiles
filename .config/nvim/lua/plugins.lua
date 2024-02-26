@@ -219,6 +219,7 @@ return {
     config = function()
         vim.g.vimtex_view_method = 'zathura'
         vim.g.vimtex_compiler_progname = 'nvr'
+        vim.g.vimtex_view_use_temp_files = 1
         vim.g.vimtex_compiler_latexmk = {
             options = {
                 "-verbose",
