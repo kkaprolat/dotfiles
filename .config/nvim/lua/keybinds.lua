@@ -30,3 +30,6 @@ map('n', '<C-h>', '<C-w>h', nr)
 map('n', '<C-j>', '<C-w>j', nr)
 map('n', '<C-k>', '<C-w>k', nr)
 map('n', '<C-l>', '<C-w>l', nr)
+
+-- disable F1
+map('n', '<F1>', '<nop>', nr)
