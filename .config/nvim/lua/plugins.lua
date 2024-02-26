@@ -535,10 +535,11 @@ return {
             auto_open = true,
             auto_close = false,
             use_diagnostic_signs = true,
-            mode = 'document_diagnostics',
+            mode = 'workspace_diagnostics',
             padding = false
         }
         vim.keymap.set("n", "<leader>td", "<cmd>TroubleToggle document_diagnostics<CR>")
+        vim.keymap.set("n", "<leader>tw", "<cmd>TroubleToggle workspace_diagnostics<CR>")
         vim.keymap.set("n", "<leader>tr", "<cmd>TroubleRefresh<CR>")
     end,
 },
