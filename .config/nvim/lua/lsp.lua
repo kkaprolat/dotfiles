@@ -52,15 +52,13 @@ lspc.texlab.setup {
     capabilities = capabilities,
     filetypes = { 'tex', 'bib' },
     settings = {
-        latex = {
-            lint = {
-                onChange = true,
-                onSave = true
+        texlab = {
+            latexFormatter = 'latexindent',
+            chktex = {
+                onOpenAndSave = true,
+                onEdit = true
             }
         }
-    },
-    texlab = {
-        latexFormatter = 'latexindent'
     },
 }
 
