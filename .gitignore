@@ -4,3 +4,17 @@ Scripts/rotatetoggle.py
 .config/mpd/pid
 .config/mpd/state
 .config/nvim/plugin/packer_compiled.lua
+.config/emacs/.cache
+.config/emacs/.lsp-session-v1
+.config/emacs/.org-id-locations
+.config/emacs/auto-save-list
+.config/emacs/bookmarks
+.config/emacs/eln-cache
+.config/emacs/elpa
+.config/emacs/history
+.config/emacs/nvim
+.config/emacs/org-roam.db
+.config/emacs/recentf
+.config/emacs/tramp
+.config/emacs/transient
+.config/emacs/url/cookies

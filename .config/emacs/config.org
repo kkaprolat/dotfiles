@@ -1,0 +1,1217 @@
+#+property: header-args :results silent :tangle yes :comments both
+#+title: My Emacs Config 
+#+author: Kay Kaprolat
+This file contains my Emacs configuration.
+Important sources are:
+- https://github.com/thomasheartman/.emacs.d/blob/develop/config.org
+- https://emacsdocs.org/docs/elisp/Emacs-Lisp
+
+* General Options
+Not loading ~bind-key~ early caused error messages, so do that right away.
+#+begin_src emacs-lisp
+  (require 'bind-key)
+#+end_src
+Since I use ~use-package~ for all my packages and don't want to repeat ~:ensure t~ everywhere, I set the following:
+#+begin_src emacs-lisp
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
+#+end_src
+** Interface Theme
+For the overall theme, I use catppuccin.
+This has to be loaded early since I use some of it's variables occasionally.
+Note that when reinstalling via Emacs, it couldn't install ~catppuccin-theme~ for some reason.
+Installing that via ~M-x package-install~ fixed that.
+#+begin_src emacs-lisp
+  (use-package catppuccin-theme
+    :init
+#+end_src
+The two ~t~ parameters when loading it are necessary for customization.
+#+begin_src emacs-lisp
+  (load-theme 'catppuccin t t)
+#+end_src
+And I want to use the moccha flavor.
+#+begin_src emacs-lisp
+  (setq catppuccin-flavor 'mocha)
+  (catppuccin-reload)
+  )
+#+end_src
+
+Furthermore, the whole interface should be slightly transparent.
+Unfortunately, this also makes the menu bar transparent.
+#+begin_src emacs-lisp
+  (set-frame-parameter nil 'alpha-background 85)
+  (add-to-list 'default-frame-alist '(alpha-background . 85))
+#+end_src
+
+
+** Cleanliness
+First of all, as all options should only ever be in this file, all customizations should be saved to ~/tmp~ to be easily discarded.
+#+begin_src emacs-lisp
+  (setq custom-file (make-temp-name "/tmp/"))
+#+end_src
+
+I also dislike Emacs' cluttering of directories with backup files (i.e. files ending with ~~~).
+Instead, all these files should be moved to a single directory.
+#+begin_src emacs-lisp
+  (setq backup-directory-alist '(("." . "~/.cache/emacs_backups")))
+#+end_src
+
+** Package Setup
+For some settings it is also useful to know whether we are running under NixOS.
+This can be tested by checking whether ~NIX_PATH~ is set in ~initial-environment~ or ~process-environment~.
+#+begin_src emacs-lisp
+  (defvar my/running-under-nix (if (seq-find (lambda (x) (string-prefix-p "NIX_PATH" x)) initial-environment)
+                                   t
+                                 nil)
+    "Whether the editor runs in a Nix environment, making some package operations unnecessary.")
+#+end_src
+
+
+For example, when not using NixOS, most packages have to be retrieved from MELPA.
+As such, that configuration is added here.
+#+begin_src emacs-lisp
+  (when (not my/running-under-nix)
+       (require 'package)
+       (add-to-list 'package-archives
+                    '("melpa" . "https://melpa.org/packages/") t)
+       (package-initialize)
+  )
+#+end_src
+
+Furthermore, since Nix automatically installs every package requested, and since I don't like repeating src_emacs-lisp[]{:ensure t} all over the place, I set ~use-package-always-ensure~.
+#+begin_src emacs-lisp :tangle yes
+  (when (not my/running-under-nix)
+    (require 'use-package-ensure)
+    (setq use-package-always-ensure t)
+    )
+#+end_src
+
+** Basic Editor Setup
+*** Performance
+Setting the garbage collection threshold higher (100MB in this case) may fix some performance problems.
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold (* 100 1024 1024))
+#+end_src
+
+When using ~doom-modeline~, some issues can be fixed with the following.
+#+begin_src emacs-lisp
+  (setq inhibit-compacting-font-caches t)
+#+end_src
+
+When using LSP, this is required to read large data blobs (1MB).
+#+begin_src emacs-lisp
+  (setq read-process-output-max (* 1024 1024))
+#+end_src
+
+*** Indentation
+By default, indent with two spaces.
+#+begin_src  emacs-lisp
+  (setq-default indent-tabs-mode nil)
+  (setq-default tab-width 2)
+  (setq standard-indent 2)
+#+end_src
+
+*** Encoding
+Always use UTF-8.
+#+begin_src emacs-lisp
+  (set-charset-priority 'unicode)
+  (prefer-coding-system 'utf-8-unix)
+#+end_src
+
+*** Dired
+Dired should be automatically refreshed when files are changed.
+#+begin_src emacs-lisp
+  (setq dired-do-revert-buffer t)
+#+end_src
+
+* Interface
+** Interface and Integration
+*** "Console-Like"
+Since I want to use Emacs mostly as a "console-like" native application, I always want to be prompted in the minibuffer and not in dialog boxes.
+#+begin_src emacs-lisp
+  (setq use-dialog-box nil)
+#+end_src
+
+Also, no tool bar or scroll bar.
+#+begin_src emacs-lisp
+  ;(when (window-system)
+    (tool-bar-mode -1)
+    (setq tool-bar-mode nil)
+    (scroll-bar-mode -1)
+    (setq scroll-bar-mode nil)
+#+end_src
+
+At some point, I may also remove the menu bar on top.
+#+begin_src emacs-lisp
+  ; (menu-bar-mode -1)
+  ; (setq menu-bar-mode nil)
+  ;)
+#+end_src
+
+*** Scrolling
+I like smooth scrolling with my mouse or trackpad.
+#+begin_src emacs-lisp
+  (pixel-scroll-precision-mode)
+  (setq pixel-scroll-precision-interpolate-page t)
+#+end_src
+
+While this breaks in evil mode, it can still be used for animations using [[https://codeberg.org/ideasman42/emacs-scroll-on-jump][scroll-on-jump]].
+#+begin_src emacs-lisp
+  (use-package scroll-on-jump
+    :custom
+    (scroll-on-jump-duration 0.6)
+    (scroll-on-jump-curve 'linear)
+    )
+#+end_src
+
+*** Windows
+Speaking of the mouse, I want windows to be switched automatically when hovering with the mouse.
+#+begin_src emacs-lisp
+  (setq mouse-autoselect-window t)
+#+end_src
+
+Furthermore, the help window should be selected immediately, as I probably want to close it after reading.
+#+begin_src emacs-lisp
+  (setq help-window-select t)
+#+end_src
+
+*** Line Numbers
+Display line numbers in most relevant modes:
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (add-hook 'org-mode-hook  'display-line-numbers-mode)
+  (dolist (mode '(pdf-view-mode-hook
+                  term-mode-hook
+                  eshell-mode-hook
+                  vterm-mode-hook
+                  imenu-list-minor-mode-hook
+                  imenu-list-major-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode -1))))
+#+end_src
+
+This actually causes weird behaviour when scrolling, as the width automatically changes with the needed number size.
+This can be fixed using the following [[https://emacs.stackexchange.com/questions/55165/uneven-line-numbers-with-display-line-numbers][snippet from StackExchange]].
+#+begin_src emacs-lisp
+  (defun display-line-numbers-equalize ()
+    "Equalize Line Number Width"
+    (setq display-line-numbers-width (length (number-to-string (line-number-at-pos (point-max)))))
+    )
+  (add-hook 'find-file-hook 'display-line-numbers-equalize)
+#+end_src
+
+Display line and column number in the mode line.
+#+begin_src emacs-lisp
+  (column-number-mode)
+#+end_src
+
+*** Lines
+Always wrap lines, as I don't like scrolling horizontally.
+#+begin_src emacs-lisp
+  (global-visual-line-mode)
+#+end_src
+
+The current line should be highlighted in programming and text mode.
+#+begin_src emacs-lisp
+  (require 'hl-line)
+  (add-hook 'prog-mode-hook #'hl-line-mode)
+  (add-hook 'text-mode-hook #'hl-line-mode)
+#+end_src
+
+*** Indentation Guides
+For indentation guides, I used [[https://github.com/lukas-reineke/indent-blankline.nvim][indent-blankline.nvim]] in the past.
+With Emacs, this functionality is provided e.g. by [[https://github.com/DarthFennec/highlight-indent-guides][highlight-indent-guides]].
+However, that package did not work on blank lines.
+I wanted to use [[https://github.com/jdtsmith/indent-bars][indent-bars]], however that requires [[https://github.com/radian-software/straight.el][straight]] which was too cumbersome to set up.
+As such, I'll just not use indentation guides until I find a better solution.
+
+*** Minibuffer
+Retain minibuffer history.
+#+begin_src emacs-lisp
+  (savehist-mode)
+#+end_src
+
+*** Miscellaneous
+Sentences should obviously only end with one space after the period.
+#+begin_src emacs-lisp
+  (setq sentence-end-double-space nil)
+#+end_src
+
+I cannot fix any issues with native compilation as I don't own any of the plugins I use.
+As such, these warnings are disabled.
+#+begin_src emacs-lisp
+  (setq native-comp-async-report-warnings-errors 'silent)
+#+end_src
+
+The clipboard should stay in the kill ring before replacing it.
+#+begin_src emacs-lisp
+  (setq save-interprogram-paste-before-kill t)
+#+end_src
+
+** Fonts and Faces
+As the default font, /Iosevka/ in Size 11 is sufficient.
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil :font "Iosevka-11")
+  (add-to-list 'default-frame-alist '(font . "Iosevka-11"))
+#+end_src
+
+Additionally, comments should be italic.
+#+begin_src emacs-lisp
+  (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+#+end_src
+
+Furthermore, the default highlighting for line numbers was too dim for my taste, so let's change it to Catppuccin's ~overlay2~.
+The current line should furthermore be bold and yellow.
+#+begin_src emacs-lisp
+  (set-face-attribute 'line-number nil :foreground (alist-get 'overlay2 catppuccin-mocha-colors))
+  (set-face-attribute 'line-number-current-line nil :foreground (alist-get 'lavender catppuccin-mocha-colors) :weight 'heavy)
+#+end_src
+
+I also like ligatures.
+Using the [[https://github.com/mickeynp/ligature.el][ligature]] package allows setting specific ligatures for specific modes.
+Note, that since we use the treesitter modes (configured later), these have to be specified here instead of the default ones.
+The ~www~ ligature should be used everywhere, and other ligatures should be language-specific.
+Possible ligatures are taken from the [[https://typeof.net/Iosevka/][Iosevka website]].
+I omitted the ~/*~ and ~*/~ ligatures, as they look bad in my opinion.
+#+begin_src emacs-lisp
+  (use-package ligature
+    :config
+    (ligature-set-ligatures 't '("www"))
+
+    (ligature-set-ligatures 'python-ts-mode  '("<=" "=>" ">=" "__"  "==" "!="  "->" "<-"))
+    (ligature-set-ligatures 'c-ts-mode       '("<<=" "<=" ">=" ">>=" "::" ":::" "==" "!="
+                                               "*="  "++"))
+    (ligature-set-ligatures 'js-ts-mode       '("->" "->>" "-->" "--->" "<<=" "<=" "=>"
+                                                "=>>" "==>" "===>" ">=" ">>=" "<->" "<=>"
+                                                "::" ":::" "__" "</" "</>" "/>" "~~>" "=="
+                                                "!=" "<>" "===" "!==" "!===" "*=" "<|" "<|>"
+                                                "|>" "++" "+++" "<!--" "<!---"))
+    (global-ligature-mode t)
+    )
+#+end_src
+
+** Modeline
+I like the look of [[https://github.com/seagle0128/doom-modeline][doom-modeline]], which requires [[https://github.com/rainstormstudio/nerd-icons.el][nerd-icons]].
+Also, I enable a bunch of interesting information in the modeline.
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :custom
+    (doom-modeline-support-imenu t)
+    (doom-modeline-height 35)
+    (doom-modeline-minor-modes t)
+    (doom-modeline-enable-word-count t)
+    (doom-modeline-indent-info t)
+    (doom-modeline-check-simple-format t)
+    (doom-modeline-time t)
+    (doom-modeline-time-icon nil)
+    (doom-modeline-time-live-icon nil)
+    (doom-modeline-time-analogue-clock nil)
+    :init (doom-modeline-mode 1)
+    )
+  (use-package nerd-icons)
+#+end_src
+
+Even with the Nerd Font correctly installed, some icons such as 💡 are not displayed.
+Unfortunately, that icon is used in the mode line.
+We can set a fallback, however:
+#+begin_src emacs-lisp :tangle yes
+  (setq lsp-modeline-code-action-fallback-icon " ")
+#+end_src
+
+Further information has to be enabled with minor modes.
+The file size:
+#+begin_src emacs-lisp
+  (size-indication-mode)
+#+end_src
+The time, with an attempt to hide the CPU information:
+#+begin_src emacs-lisp
+  (setq display-time-24hr-format t)
+  (setq display-time-default-load-average nil)
+  (display-time-mode)
+#+end_src
+
+Over time, minor modes started cluttering up my modeline.
+This can be fixed by using e.g. [[https://github.com/tarsius/minions][minions]], which ~doom-modeline~ explicitly supports.
+#+begin_src emacs-lisp
+  (use-package minions
+    :init
+    (minions-mode)
+    )
+#+end_src
+
+** Dashboard
+Using [[https://github.com/emacs-dashboard/emacs-dashboard][emacs-dashboard]], the dashboard can be improved a bit.
+#+begin_src emacs-lisp
+  (use-package dashboard
+  :custom
+  (dashboard-banner-logo-title "Hallo Kay!")
+  (dashboard-center-content t)
+  (dashboard-navigation-cycle t)
+  (dashboard-heading-shorcut-format " [%s]")  ; yes, it is shor_cut, not shor*t*cut
+  (dashboard-display-icons-p t)
+  (dashboard-icon-type 'nerd-icons)
+  (dashboard-set-heading-icons t)
+  (dashboard-set-file-icons t)
+  (dashboard-startup-banner "/home/kay/Pictures/Header.webp")
+  (dashboard-banner-ascii
+#+end_src
+I use the following ASCII art image:
+#+begin_src emacs-lisp
+  "
+  blablablub
+  blubbediblub
+  "
+#+end_src
+#+begin_src emacs-lisp
+  )
+  :config
+  (add-hook 'dashboard-mode-hook (lambda () (setq-local mode-line-format nil)))
+  (add-to-list 'doom-modeline-mode-alist '(dashboard-mode . 'nil)) ; disable the doom modeline on the dashboard
+  (dashboard-setup-startup-hook)
+#+end_src
+Interestingly, using ~emacs-dashboard~ causes ~emacs --daemon~ to not work.
+This can be fixed by setting the following (see Issue [[https://github.com/emacs-dashboard/emacs-dashboard/issues/373][#373]])
+#+begin_src emacs-lisp
+  :hook (server-after-make-frame . dashboard-refresh-buffer)
+  )
+#+end_src
+* Keybinds
+** Evil Mode
+*** Basic Evil
+Since I'm a long-time Neovim user, I use evil mode in Emacs.
+Also, as I installed ~scroll-on-jump~ above, hints for jump commands are added to ensure smooth jumping.
+This does not work for ~G~ for some reason.
+
+Additionally, I use ~Space~ as my leader key.
+This has to be set for both ~normal~ and ~visual~ mode.
+#+begin_src emacs-lisp
+  (use-package evil
+    :custom
+    (evil-want-integration t)  ;; these are necessary for evil-collection
+    (evil-want-keybinding nil)
+    :init
+    (evil-mode 1)
+    :config
+    (scroll-on-jump-advice-add evil-undo)
+    (scroll-on-jump-advice-add evil-redo)
+    (scroll-on-jump-advice-add evil-jump-item)
+    (scroll-on-jump-advice-add evil-jump-forward)
+    (scroll-on-jump-advice-add evil-jump-backward)
+    (scroll-on-jump-advice-add evil-ex-search-next)
+    (scroll-on-jump-advice-add evil-ex-search-previous)
+    (scroll-on-jump-advice-add evil-forward-paragraph)
+    (scroll-on-jump-advice-add evil-backward-paragraph)
+    (scroll-on-jump-advice-add evil-goto-mark)
+    (scroll-on-jump-advice-add evil-next-line)
+    (scroll-on-jump-advice-add evil-previous-line)
+
+    ;; Actions that themselves scroll
+    (scroll-on-jump-with-scroll-advice-add evil-goto-line)
+    (scroll-on-jump-with-scroll-advice-add evil-scroll-down)
+    (scroll-on-jump-with-scroll-advice-add evil-scroll-up)
+    (scroll-on-jump-with-scroll-advice-add evil-scroll-line-to-center)
+    (scroll-on-jump-with-scroll-advice-add evil-scroll-line-to-top)
+    (scroll-on-jump-with-scroll-advice-add evil-scroll-line-to-bottom)
+    (scroll-on-jump-with-scroll-advice-add recenter-top-bottom)
+    (scroll-on-jump-with-scroll-advice-add evil-goto-first-line)
+
+    ;; set Space as leader key
+    (evil-set-leader (list 'normal 'visual) (kbd "SPC"))
+    )
+#+end_src
+
+*** Keybinds
+Since many packages don't support ~Evil~ by default, [[https://github.com/emacs-evil/evil-collection][evil-collection]] defines keymaps defined by the community for a lot of modes.
+#+begin_src emacs-lisp
+  (use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init)
+    )
+#+end_src
+
+Apparently, this sometimes clashes with my choice of ~SPC~ for leader, but we'll see.
+
+For ~org-mode~, I'll use [[https://github.com/Somelauw/evil-org-mode][evil-org]].
+#+begin_src emacs-lisp
+  (use-package evil-org
+    :after org
+    :hook (org-mode . (lambda () evil-org-mode))
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys)
+    )
+#+end_src
+
+*** Avy
+In Neovim, I used [[https://github.com/ggandor/leap.nvim][ggandor/leap.nvim]] for jumping around.
+In Emacs, this functionality is provided by [[https://github.com/abo-abo/avy][avy]].
+We can jump everywhere (other windows, not other frames) with ~s~, make all text grey for easier jumping and change some colors.
+#+begin_src emacs-lisp
+  (use-package avy
+    :custom
+    (avy-style 'pre)
+    (avy-all-windows t)
+    (avy-background t)
+    :config
+    (avy-setup-default)
+    (define-key evil-normal-state-map (kbd "s") 'avy-goto-char-2)
+    :custom-face
+    (avy-lead-face
+     ((t
+       :foreground ,(alist-get 'green catppuccin-mocha-colors)
+       :background nil
+       :bold t
+       )))
+    (avy-lead-face-0
+     ((t
+       :foreground ,(alist-get 'red catppuccin-mocha-colors)
+       :background nil
+       :bold t
+       )))
+    (avy-background-face
+     ((t
+       :foreground ,(alist-get 'overlay1 catppuccin-mocha-colors)))
+     )
+    )
+#+end_src
+
+*** Surround
+Similar to Neovim's ~kylechui/nvim-surround~, I want to use ~evil-surround~ in Emacs.
+#+begin_src emacs-lisp
+  (use-package evil-surround
+    :config
+    (global-evil-surround-mode 1)
+    )
+#+end_src
+
+** Quick Navigation (Consult/Telescope)
+In Neovim I used [[https://github.com/nvim-telescope-telescope.nvim][telescope.nvim]].
+While this can be replaced with [[https://github.com/emacs-helm/helm][Helm]], using [[https://github.com/minad/consult][Consult]] and its companion plugins Vertico, Marginalia and Orderless also works.
+This section is inspired by [[https://kristofferbalintona.me/posts/202202211546/][Kristoffer Balintona]].
+*** Consult
+#+begin_src emacs-lisp
+  (use-package consult
+    :bind (
+           ("<leader> f f" . consult-find)
+           ("<leader> f r" . consult-ripgrep)
+           ("<leader> f p" . consult-register)
+           )
+    :custom
+    (consult-async-min-input 0)
+    )
+#+end_src
+
+The additional package [[https://github.com/gagbo/consult-lsp][consult-lsp]] can be used to query for symbols.
+#+begin_src emacs-lisp
+  (use-package consult-lsp
+    :bind (
+           ("<leader> f S" . consult-lsp-symbols)
+           ("<leader> f s" . consult-lsp-file-symbols)
+           ))
+#+end_src
+*** Vertico
+Vertico changes the completion UI.
+# TODO not completion UI but the line on the bottom...
+#+begin_src emacs-lisp
+  (use-package vertico
+    :custom
+    (vertico-resize t)  ; always resize the UI if necessary (i.e. grow or shrink)
+    (vertico-cycle t)
+    :init
+    (vertico-mode)
+    )
+#+end_src
+The README of the package further recommends using savehist to keep the history.
+This is not the default, unfortunately.
+#+begin_src emacs-lisp
+  (use-package savehist
+    :init
+    (savehist-mode)
+    )
+#+end_src
+*** Marginalia
+Marginalia adds additional information to results in Vertico.
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :init
+    (marginalia-mode)
+    )
+#+end_src
+*** Orderless
+Orderless makes searching easier, as one can search for multiple components which can match using different criteria.
+While using [[https://github.com/oantolin/orderless?tab=readme-ov-file#style-dispatchers]["Style Dispatchers"]] to directly specify which component does what is possible, using simple searches is sufficient for the time being.
+#+begin_src emacs-lisp
+  (use-package orderless
+    :custom
+    (completion-styles '(orderless))
+    (orderless-matching-styles
+     '(orderless-regexp  ; search with regex; since simple searches are also valid regex, this is fine
+       orderless-flex    ; fuzzy matching
+                                          ;basic
+       )
+     )
+    )
+#+end_src
+
+** Comments
+In Neovim I originally used [[https://github.com/scrooloose/nerdcommenter][nerdcommenter]], though only a subset of its functionality.
+However, I found the built-in Emacs functionality for comments lacking, and binding to ~<leader> c c~ did not work how I expected.
+As such, I use [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-commenter]] as replacement.
+#+begin_src emacs-lisp
+  (use-package evil-nerd-commenter
+  :bind (
+  ("<leader> c SPC" . evilnc-comment-or-uncomment-lines) ; also works in visual mode
+
+  )
+    )
+#+end_src
+
+* Programming
+** Programming Languages
+Brackets, braces, etc. should be automatically completed:
+#+begin_src emacs-lisp
+  (electric-pair-mode 1)
+#+end_src
+*** Additional Modes
+Emacs does not ship with a lua mode by default, so I install that.
+#+begin_src emacs-lisp
+  (use-package lua-mode
+    :custom
+    (lua-indent-level 2)
+    )
+#+end_src
+*** Treesitter
+First of all, I use ~treesit-auto~ to highlight all languages with treesitter, if possible.
+This may be removed in Emacs 30, as this is the default there.
+#+begin_src emacs-lisp
+  (use-package treesit-auto
+    :config
+    (global-treesit-auto-mode)
+    )
+#+end_src
+
+Nix seems to be unsupported by the previous package, so we install ~nix-ts-mode~.
+However, this requires the nix treesitter grammar, which seems to not work under Arch Linux.
+Alas, I'll switch to NixOS soon.
+#+begin_src emacs-lisp
+  (use-package nix-ts-mode
+    :mode "\\.nix\\'"
+    )
+#+end_src
+
+*** LSP and Autocomplete
+**** Completion (company)
+Completions should be detailed, though I have to test what this actually changes.
+#+begin_src emacs-lisp
+  (setq completions-detailed t)
+#+end_src
+
+For autocompletion, I use [[https://company-mode.github.io][company-mode]].
+I also tried [[https://github.com/minad/corfu][corfu]] but it didn't play well with yasnippet.
+
+First, I want suggestions immediately, both in time and in characters.
+#+begin_src emacs-lisp
+  (use-package company
+    :custom
+    (company-idle-delay 0)
+    (company-minimum-prefix-length 1)
+#+end_src
+
+Completion should wrap around after the last result.
+#+begin_src emacs-lisp
+    (company-selection-wrap-around t)
+#+end_src
+
+There are also some visual improvements here.
+#+begin_src emacs-lisp
+    (company-tooltip-align-annotations t)
+    (company-tooltip-flip-when-above t)
+#+end_src
+
+And completions should not be downcased when using dabbrev, as the capitalization of a word is usually fixed.
+#+begin_src emacs-lisp
+    (company-dabbrev-downcase nil)
+#+end_src
+
+Furthermore, backends have to be configured.
+They are all grouped into a single list, as I want to always get all possible completions.
+#+begin_src emacs-lisp
+    (company-backends '((
+#+end_src
+
+The following completions are used.
+Note that ~:with~ uses backends even if other backends have results and ~:separate~ keeps the order given here.
+This means that any snippets come first, and then any other completions, e.g. from LSP.
+- always include snippets
+#+begin_src emacs-lisp
+  company-yasnippet
+#+end_src
+- "language-aware editing based on source code parsers" -- not needed since we use LSP
+#+begin_src emacs-lisp
+  ;;;; company-semantic
+#+end_src
+- for CMakeLists.txt -- usually not needed
+#+begin_src emacs-lisp
+  ;;;; company-cmake
+#+end_src
+- the completion-at-point-function -- needed for e.g. LSP and always required
+#+begin_src emacs-lisp
+  :with company-capf
+#+end_src
+- used for Clang -- not needed
+#+begin_src emacs-lisp
+  ;;;; company-clang
+#+end_src
+- for completing relative and absolute files -- I disabled this as it is very slow and locks up Emacs
+#+begin_src emacs-lisp
+  ;;;; company-files
+#+end_src
+- looks for all symbols in the current buffer that aren't in comments or strings -- we use LSP
+#+begin_src emacs-lisp
+  ;;;; company-dabbrev-code
+#+end_src
+- for GNU Global
+#+begin_src emacs-lisp
+  ;;;; company-gtags
+#+end_src
+- for etags -- we use LSP
+#+begin_src emacs-lisp
+  ;;;; company-etags
+#+end_src
+- for programming language keywords -- we use LSP
+#+begin_src emacs-lisp
+  ;;;; company-keywords
+#+end_src
+- for Oddmuse wikis like EmacsWiki -- not needed
+#+begin_src emacs-lisp
+  ;;;; company-oddmuse
+#+end_src
+- completes words typed in the current file
+#+begin_src emacs-lisp
+  :with company-dabbrev
+#+end_src
+- completes mail addresses and such -- probably doesn't hurt to have even if I don't use email in Emacs
+#+begin_src emacs-lisp
+  :with company-bbdb
+#+end_src
+- keep any results in /this/ order
+#+begin_src emacs-lisp
+  :separate
+  )))
+#+end_src
+
+Last, we just enable completion everywhere and setup selection of results with ~TAB~.
+#+begin_src emacs-lisp
+    :init
+    (global-company-mode)
+    (company-tng-configure-default)
+    )
+#+end_src
+
+I want to see documentation quickly when choosing a completion.
+For this, I use [[https://github.com/company-mode/company-quickhelp][company-quickhelp]].
+#+begin_src emacs-lisp
+  (use-package company-quickhelp
+    :init
+    (company-quickhelp-mode)
+    )
+#+end_src
+
+Last, ~company~ should use fuzzy matching, which is accomplished with ~company-fuzzy~.
+However, it seems to do this even without ~company-fuzzy~, and ~company-fuzzy~ also caused some issues, so let's just keep it that way.
+
+**** LSP
+LSP is very useful for supporting a lot of functionality for many languages.
+
+For showing the signature help in a so-called /posframe/, we have to install that package first.
+#+begin_src emacs-lisp
+  (use-package posframe)
+#+end_src
+
+Then we can configure ~lsp-mode~.
+Its major prefix is ~<leader> s~ in this case.
+All language servers should be downloaded by the OS package manager, so disable that functionality.
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :custom
+    (lsp-keymap-prefix "<leader> s")
+    (lsp-enable-suggest-server-download nil)
+    (lsp-signature-function 'lsp-signature-posframe)
+
+    ;; Python
+    (lsp-pylsp-plugins-autopep8-enabled nil)
+    (lsp-pylsp-plugins-black-enabled nil)
+    (lsp-pylsp-plugins-flake8-enabled t)
+    (lsp-pylsp-plugins-flake8-max-line-length 90)
+    (lsp-pylsp-plugins-jedi-completion-enabled t)
+    (lsp-pylsp-plugins-jedi-definition-enabled t)
+    (lsp-pylsp-plugins-jedi-hover-enabled t)
+    (lsp-pylsp-plugins-jedi-references-enabled t)
+    (lsp-pylsp-plugins-jedi-signature-help-enabled t)
+    (lsp-pylsp-plugins-jedi-symbols-enabled t)
+    (lsp-pylsp-plugins-mccabe-enabled t)
+    (lsp-pylsp-plugins-pyflakes-enabled t)
+    :hook (
+           (python-ts-mode . lsp)
+           (js-ts-mode     . lsp)
+           (lua-mode       . lsp)
+           (lsp-mode       . lsp-enable-which-key-integration)
+           )
+    )
+#+end_src
+
+For a better UI, we install ~lsp-ui~.
+Though I'm not sure this is activated by default?
+#+begin_src emacs-lisp
+  (use-package lsp-ui
+    :commands lsp-ui-mode
+    )
+#+end_src
+
+Last, LSP overrides ~company-backends~ unless ~lsp-completion-provider~ is set to ~:none~:
+#+begin_src emacs-lisp
+  (setq lsp-completion-provider :none)
+#+end_src
+
+**** Snippets
+There are a variety of snippet engines available.
+I'm using [[][yasnippet]] and the associated [[][collection]] of snippets.
+https://kristofferbalintona.me/posts/202202270056/
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :init
+    (yas-global-mode)
+    )
+
+  (use-package yasnippet-snippets)
+#+end_src
+
+# **** Corfu
+# https://kristofferbalintona.me/posts/202202270056/
+
+#     The TAB-and-Go style from https://github.com/minad/corfu/wiki doesn't really work with orderless, apparently?
+
+# #+begin_src emacs-lisp
+#   (use-package corfu
+#     :custom
+#     (corfu-cycle t)
+#     (corfu-auto t)
+#     (corfu-auto-delay 0)  ; this may be slow
+#     (corfu-auto-prefix 2)
+#     (corfu-quit-no-match t)
+#     (corfu-quit-at-boundary 'separator)
+#     (corfu-preview-current t)
+#     (corfu-preselect 'prompt)
+#     (corfu-separator ?\s)
+#     (completion-styles '(orderless))
+#     (tab-always-indent 'complete)
+#     (completion-cycle-threshold nil)
+#     (lsp-completion-provider :none)
+#     :bind
+#     (:map corfu-map
+#           ("TAB" . corfu-next)
+#           ([tab] . corfu-next)
+#           ("S-TAB" . corfu-previous)
+#           ([backtab] . corfu-previous)
+#           )
+#     :hook (lsp-completion-mode . my/corfu-setup-lsp)
+#     :config
+#     ;; setup lsp to use corfu for lsp completion
+#     (defun my/corfu-setup-lsp ()
+#       "Use orderless completion style with lsp-capf instead of the default lsp-passthrough."
+#       (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+#             '(orderless)))
+#     (global-corfu-mode)
+#     (corfu-popupinfo-mode)
+
+#     (set-face-attribute 'corfu-popupinfo nil :font "Iosevka-9")
+
+#     )
+# #+end_src
+
+# In addition to ~corfu~ we need [[https://github.com/minad/cape][cape]] to be able to use e.g. ~yasnippet~.
+# #+begin_src emacs-lisp
+#   (use-package cape)
+# #+end_src
+# #+begin_src emacs-lisp
+#   (use-package kind-icon
+#     :after corfu
+#     :config
+#     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+#   )
+# #+end_src
+
+# **** Snippets
+# There are a variety of snippet engines available.
+# I'm using [[][yasnippet]] and the associated [[][collection]] of snippets.
+# https://kristofferbalintona.me/posts/202202270056/
+# #+begin_src emacs-lisp
+#   (use-package yasnippet
+#     :init
+#     (yas-global-mode)
+#     )
+
+#   (use-package yasnippet-snippets)
+#   (use-package yasnippet-capf
+#     :after cape
+# ;   :hook
+# ;   (emacs-lisp-mode . my/yasnippet-capf-h)
+# ;   (python-base-mode . my/yasnippet-capf-h)
+# ;   (python-ts-mode . my/yasnippet-capf-h)
+#     )
+# #+end_src
+
+# **** Combining multiple ~completion-at-point-functions~
+# Unfortunately, some modes override ~completion-at-point-functions~, effectively disabling e.g. yasnippet or cape.
+# To fix this, the addition of the relevant hooks has to be done /after/ the mode has been loaded.
+# #+begin_src emacs-lisp
+#                                           ;(defalias 'my-capfs
+#                                           ;  (cape-capf-super #'yasnippet-capf
+#                                           ;                   #'cape-dabbrev
+#                                           ;                   #'cape-elisp-block
+#                                           ;                   ;;  #'cape-file  ; too slow
+#                                           ;                   ;;  #'cape-history
+#                                           ;                   ;;  #'cape-keyword
+#                                           ;                   ;;  #'cape-tex
+#                                           ;                   ;;  #'cape-sgml
+#                                           ;                   ;;  #'cape-rfc1345
+#                                           ;                   ;;  #'cape-abbrev
+#                                           ;                   ;;  #'cape-dict
+#                                           ;                   ;;  #'cape-elisp-symbol
+#                                           ;                   ;;  #'cape-line
+#                                           ;                   ))
+
+#                                           ; (defun my/setup-lsp ()
+#                                           ;   (setq-local completion-at-point-functions
+#                                           ;               (list ('my-capfs
+#                                           ;                      #'lsp-completion-at-point))
+#                                           ;               )
+#                                           ;   )
+#   (add-hook 'lsp-after-open-hook
+#             (lambda
+#               (setq-local completion-at-point-functions
+#                           (list
+#                            '(cape-capf-super #'yasnippet-capf
+#                                             #'cape-dabbrev)
+#                            );#'lsp-completion-at-point)
+#                           )
+#               )
+#             )
+# #+end_src
+
+# But this still doesn't work...
+
+
+*** LaTeX
+Even after university I still occasionally write documents using LaTeX.
+The relevant configuration is from:
+- [[https://michaelneuper.com/posts/efficient-latex-editing-with-emacs/][Michael Neuper]].
+- [[https://tex.stackexchange.com/questions/106130/set-up-synctex-with-emacs-docview]]
+
+The built-in PDF viewer is a little barebones and doesn't support e.g. synctex.
+I attempted to replace it with [[https://github.com/vedang/pdf-tools][pdf-tools]].
+The necessary ~epdfinfo~ server is supplied when installing from NonGNU ELPA or MELPA, but I don't know what happens under NixOS.
+#+begin_src emacs-lisp
+  (use-package pdf-tools
+    :config
+    (pdf-tools-install))
+#+end_src
+
+Emacs provides some nice out-of-box options for LaTeX, so the following keybinds are relevant:
+#+begin_src emacs-lisp
+  (define-key evil-normal-state-map (kbd "<leader> l l") (lambda() (interactive) (save-buffer) (TeX-command-run-all nil)))
+  (define-key evil-normal-state-map (kbd "<leader> l v") (lambda () (interactive) (save-buffer) (TeX-view)))
+  (define-key evil-normal-state-map (kbd "<leader> l s") (lambda () (interactive) (save-buffer) (pdf-sync-forward-search)))
+  ;; TODO PDF clean
+  ;; TODO continuous compilation
+#+end_src
+
+Everybody seems to use AUCTeX, so let's install that.
+#+begin_src emacs-lisp
+  (use-package auctex
+    :custom
+#+end_src
+
+There are some interesting options for ~auctex~:
+#+begin_src emacs-lisp
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-save-query nil) ;; obviously we want to compile when I ask it to, and this usually creates files, duh.
+  (TeX-source-correlate-method '( ;; technically this is the default
+                                 (dvi . source-specials)
+                                 (pdf . synctex)
+                                 ))
+  (TeX-source-correlate-mode t)
+  (TeX-view-program-selection '(
+                                ((output-dvi has-no-display-manager) "dvi2tty")
+                                ((output-dvi style-pstricks) "dvips and gv")
+                                (output-dvi "xdvi")
+                                (output-pdf "PDF Tools")
+                                (output-html "xdg-open")
+                                ))
+#+end_src
+
+Additionally, ~LaTeX-math-mode~ offers inserting some characters more easily using ~`~ and ~reftex-mode~ helps with the ToC.
+#+begin_src emacs-lisp
+  :hook
+  (LaTeX-mode . LaTeX-math-mode)
+  (reftex-mode . LaTeX-math-mode)
+
+#+end_src
+I also found that AUCTeX uses a variable-width font for headings and such, which I don't like.
+#+begin_src emacs-lisp
+  :custom-face
+  (font-latex-sectioning-5-face
+   ((t
+     :inherit fixed-pitch
+     :foreground ,(alist-get 'yellow catppuccin-mocha-colors)
+     )))
+  )
+#+end_src
+
+[[*Visuals][Similar]] to ~org-mode~, I'd like to see pretty symbols when I'm not in insert mode.
+#+begin_src emacs-lisp
+  (add-hook 'evil-insert-state-entry-hook (lambda () (prettify-symbols-mode -1)))
+  (add-hook 'evil-insert-state-exit-hook  (lambda () (prettify-symbols-mode t)))
+#+end_src
+
+Automatic detection of the main file, similar to Neovim does not work at the moment.
+Some hints can be found [[https://stackoverflow.com/questions/29728875/auctex-and-master-file-by-means-of-latexmain-file-such-as-in-vim-latex][here]].
+
+At some point I also should enable automatic compilation.
+See e.g. [[https://emacs.stackexchange.com/questions/45263/how-to-auto-compile-latex-source-file-and-auto-revert-pdf-output-buffer][here]].
+
+*** Lilypond
+When having ~lilypond~ installed at the system level, we just have to ~require~ it.
+#+begin_src emacs-lisp
+  (require 'lilypond-mode)
+  (add-to-list 'auto-mode-alist '("\\.ly\\'" . LilyPond-mode))
+  (setq LilyPond-pdf-command "zathura")
+#+end_src
+
+The highlighting is actually quite bad regarding lyrics.
+I should fix that at some point.
+#+begin_src LilyPond
+  \addlyrics{
+  \override LyricText.font-size = #'-1
+  \set stanza = "1. "
+  Sind die Lich -- ter
+  an -- ge -- zün -- det,
+}
+#+end_src
+
+
+** Git
+Since I use Git quite often, I want to see its highlighting on the left.
+In Neovim I used [[https://github.com/lewis6991/gitsigns.nvim][gitsigns.nvim]] for that.
+In Emacs, I use [[https://github.com/dgutov/diff-hl][diff-hl]].
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :config
+    (global-diff-hl-mode)
+    )
+#+end_src
+
+*** Magit
+Magit is another interesting package for managing git in Emacs.
+#+begin_src emacs-lisp
+  (use-package magit)
+#+end_src
+
+For integration with ~diff-hl~, we have to add the following hooks:
+#+begin_src emacs-lisp
+  (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+#+end_src
+* Org Mode
+I use org mode for this file as well as other documentation stuff.
+It is included by default in Emacs, but some additional configuration is nice.
+I used these sources while writing this:
+- https://zzamboni.org/post/beautifying-org-mode-in-emacs/
+- ...
+
+** Fonts
+For some time I tried to use variable-pitch fonts in org-mode.
+However, this caused visual issues with autocompletion or line numbers.
+#+begin_src emacs-lisp
+  ; (add-hook 'org-mode-hook 'variable-pitch-mode)
+#+end_src
+
+  
+** Visuals
+Let's hide any annoying markup markers first.
+Also, entities like ~\pi~ should be shown in UTF-8.
+This may be weird when using subscripts like in ~snake_case~, so we set ~org-use-sub-superscripts~ to ~{}~.
+Furthermore, we use ~…~ instead of ~...~ for folded headings.
+#+begin_src emacs-lisp
+  (setq org-hide-emphasis-markers t)
+  (setq org-pretty-entities t)
+  (setq org-use-sub-superscripts "{}")
+  (setq org-ellipsis "…")
+#+end_src
+
+Sometimes I embed images.
+To be able to set the width if desired, the following has to be set:
+#+begin_src emacs-lisp
+  (setq org-image-actual-width nil)
+#+end_src
+
+Since editing text with ~org-hide-emphasis-markers~ set to true is harder, we want to disable it in insert mode.
+While this was supposed to work with ~org-appear~, it did not for me.
+As such, I just wrote my own hooks.
+#+begin_src emacs-lisp
+  (add-hook 'evil-insert-state-entry-hook (lambda () (visible-mode t)))
+  (add-hook 'evil-insert-state-exit-hook  (lambda () (visible-mode -1)))
+#+end_src
+
+Automatically indenting text according to the outline is also useful.
+#+begin_src emacs-lisp
+  (setq org-startup-indented t)
+#+end_src
+
+Furthermore, we can replace the dashes of lists with dots.
+While I still use ~org-modern~ below, bullets are not correctly applied in my case.
+#+begin_src emacs-lisp
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•")))
+                             ))
+                          )
+#+end_src
+
+Similarly, heading markers can be replaced.
+I originally used ~org-bullets~ for this, but ~org-superstar-mode~ seems more current.
+However, ~org-modern~ does all of this and more, so I used that eventually.
+#+begin_src emacs-lisp
+                                          ; (use-package org-superstar
+                                          ;   :config
+                                          ;   (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
+                                          ; )
+#+end_src
+
+~org-modern~ is used like so:
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :config
+    (global-org-modern-mode)
+    )
+#+end_src
+
+** Org-Roam
+[[https://github.com/org-roam/org-roam][Org-roam]] is a way of non-hierarchical note-taking (Zettelkasten).
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :custom
+    (org-roam-directory (file-truename "~/Documents/Notizen"))
+    (org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+    :config (org-roam-db-autosync-mode)
+    :bind (
+           ("<leader> r c" . org-roam-capture)
+           ("<leader> r f" . org-roam-node-find)
+           )
+    )
+#+end_src
+
+For a visualization of notes similar to Obsidian, I use [[https://github.com/org-roam/org-roam-ui][org-roam-ui]].
+#+begin_src emacs-lisp
+  (use-package org-roam-ui
+    :after org-roam
+    :custom
+    (org-roam-ui-sync-theme t)
+    (org-roam-ui-follow t)
+    (org-roam-ui-update-on-save t)
+    (org-roam-ui-open-on-start t)
+    )
+#+end_src
+
+** Org-Download
+I sometimes want to easily add pictures from the internet to my notes.
+This can be accomplished with [[https://github.com/abo-abo/org-download][org-download]].
+#+begin_src emacs-lisp
+  (use-package org-download)
+#+end_src
+
+* Additional Plugins
+** Which-Key
+In neovim I used ~folke/which-key.nvim~ which makes finding new functionality easier.
+A similar package exists for Emacs, which is included in Emacs starting with v30.
+#+begin_src emacs-lisp
+  (use-package which-key
+    :config
+    (which-key-mode)
+    ;; this does not work with `<leader>`
+    (which-key-add-key-based-replacements
+      "SPC f"     "Find..."
+      "SPC f f"   "file"
+      "SPC f p"   "register"
+      "SPC f r"   "line (ripgrep)"
+      "SPC f s"   "symbols (file)"
+      "SPC f S"   "symbols (project)"
+
+      "SPC c"     "Comment..."
+      "SPC c SPC" "toggle"
+
+      "SPC l"     "LaTeX..."
+      "SPC l l"   "compile"
+      "SPC l v"   "view"
+      "SPC l s"   "forward search"
+
+      "SPC r"     "Org-Roam..."
+      "SPC r c"   "capture"
+      "SPC r f"   "find note"
+
+      "SPC s"     "LSP..."
+      "SPC s ="     "format..."
+      "SPC s = ="     "buffer"
+      "SPC s = r"     "region"
+
+      "SPC s F"     "folders..."
+      "SPC s F a"     "add"
+      "SPC s F b"     "blocklist remove"
+      "SPC s F r"     "remove"
+
+      "SPC s G"     "peek..."
+      "SPC s G g"     "definitions"
+      "SPC s G r"     "references"
+
+      "SPC s T"     "toggle..."
+      "SPC s T D"     "modeline diagnostics"
+      "SPC s T L"     "trace IO"
+      "SPC s T S"     "sideline mode"
+      "SPC s T a"     "modeline code actions"
+      "SPC s T b"     "breadcrumbs"
+      "SPC s T d"     "documentation"
+      "SPC s T h"     "symbol highlighting"
+      "SPC s T l"     "LSP Lens"
+      "SPC s T s"     "automatic signatures"
+
+      "SPC s a"     "LSP x..."
+      "SPC s a a"     "lsp-execute-code-action"
+      "SPC s a h"     "lsp-document-highlight"
+      "SPC s a l"     "lsp-avy-lens"
+
+      "SPC s g"     "goto..."
+      "SPC s g g"     "definitions"
+      "SPC s g r"     "references"
+
+      "SPC s h"     "quickhelp..."
+      "SPC s h g"     "glance documentation"
+      "SPC s h h"     "show documentation"
+      "SPC s h s"     "type signature"
+
+      "SPC s r"     "refactor..."
+      "SPC s r o"     "organize imports"
+      "SPC s r r"     "rename"
+
+      "SPC s w"     "LSP..."
+      "SPC s w D"     "disconnect"
+      "SPC s w d"     "show session information"
+      "SPC s w q"     "shutdown"
+      "SPC s w r"     "restart"
+      "SPC s w s"     "start"
+
+      )
+    :custom
+    (which-key-prefix-prefix "") ;; unfortunately, one cannot set a suffix like ...
+    )
+#+end_src
