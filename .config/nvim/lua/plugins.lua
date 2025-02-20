@@ -252,147 +252,6 @@ return {
     end
 },
 {
-    'folke/which-key.nvim',
-    event = "VeryLazy",
-    config = function()
-        local wk = require'which-key'
-        local leader_mappings = {
-            f = {
-                name = 'Find...',
-                f = 'Find File',
-                s = 'Find Symbols',
-                r = 'Live Grep (ripgrep)'
-            },
-            c = {
-                name = 'Comment...',
-                ['$'] = 'to EOL',
-                ['<space>'] = 'toggle',
-                A = 'append',
-                a = 'alt delims???',
-                b = 'align both',
-                c = 'comment',
-                i = 'invert',
-                l = 'align left',
-                m = 'minimal',
-                n = 'nested',
-                s = 'sexy',
-                u = 'uncomment',
-                y = 'yank',
-            },
-            l = {
-                name = 'VimTex...',
-                a = "Open Context Menu",
-                c = "Clean",
-                C = "Fulll Clean",
-                e = "Look at the errors",
-                g = "Show status",
-                G = "Show full status",
-                i = "Show info",
-                I = "Show full info",
-                k = "Stop.",
-                K = "Stop all.",
-                l = "Compile",
-                L = "Compile all",
-                m = "imaps list",
-                o = "Compile output",
-                q = "Show log",
-                s = "Toggle main",
-                t = "Open TOC",
-                T = "Toggle TOC",
-                v = "View",
-                x = "reload",
-                X = "reload state",
-            },
-        }
-        local normal_mappings = {
-            [']'] = {
-                [']'] = 'next [sub*]section',
-                m = 'next environment',
-                n = 'next math zone',
-                r = 'next frame'
-            },
-            ['['] = {
-                ['['] = 'prev [sub*]section',
-                m = 'prev environment',
-                n = 'prev math zone',
-                r = 'prev frame'
-            }
-        }
-        wk.register(leader_mappings, { prefix = '<leader>' })
-        wk.register(normal_mappings)
-        wk.setup{
-            ignore_missing = false,
-            icons = {
-                group = "",
-            }
-        }
-    end
-},
-{
-    'folke/noice.nvim',
-    config = true,
-    opts = {
-        lsp = {
-            -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-            override = {
-                ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
-                ['vim.lsp.util.stylize_markdown'] = true,
-                ['cmp.entry.get_documentation'] = true,
-            },
-            progress = {
-                enabled = false,
-            },
-        },
-        -- show @recording messages
-        routes = {
-            {
-                view = "notify",
-                filter = { event = "msg_showmode" },
-            },
-        },
-        cmdline = {
-            format = {
-                cmdline = { pattern = "^:", icon = ":", lang = "vim" },
-                search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex"},
-                search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex"},
-                filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
-                lua = { pattern = "^:%s*lua%s+", icon = "", lang = "lua" },
-                help = { pattern = "^:%s*he?l?p?%s+", icon = "", lang = "bash" },
-                search_replace = { icon = "", kind = "search", title = " Search and Replace ", pattern = "^:%s*%%s/", lang = "regex", conceal = false },
-            },
-        },
-        messages = {
-            view_search = false
-        }
-    },
-    dependencies = {
-        'MunifTanjim/nui.nvim',
-        'rcarriga/nvim-notify'
-    },
-},
-{
-    'rcarriga/nvim-notify', -- also used for noice.nvim
-    config = function()
-        require'notify'.setup{
-            fps = 60,
-            icons = {
-                DEBUG = " ",
-                ERROR = " ",
-                INFO = " ",
-                TRACE = "✎ ",
-                WARN = " "
-            },
-            level = 2,
-            minimum_width = 50,
-            render = "default",
-            stages = "fade",
-            timeout = 5000,
-            top_down = true
-        }
-        vim.notify = require'notify'
-    end
-    },
-{
     'martineausimon/nvim-lilypond-suite',
     ft = "lilypond",
     dependencies = {
@@ -419,35 +278,6 @@ return {
             lineFoldingOnly = true
         }
     end
-},
-{
-    'nvimdev/lspsaga.nvim',
-    event = "LspAttach",
-    config = function ()
-        require'lspsaga'.setup({
-            symbol_in_winbar = {
-                separator = "  ",
-                show_file = true,
-            },
-            ui = {
-                code_action = "",
-                border = "solid",
-            },
-        })
-        vim.keymap.set({"n", "v"}, "<leader>sa", "<cmd>Lspsaga code_action<CR>")
-        vim.keymap.set("n", "<leader>sr", "<cmd>Lspsaga rename<CR>")
-        vim.keymap.set("n", "<leader>sR", "<cmd>Lspsaga rename ++project<CR>")
-        vim.keymap.set("n", "<leader>sk", "<cmd>Lspsaga peek_definition<CR>")
-        vim.keymap.set("n", "<leader>sK", "<cmd>Lspsaga goto_definition<CR>")
-        vim.keymap.set("n", "<leader>st", "<cmd>Lspsaga peek_type_definition<CR>")
-        vim.keymap.set("n", "<leader>sT", "<cmd>Lspsaga goto_type_definition<CR>")
-        vim.keymap.set("n", "<leader>so", "<cmd>Lspsaga outline<CR>")
-        vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc ++keep<CR>")
-    end,
-    dependencies = {
-        'nvim-tree/nvim-web-devicons',
-        'nvim-treesitter/nvim-treesitter'
-    },
 },
 'preservim/vim-markdown',
 'elkowar/yuck.vim',
@@ -488,17 +318,17 @@ return {
         vim.keymap.set("n", "<leader>dB", function() require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
     end
 },
-{
-    'rcarriga/nvim-dap-ui',
-    config = function ()
-        local dapui = require'dapui'
-        local dap = require'dap'
-        dapui.setup()
-        dap.listeners.after.event_initialized["dapui_config"] = function()
-            dapui.open()
-        end
-    end
-},
+-- {
+--    'rcarriga/nvim-dap-ui',
+--     config = function ()
+--         local dapui = require'dapui'
+--         local dap = require'dap'
+--         dapui.setup()
+--         dap.listeners.after.event_initialized["dapui_config"] = function()
+--             dapui.open()
+--         end
+--     end
+-- },
 {
     'mfussenegger/nvim-dap-python',
     config = function ()
@@ -525,23 +355,6 @@ return {
             unlisted_buffers = false,
         }
     }
-},
-{
-    'folke/trouble.nvim',
-    event = 'VeryLazy',  -- required for todo-comments.nvim...
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function ()
-        require'trouble'.setup {
-            auto_open = true,
-            auto_close = false,
-            use_diagnostic_signs = true,
-            mode = 'workspace_diagnostics',
-            padding = false
-        }
-        vim.keymap.set("n", "<leader>td", "<cmd>TroubleToggle document_diagnostics<CR>")
-        vim.keymap.set("n", "<leader>tw", "<cmd>TroubleToggle workspace_diagnostics<CR>")
-        vim.keymap.set("n", "<leader>tr", "<cmd>TroubleRefresh<CR>")
-    end,
 },
 {
     'folke/todo-comments.nvim',

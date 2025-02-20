@@ -37,7 +37,8 @@ local servers = {
                 'ansiblels',
                 'dockerls',
                 'yamlls',
-                'rust_analyzer'
+                'rust_analyzer',
+                'nil_ls',
             }
 
 -- basic settings for all servers

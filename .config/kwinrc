@@ -78,12 +78,24 @@ untileByDragging=false
 PopupHideDelay=300
 TextOnly=true
 
+[Tiling]
+padding=4
+
+[Tiling][57aef4db-640b-5d90-841f-e67149adfdba]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][9cf90523-c457-5ba8-96e4-381793fc0211]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
 [Windows]
 DelayFocusInterval=0
 FocusPolicy=FocusFollowsMouse
 FocusStealingPreventionLevel=4
 NextFocusPrefersMouse=true
 SeparateScreenFocus=true
+
+[Xwayland]
+Scale=1
 
 [org.kde.kdecoration2]
 library=org.kde.bismuth.decoration

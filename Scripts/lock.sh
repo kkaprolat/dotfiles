@@ -1,5 +1,43 @@
 #!/bin/bash
+set -x
 
-. ~/.cache/wal/colors.sh
+if [[ $(hostname) == 'Magnesium' ]]
+then
+    p='/home/kay/Wallpapers'
+elif [[ $(hostname) == 'Technetium' ]]
+then
+    #p='/run/media/kay/D0-P1/Bibliotheken/Bilder/Wallpaper/dump'
+    p='/home/kay/Pictures/Wallpapers'
+fi
 
-i3lock -i $wallpaper --tiling --indicator -k --insidevercolor=ffffff00 --insidewrongcolor=ffffff00 --insidecolor=ffffff00 --ringvercolor=ffffff00 --ringwrongcolor=ff0000aa --ringcolor=04000011 --linecolor=ffffff00 --keyhlcolor=040000ff --timestr="%H:%M" --time-font="Fantasque Sans Mono" --timesize=80 --datecolor=ffffff00 --timepos="200:900" --radius=180
+images=()
+
+while IFS= read -r output; do
+    img="$(find "$p" -type f | sort -R | head -n 1)"
+    magick "$img" -filter Gaussian -blur 0x8 "$img"_blurred
+    images+=("$img"_blurred)
+    echo "$output"
+    echo "${images[@]}"
+done <<< "$(swww query | sed 's/:.*$//g')"
+
+if [[ ${#images[@]} == 1 ]]
+then
+    swaylock -ftFkl -c 000000 --font "Cantarell" --inside-color 00000000 \
+        -s fill \
+            -i "eDP-1:${images[0]}" \
+            -i "DP-1:${images[0]}" \
+            -i "DP-2:${images[0]}"
+
+elif [[ ${#images[@]} == 0 ]]
+then
+    swaylock -ftFkl -c 000000 --font "Cantarell" --inside-color 00000000
+else
+    swaylock -ftFkl -c 000000 --font "Cantarell" --inside-color 00000000 -s fill \
+        -i "eDP-1:${images[0]}"\
+        -i "DP-1:${images[1]}"\
+        -i "DP-2:${images[0]}"
+fi
+
+for image in "${images[@]}"; do
+    rm "$image"
+done

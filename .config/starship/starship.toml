@@ -17,3 +17,11 @@ character.vimcmd_symbol =   '[c>](bold green)'
 character.vimcmd_replace_one_symbol =   '[r>](bold purple)'
 character.vimcmd_replace_symbol =   '[R>](bold purple)'
 character.vimcmd_visual_symbol =   '[v>](bold orange)'
+
+# env_var.fish_private_mode.symbol = 'P'
+# env_var.fish_private_mode.variable = 'fish_private_mode'
+# env_var.fish_private_mode.default = 'not private'
+# env_var.fish_private_mode.style = 'red bold dimmed'
+# env_var.fish_private_mode.format = '$symbol[$env_value]($style)'
+
+
